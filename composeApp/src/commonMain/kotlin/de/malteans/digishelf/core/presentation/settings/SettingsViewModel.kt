@@ -7,12 +7,11 @@ import de.malteans.digishelf.core.domain.BookRepository
 import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
-import de.malteans.digishelf.core.presentation.main.components.Screen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import de.malteans.digishelf.core.presentation.main.components.CurScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SettingsViewModel (
@@ -48,14 +47,14 @@ class SettingsViewModel (
             SettingsAction.SettingsOpened -> {
                 _state.update {
                     it.copy(
-                        curScreen = Screen.Settings
+                        curScreen = CurScreen.Settings
                     )
                 }
             }
             SettingsAction.OnTrashClicked -> {
                 _state.update {
                     it.copy(
-                        curScreen = Screen.Trash
+                        curScreen = CurScreen.Trash
                     )
                 }
             }
@@ -82,9 +81,10 @@ class SettingsViewModel (
             }
             // Import/Export
             SettingsAction.OnExportClicked -> {
-                _state.value = _state.value.copy(
-                    export = true,
-                )
+                TODO()
+//                _state.value = _state.value.copy(
+//                    export = true,
+//                )
             }
             // New import branch: fileContent now contains the CSV text.
             is SettingsAction.OnImport -> {
@@ -113,13 +113,10 @@ class SettingsViewModel (
                     allBookSeries = emptyList()
                 )
             }
-            is SettingsAction.SetLoading -> {
-                _state.value = _state.value.copy(isLoading = event.isLoading)
-            }
             is SettingsAction.OnCloudCompleteClicked -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     _state.update { it.copy(
-                        isLoading = true
+                        cloudCompletionInProgress = true
                     ) }
                     state.value.allBooks?.forEach { book ->
                         val cloudBookResult = if (book.isbn.isIsbnFormat()) {
@@ -164,7 +161,12 @@ class SettingsViewModel (
                         }
                     }
                     _state.update { it.copy(
-                        isLoading = false
+                        cloudCompletionInProgress = false,
+                        cloudCompletionDone = true
+                    ) }
+                    delay(5000L)
+                    _state.update { it.copy(
+                        cloudCompletionDone = false
                     ) }
                 }
             }

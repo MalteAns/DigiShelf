@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="navigate_back">Zurück navigieren</string>
+
+    <string name="imprint_title">Imprint</string>
+    <string name="imprint_desc">Contact Information</string>
+    <string name="imprint_heading">Information according to § 5 TMG:</string>
+    <string name="germany">Germany</string>
+    <string name="imprint_email_label">Email</string>
+    <string name="impressum_phone_label">Phone</string>
+    <string name="imprint_responsible_heading">Responsible for content according to § 18 (2) MStV:</string>
+    <string name="imprint_address_as_above">(address as above)</string>
+    <string name="imprint_privacy_hint">For more information, please refer to our privacy policy.</string>
+
+    <string name="privacy_title">Privacy</string>
+    <string name="privacy_desc">Privacy policy</string>
+
+    <string name="eula_title">EULA</string>
+    <string name="eula_desc">Terms of usage???</string>
+
+    <string name="license_title">Open-Source-Lizenzen</string>
+    <string name="license_desc">License information for used open-source-software</string>
+</resources>

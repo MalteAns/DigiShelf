@@ -3,18 +3,26 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+
+    alias(libs.plugins.aboutLibraries)
+}
+
+aboutLibraries {
+    export {
+        outputFile = file("src/commonMain/composeResources/files/aboutlibraries.json")
+    }
 }
 
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -57,6 +65,8 @@ kotlin {
             implementation(libs.barcode.scanning)
         }
         commonMain.dependencies {
+            implementation(projects.legal)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
@@ -85,6 +95,7 @@ kotlin {
 
             // Material 3
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
 
             // Coil (Image loading)
             implementation(libs.bundles.coil)
@@ -100,13 +111,12 @@ kotlin {
 
             // Back Handler
             implementation(libs.ui.backhandler)
+
+            // About Libraries
+            implementation(libs.aboutlibraries.compose.m3)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
-        }
-
-        dependencies {
-            ksp(libs.androidx.room.compiler)
         }
     }
 }
@@ -133,8 +143,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     androidResources {
         generateLocaleConfig = true
@@ -146,5 +156,6 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("kspAndroid", libs.androidx.room.compiler)
 }
 

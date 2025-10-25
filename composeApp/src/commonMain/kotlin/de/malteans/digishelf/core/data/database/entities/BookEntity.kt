@@ -2,6 +2,7 @@ package de.malteans.digishelf.core.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,9 @@ import androidx.room.PrimaryKey
             childColumns = ["bookSeriesId"],
             onDelete = ForeignKey.SET_NULL,
         )
+    ],
+    indices = [
+        Index("bookSeriesId")
     ]
 )
 data class BookEntity (

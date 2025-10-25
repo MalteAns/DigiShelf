@@ -23,7 +23,7 @@ class MainViewModel(
         when (action) {
             is MainAction.SetScreen -> {
                 _state.value = state.value.copy(
-                    selectedScreen = action.screen
+                    selectedCurScreen = action.curScreen
                 )
             }
         }

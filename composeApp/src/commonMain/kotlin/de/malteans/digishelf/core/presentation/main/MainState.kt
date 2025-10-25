@@ -1,7 +1,7 @@
 package de.malteans.digishelf.core.presentation.main
 
-import de.malteans.digishelf.core.presentation.main.components.Screen
+import de.malteans.digishelf.core.presentation.main.components.CurScreen
 
 data class MainState(
-    val selectedScreen: Screen = Screen.Overview
+    val selectedCurScreen: CurScreen = CurScreen.BooksOverview
 )

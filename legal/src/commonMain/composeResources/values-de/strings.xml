@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="navigate_back">Zurück navigieren</string>
+
+    <string name="imprint_title">Impressum</string>
+    <string name="imprint_desc">Kontaktdaten</string>
+    <string name="imprint_heading">Angaben gemäß § 5 TMG:</string>
+    <string name="germany">Deutschland</string>
+    <string name="imprint_email_label">E-Mail</string>
+    <string name="impressum_phone_label">Telefon</string>
+    <string name="imprint_responsible_heading">Inhaltlich Verantwortlich gemäß § 18 Abs. 2 MStV:</string>
+    <string name="imprint_address_as_above">(Adresse wie oben)</string>
+    <string name="imprint_privacy_hint">Weitere Informationen finden Sie in unserer Datenschutzerklärung.</string>
+
+
+    <string name="privacy_title">Datenschutz</string>
+    <string name="privacy_desc">Datenschutzerklärung</string>
+
+    <string name="eula_title">EULA</string>
+    <string name="eula_desc">Terms of service</string>
+
+    <string name="license_title">Open-Source-Lizenzen</string>
+    <string name="license_desc">Lizenzdetails für genutzte Open-Source-Software</string>
+</resources>

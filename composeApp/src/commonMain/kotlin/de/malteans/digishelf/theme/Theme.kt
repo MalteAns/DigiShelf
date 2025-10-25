@@ -1,10 +1,12 @@
 package de.malteans.digishelf.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -81,6 +83,10 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHigh = surfaceContainerHighDark,
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
+
+val ColorScheme.containerColor: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) surfaceContainer else surfaceContainerHigh
 
 /**
  * RecipesTheme now automatically applies light/dark mode based on the system settings.
