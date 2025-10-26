@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -127,6 +128,15 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 3412013
         versionName = "1.0-pre3"
+
+        buildFeatures.buildConfig = true
+        val googleApiKey: String = gradleLocalProperties(rootDir, rootProject.providers)
+            .getProperty("GOOGLE_API_KEY")
+            ?: System.getenv("GOOGLE_API_KEY")
+            ?: throw IllegalStateException(
+                "Missing GOOGLE_API_KEY property in local.properties or environment variable"
+            )
+        buildConfigField("String", "GOOGLE_API_KEY", "\"$googleApiKey\"")
     }
     packaging {
         resources {
@@ -144,9 +154,6 @@ android {
     }
     androidResources {
         generateLocaleConfig = true
-    }
-    buildFeatures {
-        buildConfig = true
     }
 }
 

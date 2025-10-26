@@ -3,9 +3,8 @@ package de.malteans.digishelf.core.data.network
 import de.malteans.digishelf.core.data.network.dto.BookResponse
 import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
+import io.ktor.client.*
+import io.ktor.client.request.*
 
 private const val BASE_URL = "https://www.googleapis.com/books/v1"
 
@@ -16,20 +15,17 @@ class KtorRemoteBookDataSource(
     override suspend fun fetchBook(
         isbn: String?, title: String?, author: String?
     ): Result<BookResponse, DataError.Remote> {
-        val query = if (isbn != null) {
-            "isbn:$isbn"
-        } else if (title != null && author != null) {
-            "intitle:$title+inauthor:$author"
-        } else if (title != null) {
-            "intitle:$title"
-        } else if (author != null) {
-            "inauthor:$author"
-        } else {
-            return Result.Error(DataError.Remote.INVALIDE_QUERY)
+        val query = when {
+            isbn != null -> "isbn:$isbn"
+            title != null && author != null -> "intitle:$title+inauthor:$author"
+            title != null -> "intitle:$title"
+            author != null -> "inauthor:$author"
+            else -> return Result.Error(DataError.Remote.INVALIDE_QUERY)
         }
 
         return safeCall<BookResponse> {
             client.get("$BASE_URL/volumes") {
+                parameter("key", ApiConfig.googleApiToken)
                 parameter("q", query)
             }
         }
