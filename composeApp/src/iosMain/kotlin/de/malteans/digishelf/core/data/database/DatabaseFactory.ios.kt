@@ -10,14 +10,12 @@ import platform.Foundation.NSUserDomainMask
 @OptIn(ExperimentalForeignApi::class)
 actual class DatabaseFactory {
     actual fun create(): RoomDatabase.Builder<BookDatabase> {
-        val dbFilePath = documentDirectory() + "/${BookDatabase.DB_NAME}"
-        return Room.databaseBuilder<BookDatabase>(
-            name = dbFilePath,
-        )
+        val dbFile = documentDirectory() + "/${BookDatabase.DB_NAME}"
+        return Room.databaseBuilder(dbFile)
     }
 
     private fun documentDirectory(): String {
-        val documentDirectory = NSFileManager.Companion.defaultManager.URLForDirectory(
+        val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,
             inDomain = NSUserDomainMask,
             appropriateForURL = null,

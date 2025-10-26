@@ -7,8 +7,10 @@ import androidx.room.Query
 import de.malteans.digishelf.core.data.database.entities.BookEntity
 import de.malteans.digishelf.core.data.database.entities.BookSeriesEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Dao
 interface BookDao {
 

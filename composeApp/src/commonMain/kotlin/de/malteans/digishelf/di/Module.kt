@@ -12,19 +12,22 @@ import de.malteans.digishelf.core.presentation.add.AddViewModel
 import de.malteans.digishelf.core.presentation.details.DetailsViewModel
 import de.malteans.digishelf.core.presentation.main.MainViewModel
 import de.malteans.digishelf.core.presentation.overview.OverviewViewModel
-import de.malteans.digishelf.series.presentation.overview.SeriesOverviewViewModel
 import de.malteans.digishelf.core.presentation.settings.SettingsViewModel
+import de.malteans.digishelf.series.presentation.overview.SeriesOverviewViewModel
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 expect val platformModule: Module
 
-val sharedModule = module {
+val module = module {
+    includes(platformModule)
+
     single { HttpClientFactory.create(get()) }
 
     single {
-        get<DatabaseFactory>().create()
+        get<DatabaseFactory>()
+            .create()
             .setDriver(BundledSQLiteDriver())
             .build()
     }
@@ -34,10 +37,10 @@ val sharedModule = module {
 
     single<BookRepository> { DefaultBookRepository(get(), get()) }
 
-    viewModel { MainViewModel() }
-    viewModel { OverviewViewModel(get()) }
-    viewModel { AddViewModel(get()) }
-    viewModel { DetailsViewModel(get()) }
-    viewModel { SettingsViewModel(get()) }
-    viewModel { SeriesOverviewViewModel(get()) }
+    viewModelOf(::MainViewModel)
+    viewModelOf(::OverviewViewModel)
+    viewModelOf(::AddViewModel)
+    viewModelOf(::DetailsViewModel)
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::SeriesOverviewViewModel)
 }

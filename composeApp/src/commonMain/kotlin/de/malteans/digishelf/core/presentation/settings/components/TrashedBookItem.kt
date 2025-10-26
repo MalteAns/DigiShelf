@@ -22,40 +22,42 @@ import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.delete
 import digishelf.composeapp.generated.resources.deleted
 import digishelf.composeapp.generated.resources.restore
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
 fun TrashedBookItem(book: Book, onClick: () -> Unit, onRestore: () -> Unit, onDelete: () -> Unit) {
     Row(
-        modifier = Modifier.Companion
+        modifier = Modifier
             .padding(12.dp, 0.dp)
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .clickable { onClick() },
-        verticalAlignment = Alignment.Companion.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(1f)
         ) {
             Text(
                 text = book.title,
-                modifier = Modifier.Companion.padding(end = 8.dp),
+                modifier = Modifier.padding(end = 8.dp),
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = book.author,
-                modifier = Modifier.Companion.padding(end = 8.dp),
+                modifier = Modifier.padding(end = 8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
             )
             Text(
                 text = "${stringResource(Res.string.deleted)}: ${book.getDeletedSinceString()}",
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .padding(end = 8.dp),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -85,11 +87,12 @@ fun TrashedBookItem(book: Book, onClick: () -> Unit, onRestore: () -> Unit, onDe
     }
 }
 
+@OptIn(ExperimentalTime::class)
 fun Book.getDeletedSinceString() : String {
     if (this.deletedSince == 0L) return ""
     val localDateTime = Instant.fromEpochMilliseconds(this.deletedSince).toLocalDateTime(TimeZone.currentSystemDefault())
     return "${localDateTime.hour}:${localDateTime.minute} " +
-            "${if (localDateTime.dayOfMonth < 10) "0" else ""}${localDateTime.dayOfMonth}." +
-            "${if (localDateTime.monthNumber < 10) "0" else ""}${localDateTime.monthNumber}." +
+            "${if (localDateTime.day < 10) "0" else ""}${localDateTime.day}." +
+            "${if (localDateTime.month.number < 10) "0" else ""}${localDateTime.month.number}." +
             "${localDateTime.year}"
 }

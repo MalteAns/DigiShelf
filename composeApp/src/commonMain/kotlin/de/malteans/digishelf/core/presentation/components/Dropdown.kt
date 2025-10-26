@@ -3,9 +3,9 @@ package de.malteans.digishelf.core.presentation.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -49,7 +49,7 @@ fun Dropdown(
             label = { Text(label) },
             colors = OutlinedTextFieldDefaults.colors(),
             modifier = Modifier
-                .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true)
                 .fillMaxWidth(),
             singleLine = true,
         )

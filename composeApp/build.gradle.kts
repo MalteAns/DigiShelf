@@ -27,17 +27,13 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            linkerOpts.add("-framework")
-            linkerOpts.add("AVFoundation")
-            linkerOpts.add("-framework")
-            linkerOpts.add("Vision")
+            binaryOption("bundleId", "de.malteans.digishelf")
         }
     }
 
@@ -115,7 +111,7 @@ kotlin {
             // About Libraries
             implementation(libs.aboutlibraries.compose.m3)
         }
-        nativeMain.dependencies {
+        iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
     }
@@ -157,5 +153,7 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
     add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
 
