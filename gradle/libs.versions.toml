@@ -8,7 +8,7 @@ androidx-lifecycle = "2.9.5"
 barcodeScanning = "17.3.0"
 cameraCore = "1.5.1"
 compose-multiplatform = "1.9.1"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 
 navigationCompose = "2.9.1"
 kotlinSerialization = "1.9.0"
@@ -26,7 +26,7 @@ ktor = "3.3.1"
 fileKit = "0.12.0"
 
 androidx-activity = "1.11.0"
-kotlinStdlib = "2.2.20"
+kotlinStdlib = "2.2.21"
 aboutLibraries = "13.1.0"
 
 [libraries]
