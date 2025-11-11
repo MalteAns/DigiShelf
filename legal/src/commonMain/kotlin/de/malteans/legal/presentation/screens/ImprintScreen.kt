@@ -48,15 +48,13 @@ fun ImprintScreen(
 
             Text("Malte Arians")
             Text("""
-                Werner Hellweg 242,
                 44894 Bochum,
                 ${stringResource(Res.string.germany)}
             """.trimIndent())
 
             Spacer(Modifier.height(8.dp))
 
-            Text("${stringResource(Res.string.imprint_email_label)}: leisure-activities@malteans.de")
-//            Text("${stringResource(Res.string.impressum_phone_label)}: ")
+            Text("${stringResource(Res.string.imprint_email_label)}: pixlists@malteans.de")
 
             Spacer(Modifier.height(8.dp))
 
@@ -64,7 +62,7 @@ fun ImprintScreen(
                 text = stringResource(Res.string.imprint_responsible_heading),
                 style = MaterialTheme.typography.titleMedium,
             )
-            Text("Malte Arians ${stringResource(Res.string.imprint_address_as_above)}")
+            Text("Malte Arians") // ${stringResource(Res.string.imprint_address_as_above)}
 
             Spacer(Modifier.height(16.dp))
 
