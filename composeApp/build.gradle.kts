@@ -127,7 +127,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 3412013
-        versionName = "1.0-pre3"
+        versionName = "1.0.0-alpha1"
 
         buildFeatures.buildConfig = true
         val googleApiKey: String = gradleLocalProperties(rootDir, rootProject.providers)
