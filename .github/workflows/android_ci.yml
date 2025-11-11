@@ -26,8 +26,6 @@ jobs:
           
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
 #      - name: Verify aboutlibraries.json is up to date
 #        run: |
@@ -37,6 +35,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean :legal:build :composeApp:build check
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
 #      - name: Run Unit Tests
 #        run: ./gradlew test
