@@ -4,24 +4,24 @@ android-compileSdk = "36"
 android-minSdk = "30"
 android-targetSdk = "36"
 androidx-activityCompose = "1.11.0"
-androidx-lifecycle = "2.9.5"
+androidx-lifecycle = "2.9.6"
 barcodeScanning = "17.3.0"
 cameraCore = "1.5.1"
-compose-multiplatform = "1.9.1"
+compose-multiplatform = "1.9.3"
 kotlin = "2.2.21"
 
 navigationCompose = "2.9.1"
 kotlinSerialization = "1.9.0"
 koin = "4.1.1"
 
-ksp = "2.3.0"
+ksp = "2.3.2"
 sqlite = "2.6.1"
 room = "2.8.3"
 
 kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
 coil3 = "3.3.0"
-ktor = "3.3.1"
+ktor = "3.3.2"
 
 fileKit = "0.12.0"
 
