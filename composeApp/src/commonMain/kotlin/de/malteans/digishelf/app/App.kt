@@ -37,7 +37,7 @@ fun App() {
         ) {
             ModalNavigationDrawer(
                 drawerState = drawerState,
-                gesturesEnabled = drawerState.isOpen || curScreen != CurScreen.Legals,
+                gesturesEnabled = drawerState.isOpen || curScreen.enableDrawer,
                 drawerContent = {
                     ModalDrawerSheet {
                         Spacer(modifier = Modifier.height(16.dp))

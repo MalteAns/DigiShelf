@@ -29,6 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SeriesOverviewScreenRoot(
     viewModel: SeriesOverviewViewModel = koinViewModel(),
     openDrawer: () -> Unit,
+    navigateToSeriesDetails: (Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -37,6 +38,7 @@ fun SeriesOverviewScreenRoot(
         onAction = { action ->
             when (action) {
                 is SeriesOverviewAction.OnOpenDrawer -> openDrawer()
+                is SeriesOverviewAction.OnShowSeriesDetails -> navigateToSeriesDetails(action.seriesId)
                 else -> viewModel.onAction(action)
             }
         },
@@ -79,12 +81,8 @@ fun SeriesOverviewScreen(
                 showDeleteDialog = false
                 seriesToEdit = null
             },
-            title = @Composable {
-                Text(
-                    text = "Serie löschen?",
-                )
-            },
-            leftIcon = @Composable {
+            title = { Text(text = "Serie löschen?") },
+            leftIcon = {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
@@ -95,7 +93,7 @@ fun SeriesOverviewScreen(
                         }
                 )
             },
-            rightIcon = @Composable {
+            rightIcon = {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
@@ -126,11 +124,7 @@ fun SeriesOverviewScreen(
                     )
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            showSeriesDialog = true
-                        }
-                    ) {
+                    IconButton({ showSeriesDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.AddCircle,
                             contentDescription = "Add Series",
@@ -149,19 +143,14 @@ fun SeriesOverviewScreen(
             LazyColumn {
                 items(state.seriesList) { series ->
                     BookSeriesItem(
-                        series,
-                        onClick = {
-                            seriesToEdit = series
-                            showSeriesDialog = true
-                        },
+                        series = series,
+                        onClick = { onAction(SeriesOverviewAction.OnShowSeriesDetails(series.id)) },
                         onLongClick = {
                             seriesToEdit = series
                             showDeleteDialog = true
                         },
                         modifier = Modifier
-                            .padding(
-                                vertical = 6.dp,
-                            )
+                            .padding(vertical = 6.dp)
                     )
                 }
             }

@@ -1,12 +1,13 @@
 package de.malteans.digishelf.core.presentation.main.components
 
-enum class CurScreen {
+enum class CurScreen(val enableDrawer: Boolean = true) {
     BooksOverview,
     Add,
     Details,
     Scanner,
     SeriesOverview,
+    SeriesDetails(false),
     Settings,
-    Trash,
-    Legals,
+    Trash(false),
+    Legals(false),
 }

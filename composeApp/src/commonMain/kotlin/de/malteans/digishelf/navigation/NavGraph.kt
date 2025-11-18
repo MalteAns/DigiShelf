@@ -28,6 +28,7 @@ import de.malteans.digishelf.core.presentation.overview.components.SearchType
 import de.malteans.digishelf.core.presentation.settings.SettingsScreenRoot
 import de.malteans.digishelf.core.presentation.settings.SettingsViewModel
 import de.malteans.digishelf.core.presentation.settings.components.TrashScreenRoot
+import de.malteans.digishelf.series.presentation.details.SeriesDetailsScreenRoot
 import de.malteans.digishelf.series.presentation.overview.SeriesOverviewScreenRoot
 import de.malteans.legal.presentation.navigation.LegalRoute
 import de.malteans.legal.presentation.screens.ImprintScreen
@@ -133,9 +134,19 @@ fun NavGraph(
         ) {
             composable<Route.Series.Overview> {
                 SeriesOverviewScreenRoot(
-                    openDrawer = openDrawer
+                    openDrawer = openDrawer,
+                    navigateToSeriesDetails = { seriesId -> navController.navigate(Route.Series.Details(seriesId)) }
                 )
                 setScreen(CurScreen.SeriesOverview)
+            }
+            composable<Route.Series.Details> {
+                val seriesId = it.toRoute<Route.Series.Details>().seriesId
+                SeriesDetailsScreenRoot(
+                    seriesId = seriesId,
+                    onBack = { navController.popBackStack() },
+                    onShowBookDetails = { bookId -> navController.navigate(Route.Books.Details(bookId)) }
+                )
+                setScreen(CurScreen.SeriesDetails)
             }
         }
         navigation<Route.NavSettings>(
