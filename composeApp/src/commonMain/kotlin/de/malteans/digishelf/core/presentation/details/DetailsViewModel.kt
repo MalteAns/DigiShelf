@@ -4,16 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,7 +45,7 @@ class DetailsViewModel (
         val priceChanged = state.price != book?.price || state.currency != book?.currency
         val pageCountChanged = state.pageCount != book?.pageCount
         val statusChanged = (state.possessionStatus != book?.possessionStatus)
-                || (state.readStatus != book?.readStatus)
+                || (state.readStatus != book.readStatus)
         val readingTimeChanged = state.readingTime != book?.readingTime
         val seriesChanged = (state.series?.id != book?.bookSeries?.id)
         val descriptionChanged = state.description != book?.description
@@ -85,7 +79,7 @@ class DetailsViewModel (
                 _bookId.update {
                     action.bookId
                 }
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     onBookChanged(
                         book = repository.getBook(action.bookId).first()
                             ?: throw IllegalArgumentException("Invalide book id ${action.bookId} passed to DetailsViewModel")
@@ -105,7 +99,7 @@ class DetailsViewModel (
                     it.copy(isbn = newIsbn)
                 }
                 //check if isbn is already in the database
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.queryBooks(isbnQuery = newIsbn).first() . forEach { bookWithIsbn ->
                         if (bookWithIsbn.id != _state.value.bookId) {
                             _state.update {
@@ -175,7 +169,7 @@ class DetailsViewModel (
                     bookSeries = _state.value.series,
                     description = _state.value.description,
                 ) ?: throw IllegalStateException("No book to update")
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     if (book.bookSeries?.id == 0L) {
                         val seriesId = repository.addSeries(book.bookSeries)
                         _state.update { it.copy(
@@ -190,7 +184,7 @@ class DetailsViewModel (
                 }
             }
             is DetailsAction.DeleteBook -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.trashBook(state.value.bookId
                         ?: throw IllegalStateException("No book to delete"))
                 }

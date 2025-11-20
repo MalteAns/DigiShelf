@@ -50,7 +50,7 @@ fun SeriesDialog(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         },
-        leftIcon = {
+        leftIcons = {
             Icon(
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Close",
@@ -58,7 +58,7 @@ fun SeriesDialog(
                 modifier = Modifier.clickable { onDismiss() }
             )
         },
-        rightIcon = {
+        rightIcons = {
             Icon(
                 imageVector = if (seriesToEdit != null) Icons.Default.Check
                     else Icons.Default.AddCircle,

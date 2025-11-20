@@ -22,8 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.presentation.components.CustomTopBar
-import de.malteans.digishelf.core.presentation.settings.components.ImportDialog
 import de.malteans.digishelf.core.presentation.settings.components.SettingsItem
+import de.malteans.digishelf.export.presentation.ImportDialog
+import de.malteans.digishelf.export.presentation.saveExport
 import de.malteans.digishelf.theme.containerColor
 import de.malteans.legal.presentation.components.LegalsList
 import de.malteans.legal.presentation.navigation.LegalRoute
@@ -65,14 +66,22 @@ fun SettingsScreen(
     state: SettingsState,
     onAction: (SettingsAction) -> Unit
 ) {
-    var showImportDialog by remember { mutableStateOf(false) }
 
-    // Show the import dialog when triggered.
+    LaunchedEffect(state.exportData) {
+        if (state.exportData != null) {
+            saveExport(state.exportData)
+                .onSuccess { /* TODO */ }
+                .onFailure { /* TODO */ }
+            onAction(SettingsAction.ResetExportData)
+        }
+    }
+
+    var showImportDialog by remember { mutableStateOf(false) }
     if (showImportDialog) {
         ImportDialog(
             onDismiss = { showImportDialog = false },
-            onFinish = { fileContent ->
-                onAction(SettingsAction.OnImport(fileContent))
+            onFinish = { fileType, fileContent ->
+                onAction(SettingsAction.OnImport(fileType, fileContent))
                 showImportDialog = false
             }
         )
@@ -103,7 +112,7 @@ fun SettingsScreen(
             ) {
                 SettingsItem(
                     title = stringResource(Res.string.trash)
-                            + if (state.trashIsEmpty) " (${stringResource(Res.string.empty)})" else "",
+                        + if (state.trashIsEmpty) " (${stringResource(Res.string.empty)})" else "",
                     description = stringResource(Res.string.settings_trash_desc),
                     icon = Icons.Outlined.Delete,
                     onClick = { onAction(SettingsAction.OnTrashClicked) },
@@ -114,7 +123,7 @@ fun SettingsScreen(
                     description = stringResource(Res.string.settings_export_desc),
                     icon = Icons.Outlined.FileDownload,
                     onClick = { onAction(SettingsAction.OnExportClicked) },
-                    enabled = false,
+                    enabled = true, // TODO: Only enable when there is data to export
                     modifier = Modifier.fillMaxWidth()
                 )
                 SettingsItem(

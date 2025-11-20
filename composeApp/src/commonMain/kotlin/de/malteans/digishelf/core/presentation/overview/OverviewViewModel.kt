@@ -5,18 +5,8 @@ import androidx.lifecycle.viewModelScope
 import de.malteans.digishelf.core.domain.BookRepository
 import de.malteans.digishelf.core.domain.SortType
 import de.malteans.digishelf.core.presentation.overview.components.SearchType
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OverviewViewModel (
@@ -56,12 +46,12 @@ class OverviewViewModel (
                 ) }
             }
             is OverviewAction.DeleteBook -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.trashBook(event.book.id)
                 }
             }
             is OverviewAction.AddBook -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.addBook(event.book)
                 }
             }
@@ -71,7 +61,7 @@ class OverviewViewModel (
                 ) }
             }
             is OverviewAction.RestoreBook -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.restoreBook(event.book.id)
                 }
             }
@@ -112,7 +102,7 @@ class OverviewViewModel (
             .launchIn(viewModelScope)
     }
 
-    private fun fetchLocalBooks(options: SearchOptions) = viewModelScope.launch {
+    private fun fetchLocalBooks(options: SearchOptions) = viewModelScope.launch(Dispatchers.IO) {
         _state.update { it.copy(isLoading = true) }
         val books = repository.fetchLocalBooks(
             titleQuery = if (options.searchType == SearchType.TITLE) options.searchQuery else "",

@@ -3,7 +3,9 @@ package de.malteans.digishelf.series.presentation.overview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.malteans.digishelf.core.domain.BookRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -36,12 +38,12 @@ class SeriesOverviewViewModel (
                 _searchQuery.value = event.searchQuery
             }
             is SeriesOverviewAction.SubmitSeries -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.updateSeries(event.series)
                 }
             }
             is SeriesOverviewAction.DeleteSeries -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.deleteSeries(event.series.id)
                 }
             }

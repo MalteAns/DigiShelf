@@ -10,7 +10,7 @@ data class SettingsState(
     val trashIsEmpty: Boolean = true,
     val trashedBooks: List<Book> = emptyList(),
 
-    val export: Boolean = false,
+    val exportData: String? = null,
     val import: Boolean = false,
     val allBooks: List<Book>? = null,
     val allBookSeries: List<BookSeries>? = null,

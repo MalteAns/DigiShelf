@@ -12,12 +12,9 @@ import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.error
 import digishelf.composeapp.generated.resources.error_completion
 import digishelf.composeapp.generated.resources.error_unknown
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AddViewModel (
@@ -58,7 +55,7 @@ class AddViewModel (
                     isbn = isbn,
                     showCompleteWithIsbn = isbn.isIsbnFormat(),
                 ) }
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     _state.update { it.copy(
                         isDoubleIsbn = isbn.isDoubleIsbn()
                     ) }
@@ -97,7 +94,7 @@ class AddViewModel (
                     )
                 }
 
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.fetchBookFromRemote(
                         isbn = if (action.isbn?.isIsbnFormat() == true) action.isbn else null,
                         title = action.title,
@@ -188,7 +185,7 @@ class AddViewModel (
 
                 )
 
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     var bookId: Long
                     if (book.bookSeries?.id == 0L) {
                         val seriesId = repository.addSeries(book.bookSeries)

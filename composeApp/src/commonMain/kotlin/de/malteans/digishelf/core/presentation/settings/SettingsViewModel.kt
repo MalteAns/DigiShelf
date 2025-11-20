@@ -8,6 +8,8 @@ import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.main.components.CurScreen
+import de.malteans.digishelf.export.domain.ExportRepository
+import de.malteans.digishelf.export.presentation.ImportFileType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SettingsViewModel (
-    private val repository: BookRepository
+    private val repository: BookRepository,
+    private val exportRepository: ExportRepository,
 ): ViewModel() {
 
     private val _allBooks = repository.queryBooks(includeDeleted = true)
@@ -42,8 +45,8 @@ class SettingsViewModel (
         SettingsState()
     )
 
-    fun onAction(event: SettingsAction) {
-        when(event) {
+    fun onAction(action: SettingsAction) {
+        when(action) {
             SettingsAction.SettingsOpened -> {
                 _state.update {
                     it.copy(
@@ -59,59 +62,63 @@ class SettingsViewModel (
                 }
             }
             is SettingsAction.OnTrashRestoreClicked -> {
-                viewModelScope.launch {
-                    repository.restoreBook(event.book.id)
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.restoreBook(action.book.id)
                 }
             }
             // Trash
             is SettingsAction.OnTrashDeleteClicked -> {
-                viewModelScope.launch {
-                    repository.deleteBook(event.book.id)
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.deleteBook(action.book.id)
                 }
             }
             SettingsAction.OnTrashDeleteAllClicked -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.emptyTrash()
                 }
             }
             SettingsAction.OnTrashRestoreAllClicked -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.restoreAllBooks()
                 }
             }
             // Import/Export
             SettingsAction.OnExportClicked -> {
-                TODO()
-//                _state.value = _state.value.copy(
-//                    export = true,
-//                )
+                viewModelScope.launch(Dispatchers.IO) {
+                    _state.update { it.copy(
+                        exportData = exportRepository.export()
+                    ) }
+                }
             }
             // New import branch: fileContent now contains the CSV text.
             is SettingsAction.OnImport -> {
-                val content = event.fileContent
-                try {
-                    viewModelScope.launch {
-                        val previousBooks = state.value.allBooks
-                        val newBooks = readCsv(content)
-                        newBooks.forEach { book ->
-                            if ((book.isbn.isIsbnFormat() && previousBooks?.find { it.isbn == book.isbn } != null))
-                                return@forEach
-                            if (book.title.isNotBlank() && book.author.isNotBlank() && previousBooks?.find{ it.title == book.title && it.author == book.author } != null)
-                                return@forEach
-
-                            repository.addBook(book.copy(id = 0L))
-                        }
+                if (action.fileType == ImportFileType.JSON) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        exportRepository.import(action.fileContent)
                     }
-                } catch(e: Exception) {
-                    // Error handling (update state with error message as needed)
+                } else { // Legacy support
+                    try {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val previousBooks = state.value.allBooks
+                            val newBooks = readCsv(action.fileContent)
+                            newBooks.forEach { book ->
+                                if ((book.isbn.isIsbnFormat() && previousBooks?.find { it.isbn == book.isbn } != null))
+                                    return@forEach
+                                if (book.title.isNotBlank() && book.author.isNotBlank() && previousBooks?.find{ it.title == book.title && it.author == book.author } != null)
+                                    return@forEach
+
+                                repository.addBook(book.copy(id = 0L))
+                            }
+                        }
+                    } catch(e: Exception) {
+                        // Error handling (update state with error message as needed)
+                    }
                 }
             }
             SettingsAction.ResetExportData -> {
-                _state.value = _state.value.copy(
-                    export = false,
-                    allBooks = emptyList(),
-                    allBookSeries = emptyList()
-                )
+                _state.update { it.copy(
+                    exportData = null
+                ) }
             }
             is SettingsAction.OnCloudCompleteClicked -> {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -171,7 +178,7 @@ class SettingsViewModel (
                 }
             }
 
-            else -> TODO("This should not happen")
+            else -> throw NotImplementedError("Action '$action' not implemented.")
         }
     }
 

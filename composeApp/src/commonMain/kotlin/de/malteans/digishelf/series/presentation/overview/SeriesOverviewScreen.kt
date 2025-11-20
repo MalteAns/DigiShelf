@@ -82,7 +82,7 @@ fun SeriesOverviewScreen(
                 seriesToEdit = null
             },
             title = { Text(text = "Serie löschen?") },
-            leftIcon = {
+            leftIcons = {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
@@ -93,7 +93,7 @@ fun SeriesOverviewScreen(
                         }
                 )
             },
-            rightIcon = {
+            rightIcons = {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",

@@ -1,14 +1,16 @@
 package de.malteans.digishelf.core.presentation.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.close
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CustomAlertDialog(
@@ -21,22 +23,16 @@ fun CustomAlertDialog(
 ) {
     CustomDialog(
         onDismissRequest = onDismissRequest,
-        leftIcon = {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable {
-                        if (onDismiss != null) {
-                            onDismiss()
-                        } else {
-                            onDismissRequest()
-                        }
-                    }
-            )
+        leftIcons = {
+            IconButton({ if (onDismiss != null) onDismiss() else onDismissRequest() }) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(Res.string.close),
+                )
+            }
         },
-        title = title,
-        rightIcon = {
+        title = { title() },
+        rightIcons = {
             if (!noConfirmButton) {
                 Icon(
                     imageVector = Icons.Default.Check,
@@ -47,11 +43,6 @@ fun CustomAlertDialog(
             }
         },
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            text()
-        }
+        text()
     }
 }

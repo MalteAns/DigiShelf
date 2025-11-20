@@ -1,6 +1,7 @@
 package de.malteans.digishelf.core.presentation.settings
 
 import de.malteans.digishelf.core.domain.Book
+import de.malteans.digishelf.export.presentation.ImportFileType
 import de.malteans.legal.presentation.navigation.LegalRoute
 
 sealed interface SettingsAction {
@@ -21,5 +22,5 @@ sealed interface SettingsAction {
 
     data object ResetExportData : SettingsAction
 
-    data class OnImport(val fileContent: String) : SettingsAction
+    data class OnImport(val fileType: ImportFileType, val fileContent: String) : SettingsAction
 }

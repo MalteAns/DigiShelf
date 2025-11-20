@@ -6,11 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.OptIn
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -20,17 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -84,25 +74,13 @@ actual fun BarcodeScannerView(
     // If still not granted, show fallback UI dialog
     if (!hasCameraPermission) {
         CustomDialog(
-            onDismissRequest = { /* Prevent dismiss */ },
+            onDismissRequest = { onBack() },
             title = { Text(
                 text = stringResource(Res.string.camera_permission_heading),
                 textAlign = TextAlign.Center
             ) },
-            leftIcon = @Composable {
-                IconButton(
-                    onClick = { onBack() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Cancel",
-                    )
-                }
-            },
-            rightIcon = @Composable {
-                IconButton(
-                    onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
-                ) {
+            rightIcons = @Composable {
+                IconButton({ permissionLauncher.launch(Manifest.permission.CAMERA) }) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Grant Permission",

@@ -3,42 +3,18 @@ package de.malteans.digishelf.core.presentation.details
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -56,38 +32,10 @@ import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
-import de.malteans.digishelf.core.presentation.details.components.BlurredImageBackground
-import de.malteans.digishelf.core.presentation.details.components.BookChip
-import de.malteans.digishelf.core.presentation.details.components.ChipSize
-import de.malteans.digishelf.core.presentation.details.components.CustomOpenInBrowserIcon
-import de.malteans.digishelf.core.presentation.details.components.CustomRemoveIcon
-import de.malteans.digishelf.core.presentation.details.components.EditType
-import de.malteans.digishelf.core.presentation.details.components.TitledContent
+import de.malteans.digishelf.core.presentation.details.components.*
 import de.malteans.digishelf.core.presentation.main.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
-import digishelf.composeapp.generated.resources.Res
-import digishelf.composeapp.generated.resources.details_by
-import digishelf.composeapp.generated.resources.edit
-import digishelf.composeapp.generated.resources.edit_title
-import digishelf.composeapp.generated.resources.error
-import digishelf.composeapp.generated.resources.error_msg_no_title
-import digishelf.composeapp.generated.resources.error_msg_save_changes
-import digishelf.composeapp.generated.resources.error_save_changes
-import digishelf.composeapp.generated.resources.hours_short
-import digishelf.composeapp.generated.resources.min_per_page
-import digishelf.composeapp.generated.resources.minutes_short
-import digishelf.composeapp.generated.resources.new_label
-import digishelf.composeapp.generated.resources.no_description_available
-import digishelf.composeapp.generated.resources.online_description
-import digishelf.composeapp.generated.resources.own_description
-import digishelf.composeapp.generated.resources.owned
-import digishelf.composeapp.generated.resources.pages
-import digishelf.composeapp.generated.resources.price
-import digishelf.composeapp.generated.resources.read
-import digishelf.composeapp.generated.resources.reading_time
-import digishelf.composeapp.generated.resources.save
-import digishelf.composeapp.generated.resources.series
-import digishelf.composeapp.generated.resources.status
+import digishelf.composeapp.generated.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -242,7 +190,7 @@ fun DetailsScreen(
                 ))
             },
             onDismissRequest = { showEditDialog = false },
-            rightIcon = {
+            rightIcons = {
                 Row {
                     if (curEditType == EditType.READING_TIME) {
                         Icon (
@@ -275,15 +223,6 @@ fun DetailsScreen(
                     )
                 }
             },
-            leftIcon = {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    modifier = Modifier.combinedClickable(
-                        onClick = { showEditDialog = false }
-                    )
-                )
-            }
         ) {
             when (curEditType) {
                 EditType.STATUS -> {

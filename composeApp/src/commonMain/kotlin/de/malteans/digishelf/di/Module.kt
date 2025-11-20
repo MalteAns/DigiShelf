@@ -13,6 +13,8 @@ import de.malteans.digishelf.core.presentation.details.DetailsViewModel
 import de.malteans.digishelf.core.presentation.main.MainViewModel
 import de.malteans.digishelf.core.presentation.overview.OverviewViewModel
 import de.malteans.digishelf.core.presentation.settings.SettingsViewModel
+import de.malteans.digishelf.export.data.DefaultExportRepository
+import de.malteans.digishelf.export.domain.ExportRepository
 import de.malteans.digishelf.series.presentation.details.SeriesDetailsViewModel
 import de.malteans.digishelf.series.presentation.overview.SeriesOverviewViewModel
 import org.koin.core.module.Module
@@ -37,6 +39,7 @@ val module = module {
     single<RemoteBookDataSource> { KtorRemoteBookDataSource(get()) }
 
     single<BookRepository> { DefaultBookRepository(get(), get()) }
+    single<ExportRepository> { DefaultExportRepository(get()) }
 
     viewModelOf(::MainViewModel)
     viewModelOf(::OverviewViewModel)
