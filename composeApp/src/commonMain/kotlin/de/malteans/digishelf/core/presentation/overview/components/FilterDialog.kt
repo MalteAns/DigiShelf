@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,38 +54,26 @@ fun FilterDialog(
         }
     ) {
         Column(Modifier.padding(top = 8.dp)) {
-            filterItemsList.forEach { item ->
+            filterItemsList.forEachIndexed { index, item ->
                 Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = item,
                         fontSize = 16.sp
                     )
                     TripleSwitch(
-                        onSelectionChange = { text ->
-                            onFilterChange(
-                                filterItemsList.indexOf(item), when (text.trim()) {
-                                    "+" -> true
-                                    "•" -> null
-                                    "-" -> false
-                                    else -> null
-                                }
-                            )
-                        },
-                        curState = when (filterStates[filterItemsList.indexOf(item)]) {
-                            true -> "+"
-                            false -> "-"
-                            else -> "•"
-                        }
+                        onSelectionChange = { onFilterChange(index, it) },
+                        curState = filterStates[index]
                     )
                 }
                 Spacer(modifier = Modifier.padding(4.dp))
             }
-            typeItemsList.forEach { (label, options) ->
+            typeItemsList.toList().forEachIndexed { index, (label, options) ->
                 var selectedOption by remember {
-                    mutableStateOf(typeStates[typeItemsList.keys.indexOf(label)])
+                    mutableStateOf(typeStates[index])
                 }
 
                 Row(
@@ -97,7 +86,7 @@ fun FilterDialog(
                         label = label,
                         onValueChanged = { text ->
                             selectedOption = text
-                            onTypeChange(typeItemsList.keys.indexOf(label), options.indexOf(text))
+                            onTypeChange(index, options.indexOf(text))
                         }
                     )
                 }

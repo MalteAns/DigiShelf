@@ -1,74 +1,69 @@
 package de.malteans.digishelf.core.presentation.overview.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun TripleSwitch(
-    onSelectionChange: (String) -> Unit = {},
-    states: List<String> = listOf("+", "•", "-"),
-    curState: String = "•"
+    onSelectionChange: (Boolean?) -> Unit = {},
+    curState: Boolean? = null,
 ) {
     var selectedOption by remember {
         mutableStateOf(curState)
     }
-    val onSelectionChangeIntern = { text: String ->
-        selectedOption = text
-        onSelectionChange(text)
+    fun onSelectionChangeIntern(newOption: Boolean?) {
+        selectedOption = newOption
+        onSelectionChange(newOption)
     }
 
-    Surface(
-        shape = RoundedCornerShape(12.dp),
+    SingleChoiceSegmentedButtonRow(
         modifier = Modifier
-            .wrapContentSize()
+            .width(112.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .clip(shape = RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            states.forEach { text ->
-                Text(
-                    text = text,
-                    color = if (text == selectedOption) {
-                        when (text.trim()) {
-                            "+" -> MaterialTheme.colorScheme.onPrimaryContainer
-                            "-" -> MaterialTheme.colorScheme.onErrorContainer
-                            else -> MaterialTheme.colorScheme.onSurface
-                        }
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    },
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(12.dp))
-                        .clickable { onSelectionChangeIntern(text) }
-                        .background(
-                            if (text == selectedOption) {
-                                when (text.trim()) {
-                                    "+" -> MaterialTheme.colorScheme.primaryContainer
-                                    "-" -> MaterialTheme.colorScheme.errorContainer
-                                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
-                                }
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainer
-                            }
-                        )
-                        .aspectRatio(1f)
-                )
+        listOf(true, null, false).forEachIndexed { index, option ->
+
+            // Define colors based on the specific option (preserves your original logic)
+            val colorScheme = MaterialTheme.colorScheme
+            val activeColor = when (option) {
+                true -> colorScheme.primaryContainer
+                null -> colorScheme.surfaceContainerHighest
+                false -> colorScheme.errorContainer
             }
+            val activeContentColor = when (option) {
+                true -> colorScheme.onPrimaryContainer
+                null -> colorScheme.onSurface
+                false -> colorScheme.onErrorContainer
+            }
+
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = 3),
+                onClick = { onSelectionChangeIntern(option) },
+                selected = option == selectedOption,
+                colors = SegmentedButtonDefaults.colors(
+                    activeContainerColor = activeColor,
+                    activeContentColor = activeContentColor,
+                    inactiveContainerColor = colorScheme.surfaceContainer, // Matches your background
+                    inactiveContentColor = colorScheme.onSurface
+                ),
+                icon = {},
+                label = {
+                    Icon(
+                        imageVector = when (option) {
+                            true -> Icons.Default.Check
+                            null -> Icons.Default.Circle
+                            false -> Icons.Default.Close
+                        },
+                        contentDescription = null,
+                    )
+                }
+            )
         }
     }
 }
