@@ -123,11 +123,12 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "de.malteans.digishelf"
+        applicationId = libs.versions.applicationId.get()
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 3412013
-        versionName = "1.0.0-alpha1"
+        versionCode = libs.versions.projectVersionCode.get().toInt()
+        versionName = libs.versions.projectVersionName.get()
+        versionNameSuffix = libs.versions.projectVersionNameSuffix.get()
 
         buildFeatures.buildConfig = true
         val googleApiKey: String = gradleLocalProperties(rootDir, rootProject.providers)
@@ -145,15 +146,13 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-    androidResources {
-        generateLocaleConfig = true
     }
 }
 
@@ -163,4 +162,3 @@ dependencies {
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
-

@@ -79,8 +79,8 @@ class AddViewModel (
             is AddAction.OnPriceChanged -> {
                 _state.value = _state.value.copy(
                     price = action.price,
-                    priceError = action.price.isBlank()
-                            || action.price.replace(",",".").toDoubleOrNull() == null
+                    priceError = !action.price.isBlank()
+                            && action.price.replace(",",".").toDoubleOrNull() == null
                 )
             }
             is AddAction.OnImageUrlChanged -> {

@@ -3,27 +3,23 @@ package de.malteans.digishelf.core.presentation.overview.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun TripleSwitch(
     onSelectionChange: (String) -> Unit = {},
-    states: List<String> = listOf(" + ", " o ", " - "),
-    curState: String = " o "
+    states: List<String> = listOf("+", "•", "-"),
+    curState: String = "•"
 ) {
     var selectedOption by remember {
         mutableStateOf(curState)
@@ -33,7 +29,6 @@ fun TripleSwitch(
         onSelectionChange(text)
     }
 
-
     Surface(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -42,33 +37,36 @@ fun TripleSwitch(
         Row(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(12.dp))
-                .background(Color.LightGray)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
         ) {
             states.forEach { text ->
                 Text(
                     text = text,
-                    color = Color.White,
+                    color = if (text == selectedOption) {
+                        when (text.trim()) {
+                            "+" -> MaterialTheme.colorScheme.onPrimaryContainer
+                            "-" -> MaterialTheme.colorScheme.onErrorContainer
+                            else -> MaterialTheme.colorScheme.onSurface
+                        }
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                    fontSize = 16.sp,
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(12.dp))
-                        .clickable {
-                            onSelectionChangeIntern(text)
-                        }
+                        .clickable { onSelectionChangeIntern(text) }
                         .background(
                             if (text == selectedOption) {
                                 when (text.trim()) {
-                                    "+" -> Color.Green
-                                    "-" -> Color.Red
-                                    else -> Color.Gray
+                                    "+" -> MaterialTheme.colorScheme.primaryContainer
+                                    "-" -> MaterialTheme.colorScheme.errorContainer
+                                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
                                 }
                             } else {
-                                Color.LightGray
+                                MaterialTheme.colorScheme.surfaceContainer
                             }
                         )
-                        .padding(
-                            vertical = 0.dp,
-                            horizontal = 3.dp,
-                        ),
-                    fontSize = 16.sp
+                        .aspectRatio(1f)
                 )
             }
         }

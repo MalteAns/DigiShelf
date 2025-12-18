@@ -6,10 +6,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -21,20 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.presentation.add.components.RatingBar
-import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
-import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.components.*
 import de.malteans.digishelf.core.presentation.main.components.CustomBookIcon
-import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
 import digishelf.composeapp.generated.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -83,11 +75,8 @@ fun DetailsScreen(
     var showNoTitleDialog by remember { mutableStateOf(false) }
 
     fun onDismiss() {
-        if (state.isEditing && state.somethingChanged) {
-            showConfirmLeaveDialog = true
-        } else {
-            onAction(DetailsAction.OnBack)
-        }
+        if (state.isEditing && state.somethingChanged) showConfirmLeaveDialog = true
+        else onAction(DetailsAction.OnBack)
     }
 
     BackHandler {
@@ -99,9 +88,12 @@ fun DetailsScreen(
 
     if (showConfirmLeaveDialog) {
         CustomAlertDialog(
-            title = { Text(stringResource(Res.string.error_save_changes)) },
-            text = { Text(stringResource(Res.string.error_msg_save_changes)) },
-            onDismissRequest = { showConfirmLeaveDialog = false },
+            title = stringResource(Res.string.error_save_changes),
+            text = stringResource(Res.string.error_msg_save_changes),
+            onDismiss = {
+                showConfirmLeaveDialog = false
+                onAction(DetailsAction.OnBack)
+            },
             onConfirm = {
                 if (state.title.isBlank()) {
                     showConfirmLeaveDialog = false
@@ -111,254 +103,56 @@ fun DetailsScreen(
                     onAction(DetailsAction.OnBack)
                 }
             },
-            onDismiss = {
-                onAction(DetailsAction.OnBack)
-            }
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            )
         )
     }
 
     if (showNoTitleDialog) {
         CustomAlertDialog(
-            title = { Text(text = stringResource(Res.string.error)) },
-            text = { Text(text = stringResource(Res.string.error_msg_no_title)) },
-            onDismissRequest = { showNoTitleDialog = false },
+            title = stringResource(Res.string.error),
+            text = stringResource(Res.string.error_msg_no_title),
+            onDismiss = { showNoTitleDialog = false },
             onConfirm = { showNoTitleDialog = false }
         )
     }
 
     if (showEditDialog) {
-        var tempString by remember { mutableStateOf("") }
-        var tempSeries by remember { mutableStateOf(state.series) }
-        var tempStatus by remember { mutableStateOf(state.possessionStatus to state.readStatus) }
-
-        var readyToFinish by remember { mutableStateOf(false) }
-
-        LaunchedEffect(curEditType, tempString, tempSeries) {
-            readyToFinish = when (curEditType) {
-                EditType.ISBN -> tempString.isIsbnFormat()
-                EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
-                EditType.PAGE_COUNT, EditType.READING_TIME -> tempString.let { value ->
-                    value.isEmpty() || (value.toIntOrNull() != null && value.toInt() >= 0)
-                }
-                EditType.PRICE -> tempString.let { value ->
-                    value.isEmpty() || (value.toDoubleOrNull() != null && value.toDouble() >= 0)
-                }
-                EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
-            }
-        }
-
-        LaunchedEffect(key1 = curEditType) {
-            tempString = when (curEditType) {
-                EditType.COVER_IMAGE -> state.imageUrl
-                EditType.ISBN -> state.isbn
-                EditType.TITLE -> state.title
-                EditType.AUTHOR -> state.author
-                EditType.PAGE_COUNT -> state.pageCount?.toString() ?: ""
-                EditType.PRICE -> state.price?.toPriceString(null) ?: ""
-                EditType.DESCRIPTION -> state.description
-                EditType.STATUS, EditType.READING_TIME, EditType.BOOK_SERIES -> ""
-            }
-        }
-
-        fun onDoneClicked() {
-            if (readyToFinish) {
-                when (curEditType) {
-                    EditType.COVER_IMAGE -> onAction(DetailsAction.ImageUrlChanged(tempString))
-                    EditType.ISBN -> onAction(DetailsAction.IsbnChanged(tempString))
-                    EditType.TITLE -> onAction(DetailsAction.TitleChanged(tempString))
-                    EditType.AUTHOR -> onAction(DetailsAction.AuthorChanged(tempString))
-                    EditType.PAGE_COUNT -> onAction(DetailsAction.PageCountChanged(tempString.toIntOrNull()))
-                    EditType.PRICE -> onAction(DetailsAction.PriceChanged(tempString.toDoubleOrNull()))
-                    EditType.STATUS -> onAction(DetailsAction.StatusChanged(tempStatus.first, tempStatus.second))
-                    EditType.READING_TIME -> onAction(
-                        DetailsAction.ReadingTimeChanged(
-                            (state.readingTime ?: 0) + (tempString.toIntOrNull() ?: 0)
-                        )
-                    )
-                    EditType.BOOK_SERIES -> onAction(DetailsAction.SeriesChanged(tempSeries))
-                    EditType.DESCRIPTION -> onAction(DetailsAction.DescriptionChanged(tempString))
-                }
-                showEditDialog = false
-            }
-        }
-
-        CustomDialog (
-            title = {
-                Text(text = stringResource(
-                    Res.string.edit_title,
-                    stringResource(curEditType.getTypeStringResource)
-                ))
+        DetailsEditDialog(
+            curEditType = curEditType,
+            values = DetailsEditValues(
+                imageUrl = state.imageUrl,
+                isbn = state.isbn,
+                title = state.title,
+                author = state.author,
+                pageCount = state.pageCount,
+                price = state.price,
+                description = state.description,
+                readingTime = state.readingTime,
+                possessionStatus = state.possessionStatus,
+                readStatus = state.readStatus,
+                series = state.series,
+                bookSeriesList = state.bookSeriesList,
+            ),
+            callbacks = DetailsEditCallbacks(
+                onImageUrlChanged = { onAction(DetailsAction.ImageUrlChanged(it)) },
+                onIsbnChanged = { onAction(DetailsAction.IsbnChanged(it)) },
+                onTitleChanged = { onAction(DetailsAction.TitleChanged(it)) },
+                onAuthorChanged = { onAction(DetailsAction.AuthorChanged(it)) },
+                onPageCountChanged = { onAction(DetailsAction.PageCountChanged(it)) },
+                onPriceChanged = { onAction(DetailsAction.PriceChanged(it)) },
+                onStatusChanged = { owned, read -> onAction(DetailsAction.StatusChanged(owned, read)) },
+                onReadingTimeChanged = { onAction(DetailsAction.ReadingTimeChanged(it)) },
+                onSeriesChanged = { onAction(DetailsAction.SeriesChanged(it)) },
+                onDescriptionChanged = { onAction(DetailsAction.DescriptionChanged(it)) },
+            ),
+            onOpenImagePicker = { onResult ->
+                ImagePicker(onResult)
             },
-            onDismissRequest = { showEditDialog = false },
-            rightIcons = {
-                Row {
-                    if (curEditType == EditType.READING_TIME) {
-                        Icon (
-                            imageVector = CustomRemoveIcon,
-                            contentDescription = "Subtract Time",
-                            modifier = Modifier
-                                .padding(end = 6.dp)
-                                .clickable {
-                                    onAction(
-                                        DetailsAction.ReadingTimeChanged(
-                                            ((state.readingTime ?: 0) - (tempString.toIntOrNull() ?: 0)).coerceAtLeast(0)
-                                        ))
-                                    showEditDialog = false
-                                }
-                        )
-                    }
-                    Icon (
-                        imageVector = if (curEditType == EditType.READING_TIME) {
-                            Icons.Default.AddCircle
-                        } else {
-                            Icons.Default.Check
-                        },
-                        contentDescription = "finish",
-                        modifier = Modifier
-                            .clickable {
-                                onDoneClicked()
-                            },
-                        tint = if (readyToFinish) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                    )
-                }
-            },
-        ) {
-            when (curEditType) {
-                EditType.STATUS -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    )  {
-                        Text(
-                            text = "${stringResource(Res.string.owned)}:",
-                            modifier = Modifier
-                                .weight(0.4f)
-                        )
-                        IconButton(
-                            onClick = { tempStatus = tempStatus.copy(first = !tempStatus.first) },
-                            modifier = Modifier
-                                .weight(0.6f),
-                        ) {
-                            Icon(
-                                imageVector = CustomBookIcon,
-                                contentDescription = "Possession Status",
-                                tint = if (tempStatus.first) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                            )
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${stringResource(Res.string.read)}:",
-                            modifier = Modifier
-                                .weight(0.4f)
-                        )
-                        IconButton(
-                            onClick = { tempStatus = tempStatus.copy(second = !tempStatus.second) },
-                            modifier = Modifier
-                                .weight(0.6f),
-                        ) {
-                            Icon(
-                                imageVector = customReadIcon(),
-                                contentDescription = "Read Status",
-                                tint = if (tempStatus.second) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                            )
-                        }
-                    }
-                }
-                EditType.BOOK_SERIES -> {
-                    val options: Map<Any?, String> = state.bookSeriesList.associateBy({ it as BookSeries? }, { it.title })
-                        .toMutableMap()
-                        .apply { put(null, "–") }
-                        .toMap()
-
-                    SeriesDropdown(
-                        selectedOption = Pair<Any?, String>(tempSeries, tempSeries?.title ?: "–"),
-                        options = options,
-                        onValueChanged = { newSeries ->
-                            tempSeries = newSeries as BookSeries?
-                        },
-                        onValueAdded = { newSeriesName ->
-                            tempSeries = BookSeries(
-                                id = 0L,
-                                title = newSeriesName,
-                            )
-                        },
-                        label = stringResource(
-                            Res.string.new_label,
-                            stringResource(curEditType.getTypeStringResource)
-                        ),
-                    )
-                }
-                EditType.COVER_IMAGE -> {
-                    OutlinedTextField(
-                        value = tempString,
-                        onValueChange = { tempString = it },
-                        label = { Text(text = stringResource(
-                            Res.string.new_label,
-                            stringResource(curEditType.getTypeStringResource)),
-                        ) },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Uri,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                onDoneClicked()
-                            }
-                        )
-                    )
-                }
-                else -> {
-                    OutlinedTextField(
-                        value = tempString,
-                        onValueChange = { tempString = it },
-                        label = { Text(text = stringResource(
-                            Res.string.new_label,
-                            stringResource(curEditType.getTypeStringResource)),
-                        ) },
-                        suffix = { when (curEditType) {
-                            EditType.PRICE
-                                -> Text(text = "EUR") // TODO: Add currency selection
-                            EditType.READING_TIME
-                                -> Text(text = stringResource(Res.string.minutes_short))
-                            EditType.ISBN, EditType.TITLE, EditType.AUTHOR, EditType.PAGE_COUNT,
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE
-                                -> Text(text = "")
-                        } },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = when (curEditType) {
-                                EditType.ISBN, EditType.PAGE_COUNT, EditType.PRICE, EditType.READING_TIME
-                                    -> KeyboardType.Number
-                                EditType.TITLE, EditType.AUTHOR, EditType.DESCRIPTION
-                                    -> KeyboardType.Text
-                                EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
-                                    -> throw IllegalStateException("Something went weirdly wrong")
-                            },
-                            imeAction = when(curEditType) {
-                                EditType.ISBN, EditType.TITLE, EditType.AUTHOR, EditType.PAGE_COUNT,
-                                EditType.PRICE, EditType.READING_TIME
-                                    -> ImeAction.Done
-                                EditType.DESCRIPTION
-                                    -> ImeAction.Default
-                                EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
-                                    -> throw IllegalStateException("Something went weirdly wrong")
-                            }
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                onDoneClicked()
-                            }
-                        )
-                    )
-                }
-            }
-        }
+            onClose = { showEditDialog = false },
+        )
     }
 
     BlurredImageBackground(
@@ -488,23 +282,16 @@ fun DetailsScreen(
                                     }
                                 ),
                         )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(0.6f),
-                        ) {
-                            RatingBar(
-                                current = state.rating,
-                                onRatingChanged = { newRating ->
-                                    onAction(DetailsAction.RatingChanged(newRating))
-                                },
-                                enabled = state.isEditing,
-                                showText = false,
-                                activeColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary
+                        RatingBar(
+                            current = state.rating,
+                            onRatingChanged = { newRating -> onAction(DetailsAction.RatingChanged(newRating)) },
+                            enabled = state.isEditing,
+                            activeColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.tertiary,
-                                inactiveColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                            inactiveColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            )
-                        }
+                            modifier = Modifier.fillMaxWidth(0.6f)
+                        )
                         Text(
                             text = state.title,
                             style = MaterialTheme.typography.headlineSmall,

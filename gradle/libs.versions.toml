@@ -1,8 +1,15 @@
 [versions]
 agp = "8.12.3"
+
 android-compileSdk = "36"
 android-minSdk = "30"
 android-targetSdk = "36"
+
+applicationId = "de.malteans.digishelf"
+projectVersionCode = "1"
+projectVersionName = "1.0.0"
+projectVersionNameSuffix = "-beta1"
+
 androidx-activityCompose = "1.11.0"
 androidx-lifecycle = "2.9.6"
 barcodeScanning = "17.3.0"
@@ -106,7 +113,6 @@ ktor = [
 coil = [
     "coil-compose",
     "coil-compose-core",
-    "coil-network-ktor2",
     "coil-network-ktor3",
     "coil-mp"
 ]

@@ -2,61 +2,22 @@ package de.malteans.digishelf.core.presentation.overview
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.SortType
 import de.malteans.digishelf.core.presentation.components.CustomTopBar
-import de.malteans.digishelf.core.presentation.overview.components.BookItem
-import de.malteans.digishelf.core.presentation.overview.components.CustomFilterIcon
-import de.malteans.digishelf.core.presentation.overview.components.FilterDialog
-import de.malteans.digishelf.core.presentation.overview.components.SearchBar
-import de.malteans.digishelf.core.presentation.overview.components.SearchType
-import digishelf.composeapp.generated.resources.Res
-import digishelf.composeapp.generated.resources.app_name
-import digishelf.composeapp.generated.resources.author
-import digishelf.composeapp.generated.resources.filter
-import digishelf.composeapp.generated.resources.isbn
-import digishelf.composeapp.generated.resources.no_series
-import digishelf.composeapp.generated.resources.owned
-import digishelf.composeapp.generated.resources.read
-import digishelf.composeapp.generated.resources.search
-import digishelf.composeapp.generated.resources.search_by
-import digishelf.composeapp.generated.resources.series
-import digishelf.composeapp.generated.resources.series_id
-import digishelf.composeapp.generated.resources.shown_books
-import digishelf.composeapp.generated.resources.sort_by
-import digishelf.composeapp.generated.resources.title
+import de.malteans.digishelf.core.presentation.overview.components.*
+import digishelf.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -201,18 +162,11 @@ fun OverviewScreen(
                         modifier = Modifier
                             .padding(12.dp)
                             .combinedClickable (
-                                onClick = {
-                                    onAction(OverviewAction.OnAddBook)
-                                },
-                                onLongClick = {
-                                    onAction(OverviewAction.OnAddBookWithScanner)
-                                }
+                                onClick = { onAction(OverviewAction.OnAddBook) },
+                                onLongClick = { onAction(OverviewAction.OnAddBookWithScanner) }
                             )
                     )
-                },
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .clip(RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomStart = 12.dp, bottomEnd = 12.dp))
+                }
             )
         },
     ) { pad ->

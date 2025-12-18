@@ -6,32 +6,34 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.close
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CustomAlertDialog(
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    title: @Composable () -> Unit,
-    text: @Composable () -> Unit,
-    onDismiss: (() -> Unit)? = null,
-    noConfirmButton: Boolean = false
+    title: String,
+    text: String,
+    noConfirmButton: Boolean = false,
+    properties: DialogProperties = DialogProperties(),
 ) {
     CustomDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismiss,
         leftIcons = {
-            IconButton({ if (onDismiss != null) onDismiss() else onDismissRequest() }) {
+            IconButton(onDismiss) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(Res.string.close),
                 )
             }
         },
-        title = { title() },
+        title = title,
         rightIcons = {
             if (!noConfirmButton) {
                 Icon(
@@ -42,7 +44,8 @@ fun CustomAlertDialog(
                 )
             }
         },
+        properties = properties,
     ) {
-        text()
+        Text(text)
     }
 }

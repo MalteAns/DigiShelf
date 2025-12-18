@@ -1,21 +1,9 @@
 package de.malteans.digishelf.core.presentation.add
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,25 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -57,26 +28,7 @@ import de.malteans.digishelf.core.presentation.add.components.RatingBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
-import digishelf.composeapp.generated.resources.Res
-import digishelf.composeapp.generated.resources.add_book
-import digishelf.composeapp.generated.resources.author
-import digishelf.composeapp.generated.resources.auto_complete
-import digishelf.composeapp.generated.resources.back
-import digishelf.composeapp.generated.resources.book_added_success
-import digishelf.composeapp.generated.resources.book_series
-import digishelf.composeapp.generated.resources.cover_image
-import digishelf.composeapp.generated.resources.data_incomplete
-import digishelf.composeapp.generated.resources.error_msg_add_incomplete
-import digishelf.composeapp.generated.resources.is_double_isbn
-import digishelf.composeapp.generated.resources.isbn
-import digishelf.composeapp.generated.resources.owned
-import digishelf.composeapp.generated.resources.pages
-import digishelf.composeapp.generated.resources.price
-import digishelf.composeapp.generated.resources.read
-import digishelf.composeapp.generated.resources.scan
-import digishelf.composeapp.generated.resources.show
-import digishelf.composeapp.generated.resources.submit
-import digishelf.composeapp.generated.resources.title
+import digishelf.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -189,29 +141,23 @@ fun AddScreen(
 
         if (state.showError) {
             CustomAlertDialog(
-                onDismissRequest = {
-                    onAction(AddAction.OnDismissError)
-                },
-                onConfirm = {
-                    onAction(AddAction.OnDismissError)
-                },
+                title = state.errorTitle.asString(),
+                text = state.errorMessage.asString(),
+                onDismiss = { onAction(AddAction.OnDismissError) },
+                onConfirm = { onAction(AddAction.OnDismissError) },
                 noConfirmButton = true,
-                title = { Text(state.errorTitle.asString()) },
-                text = { Text(state.errorMessage.asString()) },
             )
         }
 
         if (state.showIncompleteError) {
             CustomAlertDialog(
-                onDismissRequest = {
-                    onAction(AddAction.OnDismissIncompleteError)
-                },
+                title = stringResource(Res.string.data_incomplete),
+                text = stringResource(Res.string.error_msg_add_incomplete),
+                onDismiss = { onAction(AddAction.OnDismissIncompleteError) },
                 onConfirm = {
                     onAction(AddAction.OnDismissIncompleteError)
                     onAction(AddAction.AddBook)
                 },
-                title = { Text(stringResource(Res.string.data_incomplete)) },
-                text = { Text(stringResource(Res.string.error_msg_add_incomplete)) }
             )
         }
 
@@ -376,15 +322,14 @@ fun AddScreen(
                     Text(stringResource(Res.string.read))
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                Column{
-                    // Rating with clickable stars
-                    RatingBar(
-                        current = state.rating,
-                        onRatingChanged = { newRating ->
-                            onAction(AddAction.OnRatingChanged(newRating))
-                        },
-                    )
-                }
+                // Rating with clickable stars
+                RatingBar(
+                    current = state.rating,
+                    onRatingChanged = { newRating ->
+                        onAction(AddAction.OnRatingChanged(newRating))
+                    },
+                    modifier = Modifier.weight(1f)
+                )
             }
             Row (
                 verticalAlignment = Alignment.CenterVertically
