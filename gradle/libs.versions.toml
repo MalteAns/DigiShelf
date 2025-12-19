@@ -34,7 +34,7 @@ fileKit = "0.12.0"
 
 androidx-activity = "1.11.0"
 kotlinStdlib = "2.3.0"
-aboutLibraries = "13.1.0"
+aboutLibraries = "13.2.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
