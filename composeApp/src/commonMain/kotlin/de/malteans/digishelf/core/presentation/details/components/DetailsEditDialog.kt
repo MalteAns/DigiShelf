@@ -2,7 +2,6 @@ package de.malteans.digishelf.core.presentation.details.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -15,13 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
+import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.toPriceString
-import de.malteans.digishelf.core.presentation.main.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
 import digishelf.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
@@ -72,16 +70,17 @@ fun DetailsEditDialog(
         readyToFinish = when (curEditType) {
             EditType.ISBN -> tempString.isIsbnFormat()
             EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
-            EditType.PAGE_COUNT, EditType.READING_TIME -> tempString.let { value ->
+            EditType.PAGE_COUNT -> tempString.let { value ->
                 value.isEmpty() || (value.toIntOrNull() != null && value.toInt() >= 0)
             }
-
+            EditType.READING_TIME -> tempString.let { value ->
+                value.isNotBlank() && value.toIntOrNull() != null
+            }
             EditType.PRICE -> tempString.let { value ->
                 value.isEmpty() || (value.replace(",", ".").let {
                     it.toDoubleOrNull() != null && it.toDouble() >= 0
                 })
             }
-
             EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
         }
     }
@@ -131,39 +130,19 @@ fun DetailsEditDialog(
         },
         onDismissRequest = { onClose() },
         rightIcons = {
-            if (curEditType == EditType.READING_TIME) {
-                IconButton(
-                    onClick = {
-                        callbacks.onReadingTimeChanged(
-                            ((values.readingTime ?: 0) - (tempString.toIntOrNull() ?: 0)).coerceAtLeast(0)
-                        )
-                        onClose()
+            IconButton(
+                onClick = ::onDoneClicked,
+                enabled = readyToFinish,
+            ) {
+                Icon(
+                    imageVector = when(curEditType) {
+                        EditType.READING_TIME -> Icons.Default.AddCircle
+                        else -> Icons.Default.Check
                     },
-                    modifier = Modifier.padding(end = 6.dp)
-                ) {
-                    Icon(
-                        imageVector = CustomRemoveIcon,
-                        contentDescription = "Subtract Time"
-                    )
-                }
-
-                IconButton(::onDoneClicked) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircle,
-                        contentDescription = "finish",
-                        tint = if (readyToFinish) MaterialTheme.colorScheme.primary
+                    contentDescription = "Done",
+                    tint = if (readyToFinish) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                    )
-                }
-            } else {
-                IconButton(::onDoneClicked) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "finish",
-                        tint = if (readyToFinish) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                    )
-                }
+                )
             }
         },
     ) {

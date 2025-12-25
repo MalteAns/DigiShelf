@@ -120,4 +120,7 @@
     <string name="hours_short">h</string>
     <string name="min_per_page">m/P.</string>
     <string name="close">Close</string>
+    <string name="series_details_topbar_title">Series “%1$s”</string>
+    <string name="series_details_no_books">No books found for this series.</string>
+    <string name="series_details_no_description">No description available.</string>
 </resources>

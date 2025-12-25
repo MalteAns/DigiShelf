@@ -13,14 +13,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import de.malteans.digishelf.core.presentation.main.components.CurScreen
-import de.malteans.digishelf.core.presentation.main.components.CustomBookIcon
+import de.malteans.digishelf.core.presentation.components.CustomBookIcon
+import de.malteans.digishelf.core.presentation.components.NavListHeader
+import de.malteans.digishelf.navigation.CurScreen
 import de.malteans.digishelf.navigation.NavGraph
 import de.malteans.digishelf.navigation.Route
 import de.malteans.digishelf.theme.DigiShelfTheme
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.ic_book_series
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun App() {
@@ -40,6 +44,8 @@ fun App() {
                 gesturesEnabled = drawerState.isOpen || curScreen.enableDrawer,
                 drawerContent = {
                     ModalDrawerSheet {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        NavListHeader()
                         Spacer(modifier = Modifier.height(16.dp))
                         NavigationDrawerItem (
                             label = { Text("Book Overview") },
@@ -50,14 +56,14 @@ fun App() {
                                 navController.popBackStack<Route.Books.Overview>(false)
                                 scope.launch(Dispatchers.IO) { drawerState.close() }
                             },
-                            modifier = Modifier
-                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                             icon = {
                                 Icon(
                                     imageVector = CustomBookIcon,
                                     contentDescription = "Book Overview"
                                 )
                             },
+                            modifier = Modifier
+                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                         )
                         NavigationDrawerItem (
                             label = { Text("Book Series") },
@@ -66,14 +72,14 @@ fun App() {
                                 navController.navigate(Route.NavSeries)
                                 scope.launch(Dispatchers.IO) { drawerState.close() }
                             },
-                            modifier = Modifier
-                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                             icon = {
                                 Icon(
-                                    imageVector = CustomBookIcon,
+                                    painter = painterResource(Res.drawable.ic_book_series),
                                     contentDescription = "Book Series Overview"
                                 )
                             },
+                            modifier = Modifier
+                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         NavigationDrawerItem (
@@ -83,8 +89,6 @@ fun App() {
                                 navController.navigate(Route.NavSettings)
                                 scope.launch(Dispatchers.IO) { drawerState.close() }
                             },
-                            modifier = Modifier
-                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                             icon = {
                                 Icon(
                                     imageVector = if (curScreen == CurScreen.Settings) Icons.Default.Settings
@@ -92,6 +96,8 @@ fun App() {
                                     contentDescription = "Settings"
                                 )
                             },
+                            modifier = Modifier
+                                .padding(NavigationDrawerItemDefaults.ItemPadding),
                         )
                     }
                 }

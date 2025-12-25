@@ -2,7 +2,7 @@ package de.malteans.digishelf.core.presentation.settings
 
 import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookSeries
-import de.malteans.digishelf.core.presentation.main.components.CurScreen
+import de.malteans.digishelf.navigation.CurScreen
 
 data class SettingsState(
     val curScreen: CurScreen = CurScreen.Settings,

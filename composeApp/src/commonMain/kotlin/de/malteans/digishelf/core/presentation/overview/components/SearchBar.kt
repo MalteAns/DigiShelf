@@ -3,24 +3,19 @@ package de.malteans.digishelf.core.presentation.overview.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.stringResource
@@ -33,14 +28,16 @@ fun SearchBar(
     keyboardType: KeyboardType = KeyboardType.Text,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        placeholder = { Text(text = hint) },
+        placeholder = { Text(hint, maxLines = 1) },
         leadingIcon = {
             Icon(
-                Icons.Filled.Search,
+                imageVector = Icons.Filled.Search,
                 contentDescription = stringResource(Res.string.search)
             )
         },
@@ -50,19 +47,17 @@ fun SearchBar(
                 enter = expandIn(expandFrom = Alignment.Center),
                 exit = shrinkOut(shrinkTowards = Alignment.Center),
             ) {
-                IconButton(
-                    onClick = { onValueChange("") }
-                ) {
+                IconButton({ onValueChange("") }) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = null,
+                        contentDescription = "Clear search",
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
         },
         singleLine = true,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
@@ -71,6 +66,9 @@ fun SearchBar(
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = ImeAction.Search,
-        )
+        ),
+        keyboardActions = KeyboardActions {
+            focusManager.clearFocus()
+        }
     )
 }

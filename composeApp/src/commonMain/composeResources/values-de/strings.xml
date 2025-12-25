@@ -120,4 +120,7 @@
     <string name="hours_short">Std.</string>
     <string name="min_per_page">m/S.</string>
     <string name="close">Schließen</string>
+    <string name="series_details_topbar_title">Serie „%1$s“</string>
+    <string name="series_details_no_books">Keine Bücher für diese Serie gefunden.</string>
+    <string name="series_details_no_description">Keine Beschreibung vorhanden.</string>
 </resources>

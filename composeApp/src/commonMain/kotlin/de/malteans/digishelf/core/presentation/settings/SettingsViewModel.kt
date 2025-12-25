@@ -7,9 +7,9 @@ import de.malteans.digishelf.core.domain.BookRepository
 import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
-import de.malteans.digishelf.core.presentation.main.components.CurScreen
 import de.malteans.digishelf.export.domain.ExportRepository
 import de.malteans.digishelf.export.presentation.ImportFileType
+import de.malteans.digishelf.navigation.CurScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay

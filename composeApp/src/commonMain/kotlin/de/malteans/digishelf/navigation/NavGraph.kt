@@ -20,7 +20,6 @@ import de.malteans.digishelf.core.presentation.add.AddScreenRoot
 import de.malteans.digishelf.core.presentation.add.AddViewModel
 import de.malteans.digishelf.core.presentation.add.scanner.BarcodeScannerView
 import de.malteans.digishelf.core.presentation.details.DetailsScreenRoot
-import de.malteans.digishelf.core.presentation.main.components.CurScreen
 import de.malteans.digishelf.core.presentation.overview.OverviewAction
 import de.malteans.digishelf.core.presentation.overview.OverviewScreenRoot
 import de.malteans.digishelf.core.presentation.overview.OverviewViewModel
@@ -139,7 +138,12 @@ fun NavGraph(
                 )
                 setScreen(CurScreen.SeriesOverview)
             }
-            composable<Route.Series.Details> {
+            composable<Route.Series.Details>(
+                enterTransition = { slideInHorizontally { it } },
+                popEnterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popExitTransition = { slideOutHorizontally { it } },
+            ) {
                 val seriesId = it.toRoute<Route.Series.Details>().seriesId
                 SeriesDetailsScreenRoot(
                     seriesId = seriesId,

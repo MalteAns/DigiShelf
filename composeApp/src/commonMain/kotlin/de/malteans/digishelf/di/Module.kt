@@ -10,7 +10,6 @@ import de.malteans.digishelf.core.data.repository.DefaultBookRepository
 import de.malteans.digishelf.core.domain.BookRepository
 import de.malteans.digishelf.core.presentation.add.AddViewModel
 import de.malteans.digishelf.core.presentation.details.DetailsViewModel
-import de.malteans.digishelf.core.presentation.main.MainViewModel
 import de.malteans.digishelf.core.presentation.overview.OverviewViewModel
 import de.malteans.digishelf.core.presentation.settings.SettingsViewModel
 import de.malteans.digishelf.export.data.DefaultExportRepository
@@ -41,7 +40,6 @@ val module = module {
     single<BookRepository> { DefaultBookRepository(get(), get()) }
     single<ExportRepository> { DefaultExportRepository(get()) }
 
-    viewModelOf(::MainViewModel)
     viewModelOf(::OverviewViewModel)
     viewModelOf(::AddViewModel)
     viewModelOf(::DetailsViewModel)

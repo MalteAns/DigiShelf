@@ -24,9 +24,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.malteans.digishelf.core.presentation.add.components.RatingBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
+import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.components.*
-import de.malteans.digishelf.core.presentation.main.components.CustomBookIcon
 import digishelf.composeapp.generated.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -349,6 +349,7 @@ fun DetailsScreen(
                             color = if (state.pagesChanged) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
                                 .combinedClickable (
                                     onClick = {
                                         if (state.isEditing) {
@@ -372,8 +373,9 @@ fun DetailsScreen(
                         TitledContent(
                             title = stringResource(Res.string.price),
                             color = if (state.priceChanged) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface,
+                                else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
                                 .combinedClickable (
                                     onClick = {
                                         if (state.isEditing) {
@@ -397,8 +399,9 @@ fun DetailsScreen(
                         TitledContent(
                             title = stringResource(Res.string.status),
                             color = if (state.statusChanged) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface,
+                                else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
                                 .combinedClickable (
                                     onClick = {
                                         if (state.isEditing) {
@@ -461,6 +464,7 @@ fun DetailsScreen(
                             color = if (state.readingTimeChanged) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
                                 .combinedClickable (
                                     onClick = {
                                         if (state.isEditing) {
@@ -490,8 +494,9 @@ fun DetailsScreen(
                         TitledContent(
                             title = stringResource(Res.string.series),
                             color = if (state.seriesChanged) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface,
+                                else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
                                 .combinedClickable (
                                     onClick = {
                                         if (state.isEditing) {
@@ -506,11 +511,10 @@ fun DetailsScreen(
                                     }
                                 ),
                         ) {
-                            BookChip(
-                                size = ChipSize.LARGE
-                            ) {
+                            BookChip(size = ChipSize.LARGE) {
                                 Text(
                                     text = state.series?.title ?: "–",
+                                    textAlign = TextAlign.Center,
                                 )
                             }
                         }

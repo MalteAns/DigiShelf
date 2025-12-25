@@ -1,8 +1,9 @@
 package de.malteans.digishelf.series.presentation.overview
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -136,23 +137,21 @@ fun SeriesOverviewScreen(
         modifier = Modifier
             .fillMaxSize(),
     ) { pad ->
-        Box (
+        LazyColumn(
+            verticalArrangement = spacedBy(8.dp),
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(pad)
         ) {
-            LazyColumn {
-                items(state.seriesList) { series ->
-                    BookSeriesItem(
-                        series = series,
-                        onClick = { onAction(SeriesOverviewAction.OnShowSeriesDetails(series.id)) },
-                        onLongClick = {
-                            seriesToEdit = series
-                            showDeleteDialog = true
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 6.dp)
-                    )
-                }
+            items(state.seriesList) { series ->
+                BookSeriesItem(
+                    series = series,
+                    onClick = { onAction(SeriesOverviewAction.OnShowSeriesDetails(series.id)) },
+                    onLongClick = {
+                        seriesToEdit = series
+                        showDeleteDialog = true
+                    },
+                )
             }
         }
     }

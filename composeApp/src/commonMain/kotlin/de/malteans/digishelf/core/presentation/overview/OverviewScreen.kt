@@ -2,7 +2,9 @@ package de.malteans.digishelf.core.presentation.overview
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,6 +14,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.SortType
@@ -56,6 +60,8 @@ fun OverviewScreen(
     state: OverviewState,
     onAction: (OverviewAction) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     val lazyListState = rememberLazyListState()
 
     var showFilterDialog by remember { mutableStateOf(false) }
@@ -148,12 +154,9 @@ fun OverviewScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
             CustomTopBar(
-                title = {
-                    Text(text = stringResource(Res.string.app_name))
-                },
+                title = { Text(text = stringResource(Res.string.app_name)) },
                 navigationAction = { onAction(OverviewAction.OnOpenDrawer) },
                 actions = {
                     Icon(
@@ -169,6 +172,11 @@ fun OverviewScreen(
                 }
             )
         },
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures { focusManager.clearFocus() }
+            }
     ) { pad ->
         Box (modifier = Modifier.fillMaxSize()) {
             Column (
@@ -195,36 +203,18 @@ fun OverviewScreen(
                         modifier = Modifier
                             .weight(1f)
                     )
-                    Icon(
-                        imageVector = CustomFilterIcon,
-                        contentDescription = stringResource(Res.string.filter),
-                        modifier = Modifier
-                            .size(48.dp)
-                            .combinedClickable (
-                                onClick = {
-                                    showFilterDialog = true
-                                },
-                                onLongClick = {
-                                    onAction(OverviewAction.ResetFilter)
-//                                    Toast.makeText( // TODO: Replace Toast with Snackbar
-//                                        context,
-//                                        context.getString(R.string.filter_reset),
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//                                    // Vibrate
-//                                    (getSystemService(context, Vibrator::class.java) as Vibrator)
-//                                        .vibrate(
-//                                            VibrationEffect
-//                                                .createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)
-//                                        )
-                                }
-                            )
-                    )
+                    IconButton({ showFilterDialog = true }) {
+                        Icon(
+                            imageVector = CustomFilterIcon,
+                            contentDescription = stringResource(Res.string.filter),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 }
                 Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                        .fillMaxSize()
                 ) {
                     // Loading ----------------------------------------------------------------
                     if (state.isLoading) {
@@ -232,6 +222,7 @@ fun OverviewScreen(
                     } else {
                         LazyColumn(
                             state = lazyListState,
+                            verticalArrangement = spacedBy(8.dp),
                             modifier = Modifier
                                 .fillMaxSize(),
                         ) {
@@ -262,16 +253,14 @@ fun OverviewScreen(
                                     onClick = {
                                         onAction(OverviewAction.OnOpenBook(book.id))
                                     },
-                                    modifier = Modifier
-                                        .padding(vertical = 6.dp)
                                 )
                             }
                             item {
                                 Row (
+                                    horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(12.dp),
-                                    horizontalArrangement = Arrangement.Center
+                                        .padding(top = 8.dp)
                                 ) {
                                     Text(
                                         text = stringResource(Res.string.shown_books, state.books.size),
