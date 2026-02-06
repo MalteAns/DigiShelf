@@ -3,6 +3,7 @@ package de.malteans.digishelf.core.data.database
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import de.malteans.digishelf.core.data.database.migrations.MIGRATION1_2
 
 actual class DatabaseFactory(
     private val context: Context
@@ -14,5 +15,8 @@ actual class DatabaseFactory(
             context = appContext,
             name = dbFile.absolutePath
         )
+            .addMigrations(
+                BookDatabase.MIGRATION1_2,
+            )
     }
 }

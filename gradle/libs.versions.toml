@@ -6,9 +6,9 @@ android-minSdk = "30"
 android-targetSdk = "36"
 
 applicationId = "de.malteans.digishelf"
-projectVersionCode = "2"
+projectVersionCode = "3"
 projectVersionName = "1.0.0"
-projectVersionNameSuffix = "-beta2"
+projectVersionNameSuffix = "-beta3"
 
 androidx-activityCompose = "1.11.0"
 androidx-lifecycle = "2.9.6"

@@ -24,6 +24,7 @@ data class DetailsState(
     val currency: String? = null,
     val priceChanged: Boolean = false,
     val possessionStatus: Boolean = false,
+    val ebookStatus: Boolean = false,
     val readStatus: Boolean = false,
     val statusChanged: Boolean = false,
     val readingTime: Int? = null,

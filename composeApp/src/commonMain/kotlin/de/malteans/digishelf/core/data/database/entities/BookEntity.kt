@@ -39,5 +39,6 @@ data class BookEntity (
     val readStatus: Boolean = false,
     val readingTime: Int? = null,
     val possessionStatus: Boolean = false,
+    val ebookStatus: Boolean = false,
     val deletedSince: Long = 0,
 )

@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import de.malteans.digishelf.core.domain.BookSeries
@@ -22,7 +23,9 @@ import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.toPriceString
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
 import digishelf.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 data class DetailsEditValues(
     val imageUrl: String,
@@ -32,9 +35,10 @@ data class DetailsEditValues(
     val pageCount: Int?,
     val price: Double?,
     val description: String,
+    val readStatus: Boolean,
     val readingTime: Int?,
     val possessionStatus: Boolean,
-    val readStatus: Boolean,
+    val ebookStatus: Boolean,
     val series: BookSeries?,
     val bookSeriesList: List<BookSeries>,
 )
@@ -46,7 +50,7 @@ data class DetailsEditCallbacks(
     val onAuthorChanged: (String) -> Unit,
     val onPageCountChanged: (Int?) -> Unit,
     val onPriceChanged: (Double?) -> Unit,
-    val onStatusChanged: (Boolean, Boolean) -> Unit,
+    val onStatusChanged: (owned: Boolean, read: Boolean, ebook: Boolean) -> Unit,
     val onReadingTimeChanged: (Int) -> Unit,
     val onSeriesChanged: (BookSeries?) -> Unit,
     val onDescriptionChanged: (String) -> Unit,
@@ -62,7 +66,7 @@ fun DetailsEditDialog(
 ) {
     var tempString by remember { mutableStateOf("") }
     var tempSeries by remember { mutableStateOf(values.series) }
-    var tempStatus by remember { mutableStateOf(values.possessionStatus to values.readStatus) }
+    var tempStatus by remember { mutableStateOf(StatusValues(values.possessionStatus, values.readStatus, values.ebookStatus)) }
 
     var readyToFinish by remember { mutableStateOf(false) }
 
@@ -107,7 +111,7 @@ fun DetailsEditDialog(
                 EditType.AUTHOR -> callbacks.onAuthorChanged(tempString)
                 EditType.PAGE_COUNT -> callbacks.onPageCountChanged(tempString.toIntOrNull())
                 EditType.PRICE -> callbacks.onPriceChanged(tempString.toDoubleOrNull())
-                EditType.STATUS -> callbacks.onStatusChanged(tempStatus.first, tempStatus.second)
+                EditType.STATUS -> callbacks.onStatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook)
                 EditType.READING_TIME -> callbacks.onReadingTimeChanged(
                     (values.readingTime ?: 0) + (tempString.toIntOrNull() ?: 0)
                 )
@@ -148,46 +152,46 @@ fun DetailsEditDialog(
     ) {
         when (curEditType) {
             EditType.STATUS -> {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "${stringResource(Res.string.owned)}:",
-                        modifier = Modifier
-                            .weight(0.4f)
-                    )
-                    IconButton(
-                        onClick = { tempStatus = tempStatus.copy(first = !tempStatus.first) },
-                        modifier = Modifier
-                            .weight(0.6f),
+                listOf(
+                    StatusEditValues(
+                        stringRes = Res.string.owned,
+                        icon = CustomBookIcon,
+                        currentValue = tempStatus.owned,
+                        onValueChange = { tempStatus = tempStatus.copy(owned = it) }
+                    ),
+                    StatusEditValues(
+                        stringRes = Res.string.read,
+                        icon = customReadIcon(),
+                        currentValue = tempStatus.read,
+                        onValueChange = { tempStatus = tempStatus.copy(read = it) }
+                    ),
+                    StatusEditValues(
+                        stringRes = Res.string.ebook,
+                        icon = vectorResource(Res.drawable.ic_tablet),
+                        currentValue = tempStatus.ebook,
+                        onValueChange = { tempStatus = tempStatus.copy(ebook = it) }
+                    ),
+                ).forEach { statusValues ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = CustomBookIcon,
-                            contentDescription = "Possession Status",
-                            tint = if (tempStatus.first) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        Text(
+                            text = "${stringResource(statusValues.stringRes)}:",
+                            modifier = Modifier
+                                .weight(0.4f)
                         )
-                    }
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "${stringResource(Res.string.read)}:",
-                        modifier = Modifier
-                            .weight(0.4f)
-                    )
-                    IconButton(
-                        onClick = { tempStatus = tempStatus.copy(second = !tempStatus.second) },
-                        modifier = Modifier
-                            .weight(0.6f),
-                    ) {
-                        Icon(
-                            imageVector = customReadIcon(),
-                            contentDescription = "Read Status",
-                            tint = if (tempStatus.second) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                        )
+                        IconButton(
+                            onClick = { statusValues.onValueChange(!statusValues.currentValue) },
+                            modifier = Modifier
+                                .weight(0.6f),
+                        ) {
+                            Icon(
+                                imageVector = statusValues.icon,
+                                contentDescription = "${stringResource(statusValues.stringRes)} Status",
+                                tint = if (statusValues.currentValue) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                            )
+                        }
                     }
                 }
             }
@@ -307,3 +311,15 @@ fun DetailsEditDialog(
         }
     }
 }
+
+private data class StatusValues(
+    val owned: Boolean,
+    val read: Boolean,
+    val ebook: Boolean,
+)
+private data class StatusEditValues(
+    val stringRes: StringResource,
+    val icon: ImageVector,
+    val currentValue: Boolean,
+    val onValueChange: (Boolean) -> Unit,
+)

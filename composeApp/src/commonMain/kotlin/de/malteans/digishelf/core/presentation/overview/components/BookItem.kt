@@ -31,6 +31,7 @@ import de.malteans.digishelf.core.presentation.components.customReadIcon
 import digishelf.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun BookItem(
@@ -149,7 +150,7 @@ fun BookItem(
             )
         }
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -164,6 +165,12 @@ fun BookItem(
                 imageVector = customReadIcon(),
                 contentDescription = "Read Status",
                 tint = if (book.readStatus) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+            )
+            Icon(
+                imageVector = vectorResource(Res.drawable.ic_tablet),
+                contentDescription = "eBook Status",
+                tint = if (book.ebookStatus) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             )
         }

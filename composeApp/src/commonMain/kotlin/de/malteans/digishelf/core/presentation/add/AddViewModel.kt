@@ -67,6 +67,9 @@ class AddViewModel (
             is AddAction.OnReadStatusChanged -> {
                 _state.value = _state.value.copy(readStatus = action.readStatus)
             }
+            is AddAction.OnEbookStatusChanged -> {
+                _state.value = _state.value.copy(ebookStatus = action.ebookStatus)
+            }
             is AddAction.OnRatingChanged -> {
                 _state.value = _state.value.copy(rating = action.rating)
             }

@@ -22,6 +22,7 @@ sealed class AddAction {
     data class OnIsbnChanged(val isbn: String): AddAction()
     data class OnPossessionStatusChanged(val possessionStatus: Boolean): AddAction()
     data class OnReadStatusChanged(val readStatus: Boolean): AddAction()
+    data class OnEbookStatusChanged(val ebookStatus: Boolean): AddAction()
     data class OnRatingChanged(val rating: Int): AddAction()
     data class OnBookSeriesChanged(val bookSeries: BookSeries?): AddAction()
     data class OnPagesChanged(val pages: String): AddAction()

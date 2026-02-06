@@ -1,6 +1,5 @@
 package de.malteans.digishelf.core.presentation.details
 
-import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookSeries
 
 
@@ -16,7 +15,7 @@ sealed class DetailsAction {
     data class RatingChanged(val rating: Int): DetailsAction()
     data class PageCountChanged(val pages: Int?): DetailsAction()
     data class PriceChanged(val price: Double?, val currency: String = "EUR"): DetailsAction()
-    data class StatusChanged(val possessionStatus: Boolean, val readStatus: Boolean): DetailsAction()
+    data class StatusChanged(val possessionStatus: Boolean, val readStatus: Boolean, val ebookStatus: Boolean): DetailsAction()
     data class DescriptionChanged(val description: String): DetailsAction()
     data class SeriesChanged(val series: BookSeries?): DetailsAction()
     data class ReadingTimeChanged(val readingTime: Int?): DetailsAction()
@@ -29,7 +28,4 @@ sealed class DetailsAction {
     data object UpdateBook: DetailsAction()
     data object DeleteBook: DetailsAction()
     data object ResetState: DetailsAction()
-
-    data class ChangeBook(val book: Book): DetailsAction()
-
 }

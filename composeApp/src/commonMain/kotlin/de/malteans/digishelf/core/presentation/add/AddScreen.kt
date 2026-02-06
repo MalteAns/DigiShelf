@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,6 +28,7 @@ import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.presentation.add.components.RatingBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
+import de.malteans.digishelf.core.presentation.details.components.ImagePicker
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
 import digishelf.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
@@ -81,6 +83,16 @@ fun AddScreen(
             if (snackbarResult == SnackbarResult.ActionPerformed) {
                 onAction(AddAction.OnShowBookDetail(state.addedBookId))
             }
+        }
+    }
+
+    var showImagePicker by remember { mutableStateOf(false) }
+    if (showImagePicker) {
+        ImagePicker { imagePath ->
+            if (!imagePath.isNullOrBlank()) {
+                onAction(AddAction.OnImageUrlChanged(imagePath))
+            }
+            showImagePicker = false
         }
     }
 
@@ -309,7 +321,7 @@ fun AddScreen(
                     )
                     Text(stringResource(Res.string.owned))
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -321,7 +333,19 @@ fun AddScreen(
                     )
                     Text(stringResource(Res.string.read))
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Checkbox(
+                        checked = state.ebookStatus,
+                        onCheckedChange = {
+                            onAction(AddAction.OnEbookStatusChanged(it))
+                        },
+                    )
+                    Text(stringResource(Res.string.ebook))
+                }
+                Spacer(modifier = Modifier.width(12.dp))
                 // Rating with clickable stars
                 RatingBar(
                     current = state.rating,
@@ -411,7 +435,14 @@ fun AddScreen(
                     onAction(AddAction.OnImageUrlChanged(it))
                 },
                 label = { Text(stringResource(Res.string.cover_image)) },
-                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    IconButton({ showImagePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.FileOpen,
+                            contentDescription = "Pick Image"
+                        )
+                    }
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
@@ -421,7 +452,8 @@ fun AddScreen(
                     onDone = {
                         focusManger.clearFocus()
                     }
-                )
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

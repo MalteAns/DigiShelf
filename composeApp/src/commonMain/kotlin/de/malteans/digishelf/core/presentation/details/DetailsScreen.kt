@@ -30,6 +30,7 @@ import de.malteans.digishelf.core.presentation.details.components.*
 import digishelf.composeapp.generated.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.random.Random.Default.nextInt
 
@@ -130,9 +131,10 @@ fun DetailsScreen(
                 pageCount = state.pageCount,
                 price = state.price,
                 description = state.description,
+                readStatus = state.readStatus,
                 readingTime = state.readingTime,
                 possessionStatus = state.possessionStatus,
-                readStatus = state.readStatus,
+                ebookStatus = state.ebookStatus,
                 series = state.series,
                 bookSeriesList = state.bookSeriesList,
             ),
@@ -143,7 +145,7 @@ fun DetailsScreen(
                 onAuthorChanged = { onAction(DetailsAction.AuthorChanged(it)) },
                 onPageCountChanged = { onAction(DetailsAction.PageCountChanged(it)) },
                 onPriceChanged = { onAction(DetailsAction.PriceChanged(it)) },
-                onStatusChanged = { owned, read -> onAction(DetailsAction.StatusChanged(owned, read)) },
+                onStatusChanged = { owned, read, ebook -> onAction(DetailsAction.StatusChanged(owned, read, ebook)) },
                 onReadingTimeChanged = { onAction(DetailsAction.ReadingTimeChanged(it)) },
                 onSeriesChanged = { onAction(DetailsAction.SeriesChanged(it)) },
                 onDescriptionChanged = { onAction(DetailsAction.DescriptionChanged(it)) },
@@ -430,6 +432,14 @@ fun DetailsScreen(
                                     contentDescription = "Read Status",
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(
                                         alpha = if (state.readStatus) 1f else 0.4f
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.ic_tablet),
+                                    contentDescription = "eBook Status",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                        alpha = if (state.ebookStatus) 1f else 0.4f
                                     )
                                 )
                             }

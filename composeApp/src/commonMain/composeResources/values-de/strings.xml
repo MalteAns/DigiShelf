@@ -5,11 +5,12 @@
     <string name="de">Deutsch</string>
     <string name="no_rating">Keine Bewertung</string>
     <string name="not_found">Nicht gefunden</string>
-    <string name="more_details_soon">Mehr Details in kürze.</string>
+    <string name="more_details_soon">Mehr Details in Kürze.</string>
     <string name="filter">Filter</string>
     <string name="add_book">Buch hinzufügen</string>
     <string name="owned">Im Besitz</string>
     <string name="read">Gelesen</string>
+    <string name="ebook">E-Book</string>
     <string name="filter_options">Filter Einstellungen</string>
     <string name="ok">OK</string>
     <string name="back">Zurück</string>

@@ -23,6 +23,7 @@ fun BookEntity.toDomain(bookSeries: BookSeries?): Book {
         readStatus = this.readStatus,
         readingTime = this.readingTime,
         possessionStatus = this.possessionStatus,
+        ebookStatus = this.ebookStatus,
         deletedSince = this.deletedSince
     )
 }
@@ -44,6 +45,7 @@ fun Book.toEntity(): BookEntity {
         readStatus = this.readStatus,
         readingTime = this.readingTime,
         possessionStatus = this.possessionStatus,
+        ebookStatus = this.ebookStatus,
         deletedSince = this.deletedSince
     )
 }
@@ -71,6 +73,7 @@ fun BookItem.toDomain(): Book {
         readStatus = false,
         readingTime = null,
         possessionStatus = false,
+        ebookStatus = this.saleInfo.isEbook,
         deletedSince = 0L
     )
 }

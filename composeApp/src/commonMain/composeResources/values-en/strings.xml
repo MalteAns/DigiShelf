@@ -10,6 +10,7 @@
     <string name="add_book">Add book</string>
     <string name="owned">Owned</string>
     <string name="read">Read</string>
+    <string name="ebook">eBook</string>
     <string name="filter_options">Filter options</string>
     <string name="ok">OK</string>
     <string name="back">Back</string>
