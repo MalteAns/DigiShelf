@@ -10,8 +10,8 @@ sealed interface OverviewAction {
     data object OnAddBookWithScanner: OverviewAction
     data class OnOpenBook(val bookId: Long): OverviewAction
 
-    data class ChangeFilterList(val possessionStatus: Boolean?, val readStatus: Boolean?,
-                                val sortType: SortType, val searchType: SearchType
+    data class ChangeFilterList(val possessionStatus: Boolean?, val readStatus: Boolean?, val eBookStatus: Boolean?,
+        val sortType: SortType, val searchType: SearchType,
     ): OverviewAction
 
     data object ReloadBooks: OverviewAction

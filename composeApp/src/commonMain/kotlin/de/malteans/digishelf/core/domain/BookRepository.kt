@@ -22,6 +22,7 @@ interface BookRepository {
         seriesQuery: String = "",
         readStatus: Boolean? = null,
         possessionStatus: Boolean? = null,
+        eBookStatus: Boolean? = null,
         includeDeleted: Boolean = false,
     ): Flow<List<Book>>
     suspend fun fetchLocalBooks(
@@ -32,6 +33,7 @@ interface BookRepository {
         seriesQuery: String = "",
         readStatus: Boolean? = null,
         possessionStatus: Boolean? = null,
+        eBookStatus: Boolean? = null,
         includeDeleted: Boolean = false,
     ): List<Book>
 

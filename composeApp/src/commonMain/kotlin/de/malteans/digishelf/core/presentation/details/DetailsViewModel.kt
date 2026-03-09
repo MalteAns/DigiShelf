@@ -45,7 +45,7 @@ class DetailsViewModel (
         val priceChanged = state.price != book?.price || state.currency != book?.currency
         val pageCountChanged = state.pageCount != book?.pageCount
         val statusChanged = (state.possessionStatus != book?.possessionStatus)
-                || (state.readStatus != book.readStatus) || (state.ebookStatus != book.ebookStatus)
+                || (state.readStatus != book.readStatus) || (state.ebookStatus != book.eBookStatus)
         val readingTimeChanged = state.readingTime != book?.readingTime
         val seriesChanged = (state.series?.id != book?.bookSeries?.id)
         val descriptionChanged = state.description != book?.description
@@ -167,7 +167,7 @@ class DetailsViewModel (
                     readStatus = _state.value.readStatus,
                     readingTime = _state.value.readingTime,
                     possessionStatus = _state.value.possessionStatus,
-                    ebookStatus = _state.value.ebookStatus,
+                    eBookStatus = _state.value.ebookStatus,
                     bookSeries = _state.value.series,
                     description = _state.value.description,
                 ) ?: throw IllegalStateException("No book to update")
@@ -211,7 +211,7 @@ class DetailsViewModel (
                 price = book.price,
                 currency = book.currency,
                 possessionStatus = book.possessionStatus,
-                ebookStatus = book.ebookStatus,
+                ebookStatus = book.eBookStatus,
                 readStatus = book.readStatus,
                 readingTime = book.readingTime,
                 series = book.bookSeries,

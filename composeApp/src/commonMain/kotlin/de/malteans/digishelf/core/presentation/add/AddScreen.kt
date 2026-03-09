@@ -338,7 +338,7 @@ fun AddScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Checkbox(
-                        checked = state.ebookStatus,
+                        checked = state.eBookStatus,
                         onCheckedChange = {
                             onAction(AddAction.OnEbookStatusChanged(it))
                         },

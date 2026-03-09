@@ -13,12 +13,7 @@ import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
 import de.malteans.digishelf.core.domain.errorHandling.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 class DefaultBookRepository(
     private val bookDao: BookDao,
@@ -83,6 +78,7 @@ class DefaultBookRepository(
         seriesQuery: String,
         readStatus: Boolean?,
         possessionStatus: Boolean?,
+        eBookStatus: Boolean?,
         includeDeleted: Boolean,
     ): Flow<List<Book>> {
         val booksFlow = bookDao.queryBooks(
@@ -92,6 +88,7 @@ class DefaultBookRepository(
             seriesQuery,
             readStatus,
             possessionStatus,
+            eBookStatus,
             sortBy.queryValue,
             includeDeleted,
         )
@@ -116,6 +113,7 @@ class DefaultBookRepository(
         seriesQuery: String,
         readStatus: Boolean?,
         possessionStatus: Boolean?,
+        eBookStatus: Boolean?,
         includeDeleted: Boolean
     ): List<Book> {
         val books = bookDao.queryBooks(
@@ -125,6 +123,7 @@ class DefaultBookRepository(
             seriesQuery,
             readStatus,
             possessionStatus,
+            eBookStatus,
             sortBy.queryValue,
             includeDeleted
         ).first()

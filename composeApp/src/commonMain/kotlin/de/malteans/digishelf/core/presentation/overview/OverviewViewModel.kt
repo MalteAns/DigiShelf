@@ -33,6 +33,7 @@ class OverviewViewModel (
                 _state.update { it.copy(
                     possessionStatus = event.possessionStatus,
                     readStatus = event.readStatus,
+                    eBookStatus = event.eBookStatus,
                     sortType = event.sortType,
                     searchType = event.searchType
                 ) }
@@ -41,6 +42,7 @@ class OverviewViewModel (
                 _state.update { it.copy(
                     possessionStatus = null,
                     readStatus = null,
+                    eBookStatus = null,
                     sortType = SortType.TITLE,
                     searchType = SearchType.TITLE
                 ) }
@@ -71,13 +73,14 @@ class OverviewViewModel (
                 ) }
                 _searchJob?.cancel()
                 _searchJob = fetchLocalBooks(
-                    SearchOptions(
-                        searchQuery = state.value.searchQuery,
-                        possessionStatus = state.value.possessionStatus,
-                        readStatus = state.value.readStatus,
-                        sortType = state.value.sortType,
-                        searchType = state.value.searchType
-                    )
+                    with(state.value) { SearchOptions(
+                        searchQuery = searchQuery,
+                        possessionStatus = possessionStatus,
+                        readStatus = readStatus,
+                        eBookStatus = eBookStatus,
+                        sortType = sortType,
+                        searchType = searchType
+                    ) }
                 )
             }
 
@@ -91,6 +94,7 @@ class OverviewViewModel (
                 searchQuery = it.searchQuery,
                 possessionStatus = it.possessionStatus,
                 readStatus = it.readStatus,
+                eBookStatus = it.eBookStatus,
                 sortType = it.sortType,
                 searchType = it.searchType
             ) }
@@ -110,6 +114,7 @@ class OverviewViewModel (
             isbnQuery = if (options.searchType == SearchType.ISBN) options.searchQuery else "",
             possessionStatus = options.possessionStatus,
             readStatus = options.readStatus,
+            eBookStatus = options.eBookStatus,
             sortBy = options.sortType,
         )
         _state.update { it.copy(books = books, isLoading = false) }
@@ -120,6 +125,7 @@ private data class SearchOptions(
     val searchQuery: String,
     val possessionStatus: Boolean?,
     val readStatus: Boolean?,
+    val eBookStatus: Boolean?,
     val sortType: SortType,
     val searchType: SearchType
 )

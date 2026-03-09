@@ -50,7 +50,8 @@ interface BookDao {
                 ELSE (bookSeriesId IN (SELECT id FROM book_series WHERE title LIKE '%' || :seriesQuery || '%')) 
            END) = 1 AND
           (:isRead IS NULL OR readStatus = :isRead) AND
-          (:isOwned IS NULL OR possessionStatus = :isOwned)
+          (:isOwned IS NULL OR possessionStatus = :isOwned) AND
+          (:isEBook IS NULL OR eBookStatus = :isEBook)
         ORDER BY 
           CASE WHEN :sortBy = 'title' THEN title END COLLATE NOCASE ASC,
           CASE WHEN :sortBy = 'author' THEN author END COLLATE NOCASE ASC,
@@ -64,6 +65,7 @@ interface BookDao {
         seriesQuery: String = "",
         isRead: Boolean? = null,
         isOwned: Boolean? = null,
+        isEBook: Boolean? = null,
         sortBy: String = "title",
         includeDeleted: Boolean = false
     ): Flow<List<BookEntity>>

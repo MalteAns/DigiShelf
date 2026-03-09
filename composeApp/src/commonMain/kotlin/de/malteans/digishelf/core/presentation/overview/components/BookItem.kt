@@ -170,7 +170,7 @@ fun BookItem(
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_tablet),
                 contentDescription = "eBook Status",
-                tint = if (book.ebookStatus) MaterialTheme.colorScheme.primary
+                tint = if (book.eBookStatus) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             )
         }

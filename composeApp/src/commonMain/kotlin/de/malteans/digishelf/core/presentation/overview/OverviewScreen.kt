@@ -70,6 +70,7 @@ fun OverviewScreen(
         val tempFilterOptions = FilterOptions(
             possessionStatus = state.possessionStatus,
             readStatus = state.readStatus,
+            eBookStatus = state.eBookStatus,
             sortType = state.sortType,
             searchType = state.searchType,
         )
@@ -86,6 +87,7 @@ fun OverviewScreen(
                     OverviewAction.ChangeFilterList(
                         tempFilterOptions.possessionStatus,
                         tempFilterOptions.readStatus,
+                        tempFilterOptions.eBookStatus,
                         tempFilterOptions.sortType,
                         tempFilterOptions.searchType
                     )
@@ -95,6 +97,7 @@ fun OverviewScreen(
                 when (index) {
                     0 -> tempFilterOptions.possessionStatus = value
                     1 -> tempFilterOptions.readStatus = value
+                    2 -> tempFilterOptions.eBookStatus = value
                 }
             },
             onTypeChange = { index, value ->
@@ -119,13 +122,14 @@ fun OverviewScreen(
                     }
                 }
             },
-            filterItemsList = listOf(stringResource(Res.string.owned)+":", stringResource(Res.string.read)+":"),
+            filterItemsList = listOf(Res.string.owned, Res.string.read, Res.string.ebook)
+                .map { "${stringResource(it)}:" },
             typeItemsList = mapOf(
                 stringResource(Res.string.sort_by)+":" to listOf(stringResource(Res.string.title), stringResource(Res.string.author), stringResource(Res.string.series)),
                 stringResource(Res.string.search_by)+":" to listOf(stringResource(Res.string.title), stringResource(Res.string.author),
                     stringResource(Res.string.isbn), stringResource(Res.string.series), stringResource(Res.string.series_id))
             ),
-            filterStates = listOf(state.possessionStatus, state.readStatus),
+            filterStates = listOf(state.possessionStatus, state.readStatus, state.eBookStatus),
             typeStates = listOf(
                 when(state.sortType) {
                     SortType.TITLE -> stringResource(Res.string.title)
@@ -283,6 +287,7 @@ fun OverviewScreen(
 private data class FilterOptions(
     var possessionStatus: Boolean?,
     var readStatus: Boolean?,
+    var eBookStatus: Boolean?,
     var sortType: SortType,
     var searchType: SearchType,
 )

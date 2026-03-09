@@ -118,6 +118,7 @@ fun NavGraph(
                             OverviewAction.ChangeFilterList(
                                 possessionStatus = null,
                                 readStatus = null,
+                                eBookStatus = null,
                                 sortType = SortType.AUTHOR,
                                 searchType = SearchType.AUTHOR
                             ))

@@ -68,7 +68,7 @@ class AddViewModel (
                 _state.value = _state.value.copy(readStatus = action.readStatus)
             }
             is AddAction.OnEbookStatusChanged -> {
-                _state.value = _state.value.copy(ebookStatus = action.ebookStatus)
+                _state.value = _state.value.copy(eBookStatus = action.ebookStatus)
             }
             is AddAction.OnRatingChanged -> {
                 _state.value = _state.value.copy(rating = action.rating)
@@ -167,6 +167,7 @@ class AddViewModel (
                 val isbn = _state.value.isbn.trim()
                 val possessionStatus = _state.value.possessionStatus
                 val readStatus = _state.value.readStatus
+                val eBookStatus = _state.value.eBookStatus
                 val rating = _state.value.rating
                 val pageCount = _state.value.pages.toIntOrNull()
                 val price = _state.value.price.toDoubleOrNull()
@@ -179,6 +180,7 @@ class AddViewModel (
                     isbn = isbn,
                     possessionStatus = possessionStatus,
                     readStatus = readStatus,
+                    eBookStatus = eBookStatus,
                     rating = rating,
                     pageCount = pageCount,
                     imageUrl = imageUrl,

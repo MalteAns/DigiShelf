@@ -8,7 +8,7 @@ import de.malteans.digishelf.core.data.database.entities.BookSeriesEntity
 
 @Database(
     entities = [BookEntity::class, BookSeriesEntity::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 @ConstructedBy(BookDatabaseConstructor::class)
