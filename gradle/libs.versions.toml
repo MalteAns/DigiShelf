@@ -28,13 +28,13 @@ room = "2.8.3"
 kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
 coil3 = "3.4.0"
-ktor = "3.4.1"
+ktor = "3.4.2"
 
 fileKit = "0.13.0"
 
 androidx-activity = "1.11.0"
 kotlinStdlib = "2.3.20"
-aboutLibraries = "13.2.1"
+aboutLibraries = "14.0.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
