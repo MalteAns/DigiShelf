@@ -30,7 +30,7 @@ kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with 
 coil3 = "3.4.0"
 ktor = "3.4.3"
 
-fileKit = "0.13.0"
+fileKit = "0.14.0"
 
 androidx-activity = "1.11.0"
 kotlinStdlib = "2.3.21"
