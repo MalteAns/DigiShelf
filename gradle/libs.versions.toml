@@ -25,16 +25,16 @@ ksp = "2.3.7"
 sqlite = "2.6.1"
 room = "2.8.3"
 
-kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
+kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
 coil3 = "3.4.0"
 ktor = "3.4.3"
 
-fileKit = "0.13.0"
+fileKit = "0.14.1"
 
 androidx-activity = "1.11.0"
 kotlinStdlib = "2.3.21"
-aboutLibraries = "14.1.0"
+aboutLibraries = "14.2.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
