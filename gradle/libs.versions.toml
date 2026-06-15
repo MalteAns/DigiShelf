@@ -14,27 +14,27 @@ androidx-activityCompose = "1.11.0"
 androidx-lifecycle = "2.10.0"
 barcodeScanning = "17.3.0"
 cameraCore = "1.5.1"
-compose-multiplatform = "1.10.3"
-kotlin = "2.3.21"
+compose-multiplatform = "1.11.1"
+kotlin = "2.4.0"
 
 navigationCompose = "2.9.2"
 kotlinSerialization = "1.11.0"
-koin = "4.2.1"
+koin = "4.2.2"
 
-ksp = "2.3.7"
+ksp = "2.3.9"
 sqlite = "2.6.1"
 room = "2.8.3"
 
-kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
+kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
-coil3 = "3.4.0"
-ktor = "3.4.3"
+coil3 = "3.5.0"
+ktor = "3.5.0"
 
-fileKit = "0.13.0"
+fileKit = "0.14.2"
 
 androidx-activity = "1.11.0"
-kotlinStdlib = "2.3.21"
-aboutLibraries = "14.1.0"
+kotlinStdlib = "2.4.0"
+aboutLibraries = "14.2.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
