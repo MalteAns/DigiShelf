@@ -1,42 +1,49 @@
 [versions]
-agp = "8.12.3"
+agp = "9.2.1"
 
-android-compileSdk = "36"
+# DON'T DELETE, IS ACUTALLY USED:
+android-compileSdk = "37"
 android-minSdk = "30"
-android-targetSdk = "36"
+android-targetSdk = "37"
 
+# DON'T DELETE, IS ACUTALLY USED:
 applicationId = "de.malteans.digishelf"
 projectVersionCode = "5"
 projectVersionName = "1.0.0"
 projectVersionNameSuffix = "-beta4"
 
-androidx-activityCompose = "1.11.0"
-androidx-lifecycle = "2.10.0"
+androidx-activityCompose = "1.13.0"
+androidx-lifecycle = "2.11.0"
 barcodeScanning = "17.3.0"
-cameraCore = "1.5.1"
-compose-multiplatform = "1.10.3"
-kotlin = "2.3.21"
+cameraCore = "1.6.1"
+kotlin = "2.4.10"
+
+composeMultiplatform = "1.11.1"
+material3 = "1.9.0"
+materialIconsExtended = "1.7.3"
 
 navigationCompose = "2.9.2"
 kotlinSerialization = "1.11.0"
-koin = "4.2.1"
+koin = "4.2.2"
 
-ksp = "2.3.7"
-sqlite = "2.6.1"
-room = "2.8.3"
+ksp = "2.3.10"
+sqlite = "2.7.0"
+room = "2.8.4"
 
-kotlinxDatetime = "0.7.1-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
+kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
-coil3 = "3.4.0"
-ktor = "3.4.3"
+coil3 = "3.5.0"
+ktor = "3.5.1"
 
-fileKit = "0.13.0"
+fileKit = "0.14.2"
 
-androidx-activity = "1.11.0"
-kotlinStdlib = "2.3.21"
-aboutLibraries = "14.1.0"
+kotlinStdlib = "2.4.10"
+aboutLibraries = "15.0.4"
+coreKtx = "1.19.0"
 
 [libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
 androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
@@ -46,19 +53,29 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
 barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
-filekit-coil = { module = "io.github.vinceglb:filekit-coil", version.ref = "fileKit" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "fileKit" }
-filekit-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "fileKit" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "fileKit" }
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref= "navigationCompose"}
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 
+# Koin --------------------------------------------
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+
+# Compose -----------------------------------------
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+compose-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 
 # Database ----------------------------------------
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -68,7 +85,6 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 # Coil --------------------------------------------
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
-coil-network-ktor2 = { module = "io.coil-kt.coil3:coil-network-ktor2", version.ref = "coil3" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
@@ -82,37 +98,47 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 # Back Handler ------------------------------------
-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref= "compose-multiplatform" }
+ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref= "composeMultiplatform" }
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 [plugins]
+# Only Android (androidApp)
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# Basics
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# KMP/CMP
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-
-jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+# Room
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
-
-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+# About Libraries
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 
 [bundles]
+coil = [
+    "coil-compose",
+    "coil-compose-core",
+    "coil-network-ktor3",
+    "coil-mp"
+]
+compose = [
+    "compose-foundation",
+    "compose-components-resources",
+    "compose-runtime",
+    "compose-ui",
+    "compose-ui-tooling-preview"
+]
+filekit = ["filekit-core", "filekit-dialogs-compose"]
 ktor = [
     "ktor-client-core",
     "ktor-client-content-negotiation",
     "ktor-client-auth",
     "ktor-client-logging",
     "ktor-serialization-kotlinx-json",
-]
-coil = [
-    "coil-compose",
-    "coil-compose-core",
-    "coil-network-ktor3",
-    "coil-mp"
 ]

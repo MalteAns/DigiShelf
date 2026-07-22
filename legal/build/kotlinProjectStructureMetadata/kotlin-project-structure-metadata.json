@@ -1,0 +1,137 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "androidApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "androidRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "desktopApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "desktopRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "iosArm64ApiElements",
+        "sourceSet": [
+          "iosMain",
+          "appleMain",
+          "nativeMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "iosSimulatorArm64ApiElements",
+        "sourceSet": [
+          "iosMain",
+          "appleMain",
+          "nativeMain",
+          "commonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "appleMain",
+        "dependsOn": [
+          "nativeMain"
+        ],
+        "moduleDependency": [
+          "io.github.kevinnzou:compose-webview-multiplatform",
+          "org.jetbrains.compose.foundation:foundation",
+          "org.jetbrains.compose.components:components-resources",
+          "org.jetbrains.compose.runtime:runtime",
+          "org.jetbrains.compose.ui:ui",
+          "org.jetbrains.compose.ui:ui-tooling-preview",
+          "org.jetbrains.compose.material3:material3",
+          "org.jetbrains.compose.material:material-icons-extended",
+          "org.jetbrains.compose.ui:ui-backhandler",
+          "com.mikepenz:aboutlibraries-compose-core",
+          "com.mikepenz:aboutlibraries-compose-m3"
+        ],
+        "sourceSetCInteropMetadataDirectory": "appleMain-cinterop",
+        "binaryLayout": "klib",
+        "hostSpecific": "true"
+      },
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "io.github.kevinnzou:compose-webview-multiplatform",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "org.jetbrains.compose.foundation:foundation",
+          "org.jetbrains.compose.components:components-resources",
+          "org.jetbrains.compose.runtime:runtime",
+          "org.jetbrains.compose.ui:ui",
+          "org.jetbrains.compose.ui:ui-tooling-preview",
+          "org.jetbrains.compose.material3:material3",
+          "org.jetbrains.compose.material:material-icons-extended",
+          "org.jetbrains.compose.ui:ui-backhandler",
+          "com.mikepenz:aboutlibraries-compose-core",
+          "com.mikepenz:aboutlibraries-compose-m3"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "iosMain",
+        "dependsOn": [
+          "appleMain"
+        ],
+        "moduleDependency": [
+          "io.github.kevinnzou:compose-webview-multiplatform",
+          "org.jetbrains.compose.foundation:foundation",
+          "org.jetbrains.compose.components:components-resources",
+          "org.jetbrains.compose.runtime:runtime",
+          "org.jetbrains.compose.ui:ui",
+          "org.jetbrains.compose.ui:ui-tooling-preview",
+          "org.jetbrains.compose.material3:material3",
+          "org.jetbrains.compose.material:material-icons-extended",
+          "org.jetbrains.compose.ui:ui-backhandler",
+          "com.mikepenz:aboutlibraries-compose-core",
+          "com.mikepenz:aboutlibraries-compose-m3"
+        ],
+        "sourceSetCInteropMetadataDirectory": "iosMain-cinterop",
+        "binaryLayout": "klib",
+        "hostSpecific": "true"
+      },
+      {
+        "name": "nativeMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "io.github.kevinnzou:compose-webview-multiplatform",
+          "org.jetbrains.compose.foundation:foundation",
+          "org.jetbrains.compose.components:components-resources",
+          "org.jetbrains.compose.runtime:runtime",
+          "org.jetbrains.compose.ui:ui",
+          "org.jetbrains.compose.ui:ui-tooling-preview",
+          "org.jetbrains.compose.material3:material3",
+          "org.jetbrains.compose.material:material-icons-extended",
+          "org.jetbrains.compose.ui:ui-backhandler",
+          "com.mikepenz:aboutlibraries-compose-core",
+          "com.mikepenz:aboutlibraries-compose-m3"
+        ],
+        "sourceSetCInteropMetadataDirectory": "nativeMain-cinterop",
+        "binaryLayout": "klib",
+        "hostSpecific": "true"
+      }
+    ]
+  }
+}

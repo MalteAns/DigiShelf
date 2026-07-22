@@ -6,7 +6,7 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Key
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.malteans.legal.presentation.navigation.LegalRoute
-import digishelf.legal.generated.resources.*
+import de.malteans.legal.resources.*
 import org.jetbrains.compose.resources.StringResource
 
 data class LegalListItemInfo(

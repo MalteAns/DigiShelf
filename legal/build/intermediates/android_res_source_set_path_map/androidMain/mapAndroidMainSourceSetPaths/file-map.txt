@@ -1,0 +1,5 @@
+de.malteans.legal-androidMain-0 /home/malte/GitHub/DigiShelf/legal/build/generated/updated_navigation_xml/androidMain/res
+de.malteans.legal-packageAndroidMainResources-1 /home/malte/GitHub/DigiShelf/legal/build/intermediates/incremental/androidMain/packageAndroidMainResources/merged.dir
+de.malteans.legal-packageAndroidMainResources-2 /home/malte/GitHub/DigiShelf/legal/build/intermediates/incremental/androidMain/packageAndroidMainResources/stripped.dir
+de.malteans.legal-packageAndroidMainResources-3 /home/malte/GitHub/DigiShelf/legal/build/intermediates/packaged_res/androidMain/packageAndroidMainResources/res
+gradleHome-0 /home/malte/.gradle

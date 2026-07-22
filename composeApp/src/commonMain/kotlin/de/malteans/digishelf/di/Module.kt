@@ -22,7 +22,7 @@ import org.koin.dsl.module
 
 expect val platformModule: Module
 
-val module = module {
+val sharedModule = module {
     includes(platformModule)
 
     single { HttpClientFactory.create(get()) }
@@ -35,7 +35,7 @@ val module = module {
     }
     single { get<BookDatabase>().bookDao }
 
-    single<RemoteBookDataSource> { KtorRemoteBookDataSource(get()) }
+    single<RemoteBookDataSource> { KtorRemoteBookDataSource(get(), get()) }
 
     single<BookRepository> { DefaultBookRepository(get(), get()) }
     single<ExportRepository> { DefaultExportRepository(get()) }

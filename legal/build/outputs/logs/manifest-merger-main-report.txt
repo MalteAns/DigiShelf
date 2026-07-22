@@ -1,0 +1,11 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml:2:1-4:12
+	package
+		INJECTED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml
+uses-sdk
+INJECTED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/malte/GitHub/DigiShelf/legal/src/androidMain/AndroidManifest.xml

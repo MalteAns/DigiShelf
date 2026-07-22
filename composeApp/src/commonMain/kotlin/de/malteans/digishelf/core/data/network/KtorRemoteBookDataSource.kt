@@ -10,6 +10,7 @@ private const val BASE_URL = "https://www.googleapis.com/books/v1"
 
 class KtorRemoteBookDataSource(
     private val client: HttpClient,
+    private val apiConfig: ApiConfig
 ) : RemoteBookDataSource {
 
     override suspend fun fetchBook(
@@ -25,7 +26,7 @@ class KtorRemoteBookDataSource(
 
         return safeCall<BookResponse> {
             client.get("$BASE_URL/volumes") {
-                parameter("key", ApiConfig.googleApiToken)
+                parameter("key", apiConfig.googleApiToken)
                 parameter("q", query)
             }
         }
