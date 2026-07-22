@@ -1,7 +1,9 @@
 package de.malteans.digishelf.core.presentation.details.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import de.malteans.digishelf.core.domain.BookSeries
@@ -32,6 +35,10 @@ data class DetailsEditValues(
     val isbn: String,
     val title: String,
     val author: String,
+    val rating: Int,
+    val tensionLevel: Int,
+    val spiceLevel: Int,
+    val emotionLevel: Int,
     val pageCount: Int?,
     val price: Double?,
     val description: String,
@@ -48,6 +55,10 @@ data class DetailsEditCallbacks(
     val onIsbnChanged: (String) -> Unit,
     val onTitleChanged: (String) -> Unit,
     val onAuthorChanged: (String) -> Unit,
+    val onRatingChanged: (Int) -> Unit,
+    val onTensionLevelChanged: (Int) -> Unit,
+    val onSpiceLevelChanged: (Int) -> Unit,
+    val onEmotionLevelChanged: (Int) -> Unit,
     val onPageCountChanged: (Int?) -> Unit,
     val onPriceChanged: (Double?) -> Unit,
     val onStatusChanged: (owned: Boolean, read: Boolean, ebook: Boolean) -> Unit,
@@ -67,10 +78,14 @@ fun DetailsEditDialog(
     var tempString by remember { mutableStateOf("") }
     var tempSeries by remember { mutableStateOf(values.series) }
     var tempStatus by remember { mutableStateOf(StatusValues(values.possessionStatus, values.readStatus, values.ebookStatus)) }
+    var tempRating by remember { mutableStateOf(values.rating) }
+    var tempTensionLevel by remember { mutableStateOf(values.tensionLevel) }
+    var tempSpiceLevel by remember { mutableStateOf(values.spiceLevel) }
+    var tempEmotionLevel by remember { mutableStateOf(values.emotionLevel) }
 
     var readyToFinish by remember { mutableStateOf(false) }
 
-    LaunchedEffect(curEditType, tempString, tempSeries) {
+    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel) {
         readyToFinish = when (curEditType) {
             EditType.ISBN -> tempString.isIsbnFormat()
             EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
@@ -86,6 +101,7 @@ fun DetailsEditDialog(
                 })
             }
             EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
+            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL -> true
         }
     }
 
@@ -99,6 +115,18 @@ fun DetailsEditDialog(
             EditType.PRICE -> values.price?.toPriceString(null) ?: ""
             EditType.DESCRIPTION -> values.description
             EditType.STATUS, EditType.READING_TIME, EditType.BOOK_SERIES -> ""
+            EditType.RATING -> values.rating.toString()
+            EditType.TENSION_LEVEL -> values.tensionLevel.toString()
+            EditType.SPICE_LEVEL -> values.spiceLevel.toString()
+            EditType.EMOTION_LEVEL -> values.emotionLevel.toString()
+        }
+        // Initialize level values when switching to level edit types
+        when (curEditType) {
+            EditType.RATING -> tempRating = values.rating
+            EditType.TENSION_LEVEL -> tempTensionLevel = values.tensionLevel
+            EditType.SPICE_LEVEL -> tempSpiceLevel = values.spiceLevel
+            EditType.EMOTION_LEVEL -> tempEmotionLevel = values.emotionLevel
+            else -> {}
         }
     }
 
@@ -109,6 +137,10 @@ fun DetailsEditDialog(
                 EditType.ISBN -> callbacks.onIsbnChanged(tempString)
                 EditType.TITLE -> callbacks.onTitleChanged(tempString)
                 EditType.AUTHOR -> callbacks.onAuthorChanged(tempString)
+                EditType.RATING -> callbacks.onRatingChanged(tempRating)
+                EditType.TENSION_LEVEL -> callbacks.onTensionLevelChanged(tempTensionLevel)
+                EditType.SPICE_LEVEL -> callbacks.onSpiceLevelChanged(tempSpiceLevel)
+                EditType.EMOTION_LEVEL -> callbacks.onEmotionLevelChanged(tempEmotionLevel)
                 EditType.PAGE_COUNT -> callbacks.onPageCountChanged(tempString.toIntOrNull())
                 EditType.PRICE -> callbacks.onPriceChanged(tempString.toDoubleOrNull())
                 EditType.STATUS -> callbacks.onStatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook)
@@ -263,6 +295,38 @@ fun DetailsEditDialog(
                 )
             }
 
+            EditType.RATING -> {
+                LevelSlider(
+                    value = tempRating,
+                    onValueChange = { tempRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.TENSION_LEVEL -> {
+                LevelSlider(
+                    value = tempTensionLevel,
+                    onValueChange = { tempTensionLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.SPICE_LEVEL -> {
+                LevelSlider(
+                    value = tempSpiceLevel,
+                    onValueChange = { tempSpiceLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.EMOTION_LEVEL -> {
+                LevelSlider(
+                    value = tempEmotionLevel,
+                    onValueChange = { tempEmotionLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
             else -> {
                 OutlinedTextField(
                     value = tempString,
@@ -280,7 +344,8 @@ fun DetailsEditDialog(
                             EditType.PRICE -> Text(text = "EUR") // TODO: Add currency selection
                             EditType.READING_TIME -> Text(text = stringResource(Res.string.minutes_short))
                             EditType.ISBN, EditType.TITLE, EditType.AUTHOR, EditType.PAGE_COUNT,
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
                                 -> Text(text = "")
                         }
                     },
@@ -289,7 +354,8 @@ fun DetailsEditDialog(
                         keyboardType = when (curEditType) {
                             EditType.ISBN, EditType.PAGE_COUNT, EditType.PRICE, EditType.READING_TIME -> KeyboardType.Number
                             EditType.TITLE, EditType.AUTHOR, EditType.DESCRIPTION -> KeyboardType.Text
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         },
                         imeAction = when (curEditType) {
@@ -297,7 +363,8 @@ fun DetailsEditDialog(
                             EditType.PRICE, EditType.READING_TIME -> ImeAction.Done
 
                             EditType.DESCRIPTION -> ImeAction.Default
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         }
                     ),
@@ -323,3 +390,36 @@ private data class StatusEditValues(
     val currentValue: Boolean,
     val onValueChange: (Boolean) -> Unit,
 )
+
+@Composable
+private fun LevelSlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { onValueChange(it.toInt()) },
+            valueRange = 0f..5f,
+            steps = 4,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        Text(
+            text = "$value/5",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}

@@ -10,6 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ElectricBolt
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.malteans.digishelf.core.presentation.add.components.RatingBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.customReadIcon
@@ -128,6 +131,10 @@ fun DetailsScreen(
                 isbn = state.isbn,
                 title = state.title,
                 author = state.author,
+                rating = state.rating,
+                tensionLevel = state.tensionLevel,
+                spiceLevel = state.spiceLevel,
+                emotionLevel = state.emotionLevel,
                 pageCount = state.pageCount,
                 price = state.price,
                 description = state.description,
@@ -143,6 +150,10 @@ fun DetailsScreen(
                 onIsbnChanged = { onAction(DetailsAction.IsbnChanged(it)) },
                 onTitleChanged = { onAction(DetailsAction.TitleChanged(it)) },
                 onAuthorChanged = { onAction(DetailsAction.AuthorChanged(it)) },
+                onRatingChanged = { onAction(DetailsAction.RatingChanged(it)) },
+                onTensionLevelChanged = { onAction(DetailsAction.TensionLevelChanged(it)) },
+                onSpiceLevelChanged = { onAction(DetailsAction.SpiceLevelChanged(it)) },
+                onEmotionLevelChanged = { onAction(DetailsAction.EmotionLevelChanged(it)) },
                 onPageCountChanged = { onAction(DetailsAction.PageCountChanged(it)) },
                 onPriceChanged = { onAction(DetailsAction.PriceChanged(it)) },
                 onStatusChanged = { owned, read, ebook -> onAction(DetailsAction.StatusChanged(owned, read, ebook)) },
@@ -284,16 +295,38 @@ fun DetailsScreen(
                                     }
                                 ),
                         )
-                        RatingBar(
-                            current = state.rating,
-                            onRatingChanged = { newRating -> onAction(DetailsAction.RatingChanged(newRating)) },
-                            enabled = state.isEditing,
-                            activeColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.tertiary,
-                            inactiveColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            modifier = Modifier.fillMaxWidth(0.6f)
-                        )
+                        TitledContent(
+                            title = stringResource(Res.string.rating),
+                            color = if (state.ratingChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
+                                .combinedClickable(
+                                    onClick = {
+                                        if (state.isEditing) {
+                                            curEditType = EditType.RATING
+                                            showEditDialog = true
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
+                                        curEditType = EditType.RATING
+                                        showEditDialog = true
+                                    }
+                                ),
+                        ) {
+                            BookChip {
+                                Text(
+                                    text = if (state.rating > 0) "${state.rating}/5" else "–",
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Rating",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                         Text(
                             text = state.title,
                             style = MaterialTheme.typography.headlineSmall,
@@ -336,6 +369,112 @@ fun DetailsScreen(
                                     }
                                 )
                         )
+                    }
+                    // Rating, Tension, Spice, Emotion -------------------------------------------
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                vertical = 8.dp,
+                                horizontal = 16.dp
+                            ),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        TitledContent(
+                            title = stringResource(Res.string.tension_level),
+                            color = if (state.tensionLevelChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
+                                .combinedClickable (
+                                    onClick = {
+                                        if (state.isEditing) {
+                                            curEditType = EditType.TENSION_LEVEL
+                                            showEditDialog = true
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
+                                        curEditType = EditType.TENSION_LEVEL
+                                        showEditDialog = true
+                                    }
+                                ),
+                        ) {
+                            BookChip {
+                                Text(
+                                    text = if (state.tensionLevel > 0) "${state.tensionLevel}/5" else "–",
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.ElectricBolt,
+                                    contentDescription = "Tension Level",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                        TitledContent(
+                            title = stringResource(Res.string.spice_level),
+                            color = if (state.spiceLevelChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
+                                .combinedClickable (
+                                    onClick = {
+                                        if (state.isEditing) {
+                                            curEditType = EditType.SPICE_LEVEL
+                                            showEditDialog = true
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
+                                        curEditType = EditType.SPICE_LEVEL
+                                        showEditDialog = true
+                                    }
+                                ),
+                        ) {
+                            BookChip {
+                                Text(
+                                    text = if (state.spiceLevel > 0) "${state.spiceLevel}/5" else "–",
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.LocalFireDepartment,
+                                    contentDescription = "Spice Level",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                        TitledContent(
+                            title = stringResource(Res.string.emotion_level),
+                            color = if (state.emotionLevelChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
+                                .combinedClickable (
+                                    onClick = {
+                                        if (state.isEditing) {
+                                            curEditType = EditType.EMOTION_LEVEL
+                                            showEditDialog = true
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
+                                        curEditType = EditType.EMOTION_LEVEL
+                                        showEditDialog = true
+                                    }
+                                ),
+                        ) {
+                            BookChip {
+                                Text(
+                                    text = if (state.emotionLevel > 0) "${state.emotionLevel}/5" else "–",
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.WaterDrop,
+                                    contentDescription = "Emotion Level",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     }
                     // Pages, Price, Status -------------------------------------------------------
                     Row(

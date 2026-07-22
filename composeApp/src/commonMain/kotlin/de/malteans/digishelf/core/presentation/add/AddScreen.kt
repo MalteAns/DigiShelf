@@ -9,11 +9,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +30,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
-import de.malteans.digishelf.core.presentation.add.components.RatingBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
 import de.malteans.digishelf.core.presentation.details.components.ImagePicker
@@ -346,12 +350,45 @@ fun AddScreen(
                     Text(stringResource(Res.string.ebook))
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                // Rating with clickable stars
-                RatingBar(
-                    current = state.rating,
-                    onRatingChanged = { newRating ->
-                        onAction(AddAction.OnRatingChanged(newRating))
-                    },
+            }
+            // Rating, Tension, Spice, Emotion sliders -----------------------------------------------
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                LevelSliderAdd(
+                    value = state.rating,
+                    onValueChange = { onAction(AddAction.OnRatingChanged(it)) },
+                    label = stringResource(Res.string.rating),
+                    icon = Icons.Filled.Star,
+                    modifier = Modifier.weight(1f)
+                )
+                LevelSliderAdd(
+                    value = state.tensionLevel,
+                    onValueChange = { onAction(AddAction.OnTensionLevelChanged(it)) },
+                    label = stringResource(Res.string.tension_level),
+                    icon = Icons.Filled.ElectricBolt,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                LevelSliderAdd(
+                    value = state.spiceLevel,
+                    onValueChange = { onAction(AddAction.OnSpiceLevelChanged(it)) },
+                    label = stringResource(Res.string.spice_level),
+                    icon = Icons.Filled.LocalFireDepartment,
+                    modifier = Modifier.weight(1f)
+                )
+                LevelSliderAdd(
+                    value = state.emotionLevel,
+                    onValueChange = { onAction(AddAction.OnEmotionLevelChanged(it)) },
+                    label = stringResource(Res.string.emotion_level),
+                    icon = Icons.Filled.WaterDrop,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -456,6 +493,38 @@ fun AddScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun LevelSliderAdd(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { onValueChange(it.toInt()) },
+            valueRange = 0f..5f,
+            steps = 4,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Text(
+            text = "$value/5",
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
 

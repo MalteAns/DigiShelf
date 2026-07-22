@@ -40,6 +40,12 @@ class DetailsViewModel (
         val isbnChanged = state.isbn != book?.isbn
         val ratingChanged = !((state.rating == book?.rating) ||
                 (state.rating == 0 && book?.rating == null))
+        val tensionLevelChanged = !((state.tensionLevel == book?.tensionLevel) ||
+                (state.tensionLevel == 0 && book?.tensionLevel == null))
+        val spiceLevelChanged = !((state.spiceLevel == book?.spiceLevel) ||
+                (state.spiceLevel == 0 && book?.spiceLevel == null))
+        val emotionLevelChanged = !((state.emotionLevel == book?.emotionLevel) ||
+                (state.emotionLevel == 0 && book?.emotionLevel == null))
         val titleChanged = state.title != book?.title
         val authorChanged = state.author != book?.author
         val priceChanged = state.price != book?.price || state.currency != book?.currency
@@ -57,6 +63,9 @@ class DetailsViewModel (
             imageUrlChanged = coverImageChanged,
             isbnChanged = isbnChanged,
             ratingChanged = ratingChanged,
+            tensionLevelChanged = tensionLevelChanged,
+            spiceLevelChanged = spiceLevelChanged,
+            emotionLevelChanged = emotionLevelChanged,
             titleChanged = titleChanged,
             authorChanged = authorChanged,
             priceChanged = priceChanged,
@@ -65,7 +74,8 @@ class DetailsViewModel (
             statusChanged = statusChanged,
             readingTimeChanged = readingTimeChanged,
             seriesChanged = seriesChanged,
-            somethingChanged = coverImageChanged || isbnChanged || ratingChanged || titleChanged ||
+            somethingChanged = coverImageChanged || isbnChanged || ratingChanged || tensionLevelChanged ||
+                    spiceLevelChanged || emotionLevelChanged || titleChanged ||
                     authorChanged || priceChanged || pageCountChanged || statusChanged ||
                     readingTimeChanged || seriesChanged || descriptionChanged,
 
@@ -134,6 +144,15 @@ class DetailsViewModel (
             is DetailsAction.RatingChanged -> {
                 _state.value = _state.value.copy(rating = action.rating)
             }
+            is DetailsAction.TensionLevelChanged -> {
+                _state.value = _state.value.copy(tensionLevel = action.level)
+            }
+            is DetailsAction.SpiceLevelChanged -> {
+                _state.value = _state.value.copy(spiceLevel = action.level)
+            }
+            is DetailsAction.EmotionLevelChanged -> {
+                _state.value = _state.value.copy(emotionLevel = action.level)
+            }
             is DetailsAction.DescriptionChanged -> {
                 _state.value = _state.value.copy(description = action.description)
             }
@@ -159,6 +178,18 @@ class DetailsViewModel (
                     rating = when (_state.value.rating) {
                         0 -> null
                         else -> _state.value.rating
+                    },
+                    tensionLevel = when (_state.value.tensionLevel) {
+                        0 -> null
+                        else -> _state.value.tensionLevel
+                    },
+                    spiceLevel = when (_state.value.spiceLevel) {
+                        0 -> null
+                        else -> _state.value.spiceLevel
+                    },
+                    emotionLevel = when (_state.value.emotionLevel) {
+                        0 -> null
+                        else -> _state.value.emotionLevel
                     },
                     title = _state.value.title,
                     author = _state.value.author,
@@ -205,6 +236,9 @@ class DetailsViewModel (
                 imageUrl = book.imageUrl,
                 isbn = book.isbn,
                 rating = book.rating ?: 0,
+                tensionLevel = book.tensionLevel ?: 0,
+                spiceLevel = book.spiceLevel ?: 0,
+                emotionLevel = book.emotionLevel ?: 0,
                 title = book.title,
                 author = book.author,
                 pageCount = book.pageCount,

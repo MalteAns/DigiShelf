@@ -18,6 +18,9 @@ data class BookExportDto (
     val bookSeriesId: Long? = null,
 
     val rating: Int? = null,
+    val tensionLevel: Int? = null,
+    val spiceLevel: Int? = null,
+    val emotionLevel: Int? = null,
     val readStatus: Boolean = false,
     val readingTime: Int? = null,
     val possessionStatus: Boolean = false,

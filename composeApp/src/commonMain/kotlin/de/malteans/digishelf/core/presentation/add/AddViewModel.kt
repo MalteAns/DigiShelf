@@ -73,6 +73,15 @@ class AddViewModel (
             is AddAction.OnRatingChanged -> {
                 _state.value = _state.value.copy(rating = action.rating)
             }
+            is AddAction.OnTensionLevelChanged -> {
+                _state.value = _state.value.copy(tensionLevel = action.level)
+            }
+            is AddAction.OnSpiceLevelChanged -> {
+                _state.value = _state.value.copy(spiceLevel = action.level)
+            }
+            is AddAction.OnEmotionLevelChanged -> {
+                _state.value = _state.value.copy(emotionLevel = action.level)
+            }
             is AddAction.OnPagesChanged -> {
                 _state.value = _state.value.copy(
                     pages = action.pages,
@@ -169,6 +178,9 @@ class AddViewModel (
                 val readStatus = _state.value.readStatus
                 val eBookStatus = _state.value.eBookStatus
                 val rating = _state.value.rating
+                val tensionLevel = _state.value.tensionLevel
+                val spiceLevel = _state.value.spiceLevel
+                val emotionLevel = _state.value.emotionLevel
                 val pageCount = _state.value.pages.toIntOrNull()
                 val price = _state.value.price.toDoubleOrNull()
                 val imageUrl = _state.value.imageUrl
@@ -182,6 +194,9 @@ class AddViewModel (
                     readStatus = readStatus,
                     eBookStatus = eBookStatus,
                     rating = rating,
+                    tensionLevel = tensionLevel,
+                    spiceLevel = spiceLevel,
+                    emotionLevel = emotionLevel,
                     pageCount = pageCount,
                     imageUrl = imageUrl,
                     price = price,

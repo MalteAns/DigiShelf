@@ -124,4 +124,7 @@
     <string name="series_details_topbar_title">Series “%1$s”</string>
     <string name="series_details_no_books">No books found for this series.</string>
     <string name="series_details_no_description">No description available.</string>
+    <string name="tension_level">Tension</string>
+    <string name="spice_level">Spice</string>
+    <string name="emotion_level">Emotion</string>
 </resources>
