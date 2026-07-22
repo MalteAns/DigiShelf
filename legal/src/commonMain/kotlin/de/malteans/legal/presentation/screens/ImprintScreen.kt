@@ -10,12 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import digishelf.legal.generated.resources.*
+import de.malteans.legal.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImprintScreen(
+    email: String = "contact@malteans.de",
     navigateBack: () -> Unit,
 ) {
     Scaffold(
@@ -54,7 +55,7 @@ fun ImprintScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            Text("${stringResource(Res.string.imprint_email_label)}: pixlists@malteans.de")
+            Text("${stringResource(Res.string.imprint_email_label)}: $email")
 
             Spacer(Modifier.height(8.dp))
 

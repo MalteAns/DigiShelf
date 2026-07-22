@@ -6,7 +6,9 @@
 ## NavGraph:
 ```kotlin
 navigation<Route.LegalNav>(
-    startDestination = LegalRoute.Imprint
+    startDestination = LegalRoute.Imprint,
+    enterTransition = { slideInHorizontally { it } },
+    popExitTransition = { slideOutHorizontally { it } },
 ) {
     composable<LegalRoute.Imprint> {
         ImprintScreen(

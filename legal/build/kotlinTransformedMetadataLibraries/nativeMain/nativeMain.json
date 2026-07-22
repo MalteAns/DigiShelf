@@ -1,0 +1,1532 @@
+[
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "io.github.kevinnzou",
+        "name": "compose-webview-multiplatform"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "io.github.kevinnzou",
+        "name": "compose-webview-multiplatform"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/io.github.kevinnzou-compose-webview-multiplatform-2.0.3-iosMain-oGgcfQ.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-1.11.1-iosMain-Bd9dog.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-1.11.1-darwinMain-Bd9dog.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-1.11.1-nativeMain-Bd9dog.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-1.11.1-nonJvmMain-c2sWlw.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-1.11.1-skikoMain-c2sWlw.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.components-components-resources-1.11.1-iosMain-4n6I0w.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.components-components-resources-1.11.1-nativeMain-4n6I0w.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.components",
+        "name": "components-resources"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.components-components-resources-1.11.1-skikoMain-1DbaQA.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-1.11.1-iosMain-QX0NHg.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-1.11.1-nativeMain-QX0NHg.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-1.11.1-nonJvmMain-XXKw3w.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-1.11.1-skikoMain-XXKw3w.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-tooling-preview"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-tooling-preview"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-tooling-preview-1.11.1-nonJvmMain-BsDNPw.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.material3-material3-1.9.0-darwinMain-ZkaPNQ.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.material3-material3-1.9.0-nativeMain-ZkaPNQ.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.material3-material3-1.9.0-nonJvmMain-PrP0Cw.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.material3",
+        "name": "material3"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.material3-material3-1.9.0-skikoMain-PrP0Cw.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-backhandler"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-backhandler"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-backhandler-1.11.1-jbMain-SuAZcQ.klib",
+    "sourceSetName": "jbMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "com.mikepenz",
+        "name": "aboutlibraries-compose-m3"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "com.mikepenz",
+        "name": "aboutlibraries-compose-m3"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/com.mikepenz-aboutlibraries-compose-m3-15.0.4-nativeMain-4Eg7Qg.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "co.touchlab",
+        "name": "kermit"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "co.touchlab",
+        "name": "kermit"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-kermit-2.0.3-nativeMain-PhOYsA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "co.touchlab",
+        "name": "kermit"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "co.touchlab",
+        "name": "kermit"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-kermit-2.0.3-commonMain-PhOYsA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-coroutines-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-coroutines-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-coroutines-core-1.10.2-nativeDarwinMain--jzUgA.klib",
+    "sourceSetName": "nativeDarwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-coroutines-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-coroutines-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-coroutines-core-1.10.2-nativeMain-wJOvIw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-json"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-json"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-serialization-json-1.11.0-nativeMain-1M5Mww.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-json"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-json"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-serialization-json-1.11.0-commonMain-1M5Mww.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.collection",
+        "name": "collection"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.collection",
+        "name": "collection"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.collection-collection-1.5.0-darwinMain-1oCDtg.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.collection",
+        "name": "collection"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.collection",
+        "name": "collection"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.collection-collection-1.5.0-unixMain-j7f1lg.klib",
+    "sourceSetName": "unixMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.collection",
+        "name": "collection"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.collection",
+        "name": "collection"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.collection-collection-1.5.0-nativeMain-j7f1lg.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.collection",
+        "name": "collection"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.collection",
+        "name": "collection"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.collection-collection-1.5.0-nonJvmMain-j7f1lg.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.animation-animation-1.11.1-nonJvmMain-wp24gA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.animation-animation-1.11.1-nonAndroidMain-wp24gA.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation-layout"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation-layout"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-layout-1.11.1-nonJvmMain-4i_NWA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation-layout"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.foundation",
+        "name": "foundation-layout"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.foundation-foundation-layout-1.11.1-skikoMain-4i_NWA.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-text-1.11.1-iosMain-gfT-LA.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-text-1.11.1-darwinMain-gfT-LA.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-text-1.11.1-nativeMain-gfT-LA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-text-1.11.1-nonJvmMain-XOUhsQ.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-text"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-text-1.11.1-skikoMain-XOUhsQ.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-uikit"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-uikit"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-uikit-1.11.1-iosMain-g8M-QQ.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-util"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-util"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-util-1.11.1-iosMain-L2xsQw.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-util"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-util"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-util-1.11.1-nonJvmMain-PnqG8w.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.28.0-appleMain-U-HXlg.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.28.0-nativeUnixLikeMain-UmPgNA.klib",
+    "sourceSetName": "nativeUnixLikeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.28.0-nativeMain-UmPgNA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.28.0-concurrentMain-UmPgNA.klib",
+    "sourceSetName": "concurrentMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "atomicfu"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.28.0-commonMain-UmPgNA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-iosMain-9wZN-w.klib",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-uikitMain-9wZN-w.klib",
+    "sourceSetName": "uikitMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-darwinMain-9wZN-w.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-nativeMain-Uz8PKA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-nativeJsMain-Uz8PKA.klib",
+    "sourceSetName": "nativeJsMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.skiko",
+        "name": "skiko"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.skiko-skiko-0.144.6-commonMain-Uz8PKA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.compose.runtime-runtime-1.11.2-nonJvmMain-wNX9OQ.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.compose.runtime-runtime-1.11.2-nativeMain-wNX9OQ.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.compose.runtime",
+        "name": "runtime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.compose.runtime-runtime-1.11.2-nonAndroidMain-wNX9OQ.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.annotation",
+        "name": "annotation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.annotation",
+        "name": "annotation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.annotation-annotation-1.9.1-nonJvmMain-WmoUwA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.compose.runtime",
+        "name": "runtime-retain"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.compose.runtime",
+        "name": "runtime-retain"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.compose.runtime-runtime-retain-1.11.2-nonJvmMain-c_A_bA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.navigationevent-navigationevent-1.0.1-darwinMain-v-PyAQ.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.navigationevent-navigationevent-1.0.1-unixMain-CVCQsg.klib",
+    "sourceSetName": "unixMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.navigationevent-navigationevent-1.0.1-nativeMain-CVCQsg.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.navigationevent",
+        "name": "navigationevent"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.navigationevent-navigationevent-1.0.1-commonMain-CVCQsg.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.savedstate",
+        "name": "savedstate-compose"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.savedstate",
+        "name": "savedstate-compose"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.savedstate-savedstate-compose-1.4.0-nonAndroidMain-YfHBdg.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.androidx.lifecycle-lifecycle-viewmodel-2.9.6-commonMain-o5UeXw.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.androidx.lifecycle-lifecycle-viewmodel-savedstate-2.9.6-commonMain-HvVjYQ.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.annotation-internal",
+        "name": "annotation"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.annotation-internal",
+        "name": "annotation"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.annotation-internal-annotation-1.10.0-commonMain-jG1XTg.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.collection-internal",
+        "name": "collection"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.collection-internal",
+        "name": "collection"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.collection-internal-collection-1.10.0-commonMain-PdmhIQ.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-graphics-1.11.1-nativeMain-yEDwyA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-graphics-1.11.1-skikoExcludingWebMain-wpXktQ.klib",
+    "sourceSetName": "skikoExcludingWebMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-graphics-1.11.1-nonJvmMain-wpXktQ.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-graphics"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-graphics-1.11.1-skikoMain-wpXktQ.klib",
+    "sourceSetName": "skikoMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-unit"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-unit"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-unit-1.11.1-nonJvmMain-wEofVA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-unit"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.ui",
+        "name": "ui-unit"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.ui-ui-unit-1.11.1-nonAndroidMain-wEofVA.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.animation-animation-core-1.11.1-appleMain-ZaBDAQ.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.animation",
+        "name": "animation-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.animation-animation-core-1.11.1-nonJvmMain-M3Z-Fw.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.compose.material",
+        "name": "material-ripple"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.compose.material",
+        "name": "material-ripple"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.compose.material-material-ripple-1.9.1-nonAndroidMain-tnX3iQ.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.7.1-darwinMain-HeEIcg.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.7.1-tzdbOnFilesystemMain-uTxUqg.klib",
+    "sourceSetName": "tzdbOnFilesystemMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.7.1-tzfileMain-uTxUqg.klib",
+    "sourceSetName": "tzfileMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.7.1-commonKotlinMain-uTxUqg.klib",
+    "sourceSetName": "commonKotlinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-datetime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.7.1-commonMain-uTxUqg.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "com.mikepenz",
+        "name": "aboutlibraries-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "com.mikepenz",
+        "name": "aboutlibraries-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/com.mikepenz-aboutlibraries-core-15.0.4-multiplatformMain-W-WBxQ.klib",
+    "sourceSetName": "multiplatformMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-kermit-core-2.0.3-appleMain-WBU2sg.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-kermit-core-2.0.3-nativeMain-sXpuEA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "co.touchlab",
+        "name": "kermit-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-kermit-core-2.0.3-commonMain-sXpuEA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-core"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-core"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-serialization-core-1.11.0-nativeMain-POu6Pw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.savedstate-savedstate-1.4.0-darwinMain-PeDSBw.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.savedstate-savedstate-1.4.0-unixMain-JkDvJw.klib",
+    "sourceSetName": "unixMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.savedstate-savedstate-1.4.0-nativeMain-JkDvJw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.savedstate",
+        "name": "savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.savedstate-savedstate-1.4.0-nonAndroidMain-JkDvJw.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime-compose"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime-compose"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-runtime-compose-2.9.4-nonAndroidMain-Jyns3Q.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-2.9.4-darwinMain-eMK4cw.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-2.9.4-unixMain-YZugNA.klib",
+    "sourceSetName": "unixMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-2.9.4-nativeMain-YZugNA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-2.9.4-nonJvmMain-YZugNA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-2.9.4-commonMain-YZugNA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-savedstate-2.9.4-nativeMain-KTe1Gw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-savedstate-2.9.4-nonAndroidMain-KTe1Gw.klib",
+    "sourceSetName": "nonAndroidMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-viewmodel-savedstate"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-viewmodel-savedstate-2.9.4-commonMain-KTe1Gw.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-common"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-common"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-common-2.9.4-nonJvmMain-2l5nFA.klib",
+    "sourceSetName": "nonJvmMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-runtime-2.9.4-nativeMain-IrcNlw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": {
+      "groupAndName": {
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime"
+      },
+      "componentId": {
+        "type": "module",
+        "group": "androidx.lifecycle",
+        "name": "lifecycle-runtime"
+      }
+    },
+    "file": "/home/malte/GitHub/DigiShelf/legal/build/kotlinTransformedMetadataLibraries/nativeMain/androidx.lifecycle-lifecycle-runtime-2.9.4-nonJvmMain-IrcNlw.klib",
+    "sourceSetName": "nonJvmMain"
+  }
+]

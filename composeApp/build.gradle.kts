@@ -1,13 +1,10 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 
-    alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
 
@@ -21,9 +18,13 @@ aboutLibraries {
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+    android {
+        namespace = "de.malteans.digishelf.composeapp"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        withJava()
+        androidResources {
+            enable = true
         }
     }
 
@@ -45,7 +46,7 @@ kotlin {
     sourceSets {
 
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.koin.android)
@@ -64,16 +65,10 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.legal)
 
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.bundles.compose)
 
             // Koin (DI)
             api(libs.koin.core)
@@ -91,8 +86,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             // Material 3
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.materialIconsExtended)
 
             // Coil (Image loading)
             implementation(libs.bundles.coil)
@@ -101,10 +96,7 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             // FilePicker
-            implementation(libs.filekit.core)
-            implementation(libs.filekit.dialogs)
-            implementation(libs.filekit.dialogs.compose)
-            implementation(libs.filekit.coil)
+            implementation(libs.bundles.filekit)
 
             // Back Handler
             implementation(libs.ui.backhandler)
@@ -118,46 +110,8 @@ kotlin {
     }
 }
 
-android {
-    namespace = "de.malteans.digishelf"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = libs.versions.applicationId.get()
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = libs.versions.projectVersionCode.get().toInt()
-        versionName = libs.versions.projectVersionName.get()
-        versionNameSuffix = libs.versions.projectVersionNameSuffix.get()
-
-        buildFeatures.buildConfig = true
-        val googleApiKey: String = gradleLocalProperties(rootDir, rootProject.providers)
-            .getProperty("GOOGLE_API_KEY")
-            ?: System.getenv("GOOGLE_API_KEY")
-            ?: throw IllegalStateException(
-                "Missing GOOGLE_API_KEY property in local.properties or environment variable"
-            )
-        buildConfigField("String", "GOOGLE_API_KEY", "\"$googleApiKey\"")
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-}
-
 dependencies {
-    debugImplementation(compose.uiTooling)
+    add("androidRuntimeClasspath", libs.compose.ui.tooling)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)

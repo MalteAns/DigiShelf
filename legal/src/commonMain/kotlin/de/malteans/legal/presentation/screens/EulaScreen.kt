@@ -8,9 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import de.malteans.legal.presentation.components.WebViewContent
-import digishelf.legal.generated.resources.Res
-import digishelf.legal.generated.resources.eula_title
-import digishelf.legal.generated.resources.navigate_back
+import de.malteans.legal.resources.Res
+import de.malteans.legal.resources.eula_title
+import de.malteans.legal.resources.navigate_back
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
