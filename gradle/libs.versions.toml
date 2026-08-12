@@ -26,16 +26,16 @@ navigationCompose = "2.9.2"
 kotlinSerialization = "1.11.0"
 koin = "4.2.2"
 
-ksp = "2.3.10"
+ksp = "2.3.11"
 sqlite = "2.7.0"
 room = "2.8.4"
 
 kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
 coil3 = "3.5.0"
-ktor = "3.5.1"
+ktor = "3.5.2"
 
-fileKit = "0.14.2"
+fileKit = "0.15.0"
 
 kotlinStdlib = "2.4.10"
 aboutLibraries = "15.0.4"
