@@ -3,11 +3,14 @@ package de.malteans.digishelf.core.presentation.details.components
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.author
 import digishelf.composeapp.generated.resources.book_series
+import digishelf.composeapp.generated.resources.chapter_length
 import digishelf.composeapp.generated.resources.cover_image
 import digishelf.composeapp.generated.resources.description
 import digishelf.composeapp.generated.resources.emotion_level
+import digishelf.composeapp.generated.resources.ending_rating
 import digishelf.composeapp.generated.resources.isbn
 import digishelf.composeapp.generated.resources.pages
+import digishelf.composeapp.generated.resources.plot_rating
 import digishelf.composeapp.generated.resources.price
 import digishelf.composeapp.generated.resources.rating
 import digishelf.composeapp.generated.resources.reading_time
@@ -26,6 +29,9 @@ enum class EditType {
     TENSION_LEVEL,
     SPICE_LEVEL,
     EMOTION_LEVEL,
+    CHAPTER_LENGTH,
+    ENDING_RATING,
+    PLOT_RATING,
     PAGE_COUNT,
     PRICE,
     STATUS,
@@ -43,6 +49,9 @@ enum class EditType {
             TENSION_LEVEL -> Res.string.tension_level
             SPICE_LEVEL -> Res.string.spice_level
             EMOTION_LEVEL -> Res.string.emotion_level
+            CHAPTER_LENGTH -> Res.string.chapter_length
+            ENDING_RATING -> Res.string.ending_rating
+            PLOT_RATING -> Res.string.plot_rating
             PAGE_COUNT -> Res.string.pages
             PRICE -> Res.string.price
             STATUS -> Res.string.status

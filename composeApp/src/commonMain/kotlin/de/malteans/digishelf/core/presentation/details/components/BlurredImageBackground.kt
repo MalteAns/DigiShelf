@@ -3,7 +3,6 @@ package de.malteans.digishelf.core.presentation.details.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOutBack
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -23,6 +22,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -47,6 +47,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.add_cover_image
+import digishelf.composeapp.generated.resources.back
+import digishelf.composeapp.generated.resources.book_cover
+import digishelf.composeapp.generated.resources.edit
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BlurredImageBackground(
@@ -109,7 +115,7 @@ fun BlurredImageBackground(
                     if (hasValidImage) {
                         Image(
                             painter = painter,
-                            contentDescription = "Book cover",
+                            contentDescription = stringResource(Res.string.book_cover),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -122,8 +128,8 @@ fun BlurredImageBackground(
                             .background(
                                 brush = Brush.verticalGradient(
                                     colors = listOf(
-                                        Color.Transparent,
-                                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f),
+                                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.2f),
+                                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.6f),
                                         MaterialTheme.colorScheme.surfaceContainer
                                     )
                                 )
@@ -152,7 +158,7 @@ fun BlurredImageBackground(
                                 }
                         ) {
                             Text(
-                                text = "Add cover image",
+                                text = stringResource(Res.string.add_cover_image),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -165,12 +171,13 @@ fun BlurredImageBackground(
                         .absoluteOffset(y = (-120).dp)
                 ) {
                     if (hasValidImage) {
-                        val scale by animateFloatAsState(
-                            targetValue = 1f,
-                            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
-                            label = "imageScale"
-                        )
-
+                        val transition = remember { Animatable(0f) }
+                        LaunchedEffect(Unit) {
+                            transition.animateTo(
+                                targetValue = 1f,
+                                animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
+                            )
+                        }
                         ElevatedCard(
                             onClick = onImageClick ?: {},
                             enabled = onImageClick != null,
@@ -182,18 +189,40 @@ fun BlurredImageBackground(
                                 .height(230.dp)
                                 .aspectRatio(2 / 3f)
                                 .graphicsLayer {
+                                    rotationX = (1f - transition.value) * 20f
+                                    val scale = 0.7f + (0.3f * transition.value)
                                     scaleX = scale
                                     scaleY = scale
                                 }
                         ) {
-                            Image(
-                                painter = painter,
-                                contentDescription = "Book Cover",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Transparent)
-                            )
+                            Box {
+                                Image(
+                                    painter = painter,
+                                    contentDescription = stringResource(Res.string.book_cover),
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color.Transparent)
+                                )
+                                if (isEditing) {
+                                    val alpha = remember { Animatable(0f) }
+                                    LaunchedEffect(Unit) {
+                                        alpha.animateTo(1f)
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .graphicsLayer { this.alpha = alpha.value }
+                                            .fillMaxSize()
+                                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = stringResource(Res.string.edit),
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                     content()
@@ -211,9 +240,23 @@ fun BlurredImageBackground(
                 .padding(top = 16.dp, start = 16.dp)
                 .statusBarsPadding()
         ) {
+            val backgroundAlpha = remember { Animatable(0f) }
+            LaunchedEffect(scrollState.canScrollBackward) {
+                if (scrollState.canScrollBackward) {
+                    backgroundAlpha.animateTo(0.5f)
+                } else {
+                    backgroundAlpha.animateTo(0f)
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .graphicsLayer { alpha = backgroundAlpha.value }
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(Res.string.back),
             )
         }
 

@@ -126,6 +126,18 @@
     <string name="series_details_no_books">Keine Bücher für diese Serie gefunden.</string>
     <string name="series_details_no_description">Keine Beschreibung vorhanden.</string>
     <string name="tension_level">Spannung</string>
-    <string name="spice_level">Schärfe</string>
+    <string name="spice_level">Spice</string>
     <string name="emotion_level">Emotion</string>
+    <string name="chapter_length">Kapitel Länge</string>
+    <string name="ending_rating">Ende</string>
+    <string name="plot_rating">Plot</string>
+    <string name="add_cover_image">Cover Bild hinzufügen</string>
+    <string name="book_cover">Buchcover</string>
+    <string name="done">Fertig</string>
+    <string name="pick_image">Bild auswählen</string>
+    <string name="open_in_browser">Im Browser öffnen</string>
+    <string name="delete_book">Buch löschen</string>
+    <string name="possession_status">Besitzstatus</string>
+    <string name="read_status">Gelesen-Status</string>
+    <string name="ebook_status">E-Book-Status</string>
 </resources>

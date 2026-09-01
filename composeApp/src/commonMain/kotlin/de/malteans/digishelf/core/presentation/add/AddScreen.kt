@@ -1,9 +1,21 @@
 package de.malteans.digishelf.core.presentation.add
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,16 +26,41 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.outlined.ElectricBolt
+import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.HourglassBottom
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.Terrain
 import androidx.compose.material.icons.outlined.WaterDrop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -38,7 +75,35 @@ import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
 import de.malteans.digishelf.core.presentation.details.components.ImagePicker
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
-import digishelf.composeapp.generated.resources.*
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.add_book
+import digishelf.composeapp.generated.resources.author
+import digishelf.composeapp.generated.resources.auto_complete
+import digishelf.composeapp.generated.resources.back
+import digishelf.composeapp.generated.resources.book_added_success
+import digishelf.composeapp.generated.resources.book_series
+import digishelf.composeapp.generated.resources.chapter_length
+import digishelf.composeapp.generated.resources.cover_image
+import digishelf.composeapp.generated.resources.data_incomplete
+import digishelf.composeapp.generated.resources.ebook
+import digishelf.composeapp.generated.resources.emotion_level
+import digishelf.composeapp.generated.resources.ending_rating
+import digishelf.composeapp.generated.resources.error_msg_add_incomplete
+import digishelf.composeapp.generated.resources.is_double_isbn
+import digishelf.composeapp.generated.resources.isbn
+import digishelf.composeapp.generated.resources.owned
+import digishelf.composeapp.generated.resources.pages
+import digishelf.composeapp.generated.resources.pick_image
+import digishelf.composeapp.generated.resources.plot_rating
+import digishelf.composeapp.generated.resources.price
+import digishelf.composeapp.generated.resources.rating
+import digishelf.composeapp.generated.resources.read
+import digishelf.composeapp.generated.resources.scan
+import digishelf.composeapp.generated.resources.show
+import digishelf.composeapp.generated.resources.spice_level
+import digishelf.composeapp.generated.resources.submit
+import digishelf.composeapp.generated.resources.tension_level
+import digishelf.composeapp.generated.resources.title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -371,7 +436,7 @@ fun AddScreen(
                     modifier = Modifier.fillMaxWidth(0.7f)
                 )
             }
-            // Tension, Spice, Emotion bars ---------------------------------------
+            // Tension, Spice, Emotion, Chapter Length, Ending, Plot bars ---------------------------------------
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -416,6 +481,52 @@ fun AddScreen(
                     contentDescription = stringResource(Res.string.emotion_level),
                     modifier = Modifier.fillMaxWidth(0.7f)
                 )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                LevelBar(
+                    current = state.chapterLength,
+                    onLevelChanged = { onAction(AddAction.OnChapterLengthChanged(it)) },
+                    activeIcon = Icons.Filled.HourglassBottom,
+                    inactiveIcon = Icons.Outlined.HourglassBottom,
+                    contentDescription = stringResource(Res.string.chapter_length),
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                LevelBar(
+                    current = state.endingRating,
+                    onLevelChanged = { onAction(AddAction.OnEndingRatingChanged(it)) },
+                    activeIcon = Icons.Filled.Flag,
+                    inactiveIcon = Icons.Outlined.Flag,
+                    contentDescription = stringResource(Res.string.ending_rating),
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                LevelBar(
+                    current = state.plotRating,
+                    onLevelChanged = { onAction(AddAction.OnPlotRatingChanged(it)) },
+                    activeIcon = Icons.Filled.Terrain,
+                    inactiveIcon = Icons.Outlined.Terrain,
+                    contentDescription = stringResource(Res.string.plot_rating),
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+
             }
             Row (
                 verticalAlignment = Alignment.CenterVertically
@@ -501,7 +612,7 @@ fun AddScreen(
                     IconButton({ showImagePicker = true }) {
                         Icon(
                             imageVector = Icons.Default.FileOpen,
-                            contentDescription = "Pick Image"
+                            contentDescription = stringResource(Res.string.pick_image)
                         )
                     }
                 },

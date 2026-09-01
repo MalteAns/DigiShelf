@@ -7,7 +7,15 @@ import de.malteans.digishelf.core.domain.BookRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,6 +54,12 @@ class DetailsViewModel (
                 (state.spiceLevel == 0 && book?.spiceLevel == null))
         val emotionLevelChanged = !((state.emotionLevel == book?.emotionLevel) ||
                 (state.emotionLevel == 0 && book?.emotionLevel == null))
+        val chapterLengthChanged = !((state.chapterLength == book?.chapterLength) ||
+                (state.chapterLength == 0 && book?.chapterLength == null))
+        val endingRatingChanged = !((state.endingRating == book?.endingRating) ||
+                (state.endingRating == 0 && book?.endingRating == null))
+        val plotRatingChanged = !((state.plotRating == book?.plotRating) ||
+                (state.plotRating == 0 && book?.plotRating == null))
         val titleChanged = state.title != book?.title
         val authorChanged = state.author != book?.author
         val priceChanged = state.price != book?.price || state.currency != book?.currency
@@ -66,6 +80,9 @@ class DetailsViewModel (
             tensionLevelChanged = tensionLevelChanged,
             spiceLevelChanged = spiceLevelChanged,
             emotionLevelChanged = emotionLevelChanged,
+            chapterLengthChanged = chapterLengthChanged,
+            endingRatingChanged = endingRatingChanged,
+            plotRatingChanged = plotRatingChanged,
             titleChanged = titleChanged,
             authorChanged = authorChanged,
             priceChanged = priceChanged,
@@ -75,7 +92,8 @@ class DetailsViewModel (
             readingTimeChanged = readingTimeChanged,
             seriesChanged = seriesChanged,
             somethingChanged = coverImageChanged || isbnChanged || ratingChanged || tensionLevelChanged ||
-                    spiceLevelChanged || emotionLevelChanged || titleChanged ||
+                    spiceLevelChanged || emotionLevelChanged || chapterLengthChanged || endingRatingChanged ||
+                    plotRatingChanged || titleChanged ||
                     authorChanged || priceChanged || pageCountChanged || statusChanged ||
                     readingTimeChanged || seriesChanged || descriptionChanged,
 
@@ -153,6 +171,15 @@ class DetailsViewModel (
             is DetailsAction.EmotionLevelChanged -> {
                 _state.value = _state.value.copy(emotionLevel = action.level)
             }
+            is DetailsAction.ChapterLengthChanged -> {
+                _state.value = _state.value.copy(chapterLength = action.level)
+            }
+            is DetailsAction.EndingRatingChanged -> {
+                _state.value = _state.value.copy(endingRating = action.level)
+            }
+            is DetailsAction.PlotRatingChanged -> {
+                _state.value = _state.value.copy(plotRating = action.level)
+            }
             is DetailsAction.DescriptionChanged -> {
                 _state.value = _state.value.copy(description = action.description)
             }
@@ -190,6 +217,18 @@ class DetailsViewModel (
                     emotionLevel = when (_state.value.emotionLevel) {
                         0 -> null
                         else -> _state.value.emotionLevel
+                    },
+                    chapterLength = when (_state.value.chapterLength) {
+                        0 -> null
+                        else -> _state.value.chapterLength
+                    },
+                    endingRating = when (_state.value.endingRating) {
+                        0 -> null
+                        else -> _state.value.endingRating
+                    },
+                    plotRating = when (_state.value.plotRating) {
+                        0 -> null
+                        else -> _state.value.plotRating
                     },
                     title = _state.value.title,
                     author = _state.value.author,
@@ -239,6 +278,9 @@ class DetailsViewModel (
                 tensionLevel = book.tensionLevel ?: 0,
                 spiceLevel = book.spiceLevel ?: 0,
                 emotionLevel = book.emotionLevel ?: 0,
+                chapterLength = book.chapterLength ?: 0,
+                endingRating = book.endingRating ?: 0,
+                plotRating = book.plotRating ?: 0,
                 title = book.title,
                 author = book.author,
                 pageCount = book.pageCount,

@@ -14,7 +14,12 @@ import digishelf.composeapp.generated.resources.error_completion
 import digishelf.composeapp.generated.resources.error_unknown
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddViewModel (
@@ -81,6 +86,15 @@ class AddViewModel (
             }
             is AddAction.OnEmotionLevelChanged -> {
                 _state.value = _state.value.copy(emotionLevel = action.level)
+            }
+            is AddAction.OnChapterLengthChanged -> {
+                _state.value = _state.value.copy(chapterLength = action.level)
+            }
+            is AddAction.OnEndingRatingChanged -> {
+                _state.value = _state.value.copy(endingRating = action.level)
+            }
+            is AddAction.OnPlotRatingChanged -> {
+                _state.value = _state.value.copy(plotRating = action.level)
             }
             is AddAction.OnPagesChanged -> {
                 _state.value = _state.value.copy(
@@ -181,6 +195,9 @@ class AddViewModel (
                 val tensionLevel = _state.value.tensionLevel
                 val spiceLevel = _state.value.spiceLevel
                 val emotionLevel = _state.value.emotionLevel
+                val chapterLength = _state.value.chapterLength
+                val endingRating = _state.value.endingRating
+                val plotRating = _state.value.plotRating
                 val pageCount = _state.value.pages.toIntOrNull()
                 val price = _state.value.price.toDoubleOrNull()
                 val imageUrl = _state.value.imageUrl
@@ -197,6 +214,9 @@ class AddViewModel (
                     tensionLevel = tensionLevel,
                     spiceLevel = spiceLevel,
                     emotionLevel = emotionLevel,
+                    chapterLength = chapterLength,
+                    endingRating = endingRating,
+                    plotRating = plotRating,
                     pageCount = pageCount,
                     imageUrl = imageUrl,
                     price = price,

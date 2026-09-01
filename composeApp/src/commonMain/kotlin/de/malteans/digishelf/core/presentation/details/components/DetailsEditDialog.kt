@@ -10,14 +10,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
@@ -25,7 +35,16 @@ import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.toPriceString
 import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
-import digishelf.composeapp.generated.resources.*
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.done
+import digishelf.composeapp.generated.resources.ebook
+import digishelf.composeapp.generated.resources.edit_title
+import digishelf.composeapp.generated.resources.ic_tablet
+import digishelf.composeapp.generated.resources.minutes_short
+import digishelf.composeapp.generated.resources.new_label
+import digishelf.composeapp.generated.resources.owned
+import digishelf.composeapp.generated.resources.pick_image
+import digishelf.composeapp.generated.resources.read
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -39,6 +58,9 @@ data class DetailsEditValues(
     val tensionLevel: Int,
     val spiceLevel: Int,
     val emotionLevel: Int,
+    val chapterLength: Int,
+    val endingRating: Int,
+    val plotRating: Int,
     val pageCount: Int?,
     val price: Double?,
     val description: String,
@@ -59,6 +81,9 @@ data class DetailsEditCallbacks(
     val onTensionLevelChanged: (Int) -> Unit,
     val onSpiceLevelChanged: (Int) -> Unit,
     val onEmotionLevelChanged: (Int) -> Unit,
+    val onChapterLengthChanged: (Int) -> Unit,
+    val onEndingRatingChanged: (Int) -> Unit,
+    val onPlotRatingChanged: (Int) -> Unit,
     val onPageCountChanged: (Int?) -> Unit,
     val onPriceChanged: (Double?) -> Unit,
     val onStatusChanged: (owned: Boolean, read: Boolean, ebook: Boolean) -> Unit,
@@ -82,10 +107,13 @@ fun DetailsEditDialog(
     var tempTensionLevel by remember { mutableStateOf(values.tensionLevel) }
     var tempSpiceLevel by remember { mutableStateOf(values.spiceLevel) }
     var tempEmotionLevel by remember { mutableStateOf(values.emotionLevel) }
+    var tempChapterLength by remember { mutableStateOf(values.chapterLength) }
+    var tempEndingRating by remember { mutableStateOf(values.endingRating) }
+    var tempPlotRating by remember { mutableStateOf(values.plotRating) }
 
     var readyToFinish by remember { mutableStateOf(false) }
 
-    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel) {
+    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel, tempChapterLength, tempEndingRating, tempPlotRating) {
         readyToFinish = when (curEditType) {
             EditType.ISBN -> tempString.isIsbnFormat()
             EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
@@ -101,7 +129,8 @@ fun DetailsEditDialog(
                 })
             }
             EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
-            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL -> true
+            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING -> true
         }
     }
 
@@ -119,6 +148,9 @@ fun DetailsEditDialog(
             EditType.TENSION_LEVEL -> values.tensionLevel.toString()
             EditType.SPICE_LEVEL -> values.spiceLevel.toString()
             EditType.EMOTION_LEVEL -> values.emotionLevel.toString()
+            EditType.CHAPTER_LENGTH -> values.chapterLength.toString()
+            EditType.ENDING_RATING -> values.endingRating.toString()
+            EditType.PLOT_RATING -> values.plotRating.toString()
         }
         // Initialize level values when switching to level edit types
         when (curEditType) {
@@ -126,6 +158,9 @@ fun DetailsEditDialog(
             EditType.TENSION_LEVEL -> tempTensionLevel = values.tensionLevel
             EditType.SPICE_LEVEL -> tempSpiceLevel = values.spiceLevel
             EditType.EMOTION_LEVEL -> tempEmotionLevel = values.emotionLevel
+            EditType.CHAPTER_LENGTH -> tempChapterLength = values.chapterLength
+            EditType.ENDING_RATING -> tempEndingRating = values.endingRating
+            EditType.PLOT_RATING -> tempPlotRating = values.plotRating
             else -> {}
         }
     }
@@ -141,6 +176,9 @@ fun DetailsEditDialog(
                 EditType.TENSION_LEVEL -> callbacks.onTensionLevelChanged(tempTensionLevel)
                 EditType.SPICE_LEVEL -> callbacks.onSpiceLevelChanged(tempSpiceLevel)
                 EditType.EMOTION_LEVEL -> callbacks.onEmotionLevelChanged(tempEmotionLevel)
+                EditType.CHAPTER_LENGTH -> callbacks.onChapterLengthChanged(tempChapterLength)
+                EditType.ENDING_RATING -> callbacks.onEndingRatingChanged(tempEndingRating)
+                EditType.PLOT_RATING -> callbacks.onPlotRatingChanged(tempPlotRating)
                 EditType.PAGE_COUNT -> callbacks.onPageCountChanged(tempString.toIntOrNull())
                 EditType.PRICE -> callbacks.onPriceChanged(tempString.toDoubleOrNull())
                 EditType.STATUS -> callbacks.onStatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook)
@@ -175,7 +213,7 @@ fun DetailsEditDialog(
                         EditType.READING_TIME -> Icons.Default.AddCircle
                         else -> Icons.Default.Check
                     },
-                    contentDescription = "Done",
+                    contentDescription = stringResource(Res.string.done),
                     tint = if (readyToFinish) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
@@ -280,7 +318,7 @@ fun DetailsEditDialog(
                         IconButton({ showImagePicker = true }) {
                             Icon(
                                 imageVector = Icons.Default.FileOpen,
-                                contentDescription = "Pick Image"
+                                contentDescription = stringResource(Res.string.pick_image)
                             )
                         }
                     },
@@ -327,6 +365,30 @@ fun DetailsEditDialog(
                 )
             }
 
+            EditType.CHAPTER_LENGTH -> {
+                LevelSlider(
+                    value = tempChapterLength,
+                    onValueChange = { tempChapterLength = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.ENDING_RATING -> {
+                LevelSlider(
+                    value = tempEndingRating,
+                    onValueChange = { tempEndingRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.PLOT_RATING -> {
+                LevelSlider(
+                    value = tempPlotRating,
+                    onValueChange = { tempPlotRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
             else -> {
                 OutlinedTextField(
                     value = tempString,
@@ -345,7 +407,8 @@ fun DetailsEditDialog(
                             EditType.READING_TIME -> Text(text = stringResource(Res.string.minutes_short))
                             EditType.ISBN, EditType.TITLE, EditType.AUTHOR, EditType.PAGE_COUNT,
                             EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE,
-                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> Text(text = "")
                         }
                     },
@@ -355,7 +418,8 @@ fun DetailsEditDialog(
                             EditType.ISBN, EditType.PAGE_COUNT, EditType.PRICE, EditType.READING_TIME -> KeyboardType.Number
                             EditType.TITLE, EditType.AUTHOR, EditType.DESCRIPTION -> KeyboardType.Text
                             EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
-                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         },
                         imeAction = when (curEditType) {
@@ -364,7 +428,8 @@ fun DetailsEditDialog(
 
                             EditType.DESCRIPTION -> ImeAction.Default
                             EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
-                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         }
                     ),

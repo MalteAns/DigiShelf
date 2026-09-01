@@ -1,9 +1,11 @@
 package de.malteans.digishelf.core.presentation.details
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,14 +29,15 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ElectricBolt
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -51,8 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +63,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.malteans.digishelf.core.domain.Book
-import de.malteans.digishelf.core.presentation.add.components.LevelBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.customReadIcon
@@ -69,13 +71,20 @@ import de.malteans.digishelf.core.presentation.details.components.CustomOpenInBr
 import de.malteans.digishelf.core.presentation.details.components.DetailsEditCallbacks
 import de.malteans.digishelf.core.presentation.details.components.DetailsEditDialog
 import de.malteans.digishelf.core.presentation.details.components.DetailsEditValues
+import de.malteans.digishelf.core.presentation.details.components.DetailsInfoChip
+import de.malteans.digishelf.core.presentation.details.components.DetailsMoodLevelRow
+import de.malteans.digishelf.core.presentation.details.components.DetailsRatingBar
 import de.malteans.digishelf.core.presentation.details.components.EditType
 import de.malteans.digishelf.core.presentation.details.components.ImagePicker
 import de.malteans.digishelf.theme.DigiShelfTheme
 import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.chapter_length
+import digishelf.composeapp.generated.resources.delete_book
 import digishelf.composeapp.generated.resources.details_by
+import digishelf.composeapp.generated.resources.ebook_status
 import digishelf.composeapp.generated.resources.edit
 import digishelf.composeapp.generated.resources.emotion_level
+import digishelf.composeapp.generated.resources.ending_rating
 import digishelf.composeapp.generated.resources.error
 import digishelf.composeapp.generated.resources.error_msg_no_title
 import digishelf.composeapp.generated.resources.error_msg_save_changes
@@ -85,9 +94,13 @@ import digishelf.composeapp.generated.resources.ic_tablet
 import digishelf.composeapp.generated.resources.min_per_page
 import digishelf.composeapp.generated.resources.no_description_available
 import digishelf.composeapp.generated.resources.online_description
+import digishelf.composeapp.generated.resources.open_in_browser
 import digishelf.composeapp.generated.resources.own_description
 import digishelf.composeapp.generated.resources.pages_short
+import digishelf.composeapp.generated.resources.plot_rating
+import digishelf.composeapp.generated.resources.possession_status
 import digishelf.composeapp.generated.resources.rating
+import digishelf.composeapp.generated.resources.read_status
 import digishelf.composeapp.generated.resources.save
 import digishelf.composeapp.generated.resources.spice_level
 import digishelf.composeapp.generated.resources.status
@@ -140,6 +153,9 @@ fun DetailsScreen(
     var showConfirmLeaveDialog by remember { mutableStateOf(false) }
     var showNoTitleDialog by remember { mutableStateOf(false) }
 
+    var showEditDialog by remember { mutableStateOf(false) }
+    var curEditType by remember { mutableStateOf(EditType.TITLE) }
+
     fun onDismiss() {
         if (state.isEditing && state.somethingChanged) showConfirmLeaveDialog = true
         else onAction(DetailsAction.OnBack)
@@ -148,9 +164,6 @@ fun DetailsScreen(
     BackHandler {
         onDismiss()
     }
-
-    var showEditDialog by remember { mutableStateOf(false) }
-    var curEditType by remember { mutableStateOf(EditType.TITLE) }
 
     if (showConfirmLeaveDialog) {
         CustomAlertDialog(
@@ -197,6 +210,9 @@ fun DetailsScreen(
                 tensionLevel = state.tensionLevel,
                 spiceLevel = state.spiceLevel,
                 emotionLevel = state.emotionLevel,
+                chapterLength = state.chapterLength,
+                endingRating = state.endingRating,
+                plotRating = state.plotRating,
                 pageCount = state.pageCount,
                 price = state.price,
                 description = state.description,
@@ -216,6 +232,9 @@ fun DetailsScreen(
                 onTensionLevelChanged = { onAction(DetailsAction.TensionLevelChanged(it)) },
                 onSpiceLevelChanged = { onAction(DetailsAction.SpiceLevelChanged(it)) },
                 onEmotionLevelChanged = { onAction(DetailsAction.EmotionLevelChanged(it)) },
+                onChapterLengthChanged = { onAction(DetailsAction.ChapterLengthChanged(it)) },
+                onEndingRatingChanged = { onAction(DetailsAction.EndingRatingChanged(it)) },
+                onPlotRatingChanged = { onAction(DetailsAction.PlotRatingChanged(it)) },
                 onPageCountChanged = { onAction(DetailsAction.PageCountChanged(it)) },
                 onPriceChanged = { onAction(DetailsAction.PriceChanged(it)) },
                 onStatusChanged = { owned, read, ebook -> onAction(DetailsAction.StatusChanged(owned, read, ebook)) },
@@ -238,37 +257,64 @@ fun DetailsScreen(
         scrollState = scrollState,
         isEditing = state.isEditing,
         rightIcons = @Composable {
-            IconButton(
-                onClick = { uriHandler.openUri("https://www.thalia.de/suche?sq=" + state.isbn.ifBlank { state.title }) }
-            ) {
+            val backgroundAlpha = remember { Animatable(0f) }
+            LaunchedEffect(scrollState.canScrollBackward) {
+                if (scrollState.canScrollBackward) {
+                    backgroundAlpha.animateTo(0.5f)
+                } else {
+                    backgroundAlpha.animateTo(0f)
+                }
+            }
+
+            IconButton({ uriHandler.openUri("https://www.thalia.de/suche?sq=" + state.isbn.ifBlank { state.title }) }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer { alpha = backgroundAlpha.value }
+                        .background(MaterialTheme.colorScheme.surface)
+                )
                 Icon(
                     imageVector = CustomOpenInBrowserIcon,
-                    contentDescription = "Open in Browser",
+                    contentDescription = stringResource(Res.string.open_in_browser),
                 )
             }
             if (!state.isEditing) {
-                IconButton(onClick = {
-                    onAction(DetailsAction.SwitchEditing)
-                }) {
+                IconButton({ onAction(DetailsAction.SwitchEditing) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer { alpha = backgroundAlpha.value }
+                            .background(MaterialTheme.colorScheme.surface)
+                    )
                     Icon(
                         imageVector =  Icons.Filled.Edit,
                         contentDescription = stringResource(Res.string.edit),
                     )
                 }
             } else {
-                IconButton(onClick = {
-                    if (state.title.isBlank()) {
-                        showNoTitleDialog = true
-                    } else {
-                        if (state.somethingChanged) {
-                            onAction(DetailsAction.UpdateBook)
+                IconButton(
+                    onClick = {
+                        if (state.title.isBlank()) {
+                            showNoTitleDialog = true
+                        } else {
+                            if (state.somethingChanged) {
+                                onAction(DetailsAction.UpdateBook)
+                            }
+                            onAction(DetailsAction.SwitchEditing)
                         }
-                        onAction(DetailsAction.SwitchEditing)
                     }
-                }) {
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer { alpha = backgroundAlpha.value }
+                            .background(MaterialTheme.colorScheme.surface)
+                    )
                     Icon(
                         imageVector =  Icons.Filled.Check,
                         contentDescription = stringResource(Res.string.save),
+                        tint = if (state.somethingChanged) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -289,11 +335,17 @@ fun DetailsScreen(
                     }
                 }
             ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer { alpha = backgroundAlpha.value }
+                        .background(MaterialTheme.colorScheme.surface)
+                )
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Recipe",
+                    contentDescription = stringResource(Res.string.delete_book),
                     tint = if (deleteClicked.value) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface
                 )
             }
         },
@@ -376,7 +428,7 @@ fun DetailsScreen(
                             onLevelChanged = { onAction(DetailsAction.RatingChanged(it)) },
                             enabled = state.isEditing,
                             activeColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.tertiary,
+                            else MaterialTheme.colorScheme.tertiary,
                             activeIcon = Icons.Filled.Star,
                             inactiveIcon = Icons.Outlined.Star,
                             label = stringResource(Res.string.rating)
@@ -389,7 +441,7 @@ fun DetailsScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val chipModifier = Modifier.weight(1f).widthIn(min = 100.dp)
+                    val smallChipModifier = Modifier.weight(1f).widthIn(min = 110.dp)
                     DetailsInfoChip(
                         label = "${state.pageCount ?: "–"} ${stringResource(Res.string.pages_short)}",
                         icon = Icons.AutoMirrored.Filled.MenuBook,
@@ -400,7 +452,7 @@ fun DetailsScreen(
                                 showEditDialog = true
                             }
                         },
-                        modifier = chipModifier
+                        modifier = smallChipModifier
                     )
                     DetailsInfoChip(
                         label = state.price?.toPriceString(state.currency ?: "EUR") ?: "–",
@@ -412,7 +464,7 @@ fun DetailsScreen(
                                 showEditDialog = true
                             }
                         },
-                        modifier = chipModifier
+                        modifier = smallChipModifier
                     )
                     DetailsInfoChip(
                         label = stringResource(Res.string.status),
@@ -423,31 +475,31 @@ fun DetailsScreen(
                                 showEditDialog = true
                             }
                         },
-                        modifier = chipModifier,
                         content = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = CustomBookIcon,
-                                    contentDescription = "Possession Status",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = if (state.possessionStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                                    contentDescription = stringResource(Res.string.possession_status),
+                                    tint = if (state.possessionStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(4.dp))
                                 Icon(
                                     imageVector = customReadIcon(),
-                                    contentDescription = "Read Status",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = if (state.readStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                                    contentDescription = stringResource(Res.string.read_status),
+                                    tint = if (state.readStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(4.dp))
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.ic_tablet),
-                                    contentDescription = "eBook Status",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = if (state.ebookStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                                    contentDescription = stringResource(Res.string.ebook_status),
+                                    tint = if (state.ebookStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
-                        }
+                        },
+                        modifier = smallChipModifier
                     )
                     var perPageCounter by remember { mutableStateOf(1) }
                     var showPerPage by remember { mutableStateOf(false) }
@@ -471,10 +523,11 @@ fun DetailsScreen(
                                 curEditType = EditType.READING_TIME
                                 showEditDialog = true
                             } else {
-                                perPageCounter = 0
+                                if (perPageCounter == 0) showPerPage = !showPerPage
+                                else perPageCounter = 0
                             }
                         },
-                        modifier = chipModifier
+                        modifier = smallChipModifier
                     )
                     DetailsInfoChip(
                         label = state.series?.title ?: "–",
@@ -484,13 +537,15 @@ fun DetailsScreen(
                             if (state.isEditing) {
                                 curEditType = EditType.BOOK_SERIES
                                 showEditDialog = true
+                            } else {
+                                // TODO: Open Series
                             }
                         },
-                        modifier = chipModifier
+                        modifier = smallChipModifier
                     )
                 }
 
-                // 3. Mood Levels (Tension, Spice, Emotion)
+                // 3. Mood Levels (Tension, Spice, Emotion, Chapter Length, Ending, Plot)
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -517,6 +572,30 @@ fun DetailsScreen(
                             icon = Icons.Filled.WaterDrop,
                             color = if (state.emotionLevelChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                             onValueChange = { onAction(DetailsAction.EmotionLevelChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.chapter_length),
+                            value = state.chapterLength,
+                            icon = Icons.Filled.HourglassBottom,
+                            color = if (state.chapterLengthChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.ChapterLengthChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.ending_rating),
+                            value = state.endingRating,
+                            icon = Icons.Filled.Flag,
+                            color = if (state.endingRatingChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.EndingRatingChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.plot_rating),
+                            value = state.plotRating,
+                            icon = Icons.Filled.Terrain,
+                            color = if (state.plotRatingChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.PlotRatingChanged(it)) },
                             enabled = state.isEditing
                         )
                     }
@@ -609,99 +688,6 @@ fun DetailsScreen(
 }
 
 @Composable
-private fun DetailsInfoChip(
-    label: String,
-    icon: ImageVector? = null,
-    color: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable (() -> Unit)? = null
-) {
-    AssistChip(
-        onClick = onClick,
-        label = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (content != null) {
-                    content()
-                } else {
-                    icon?.let {
-                        Icon(it, null, Modifier.size(18.dp), tint = color)
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    Text(text = label, color = color)
-                }
-            }
-        },
-        colors = AssistChipDefaults.assistChipColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        ),
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun DetailsMoodLevelRow(
-    label: String,
-    value: Int,
-    icon: ImageVector,
-    color: Color,
-    onValueChange: (Int) -> Unit,
-    enabled: Boolean
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(icon, null, modifier = Modifier.size(20.dp), tint = color)
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = color,
-            modifier = Modifier.weight(1f)
-        )
-        LevelBar(
-            current = value,
-            onLevelChanged = onValueChange,
-            enabled = enabled,
-            activeColor = color,
-            inactiveColor = MaterialTheme.colorScheme.outlineVariant,
-            activeIcon = icon,
-            inactiveIcon = icon,
-            contentDescription = label,
-            modifier = Modifier.width(130.dp)
-        )
-    }
-}
-
-@Composable
-private fun DetailsRatingBar(
-    current: Int,
-    onLevelChanged: (Int) -> Unit,
-    enabled: Boolean,
-    activeColor: Color,
-    activeIcon: ImageVector,
-    inactiveIcon: ImageVector,
-    label: String
-) {
-    LevelBar(
-        current = current,
-        onLevelChanged = onLevelChanged,
-        enabled = enabled,
-        activeColor = activeColor,
-        inactiveColor = MaterialTheme.colorScheme.outlineVariant,
-        activeIcon = activeIcon,
-        inactiveIcon = inactiveIcon,
-        contentDescription = label,
-        modifier = Modifier.width(150.dp)
-    )
-}
-
-@Composable
 fun Int.toReadingTimeString() : String {
     val minutes: Int = this % 60
     val hours: Int = (this - minutes) / 60
@@ -746,6 +732,9 @@ fun DetailsScreenPreview() {
         tensionLevel = 3,
         spiceLevel = 1,
         emotionLevel = 5,
+        chapterLength = 4,
+        endingRating = 5,
+        plotRating = 4,
         pageCount = 180,
         price = 12.99,
         readingTime = 150,
@@ -764,6 +753,9 @@ fun DetailsScreenPreview() {
         tensionLevel = mockBook.tensionLevel ?: 0,
         spiceLevel = mockBook.spiceLevel ?: 0,
         emotionLevel = mockBook.emotionLevel ?: 0,
+        chapterLength = mockBook.chapterLength ?: 0,
+        endingRating = mockBook.endingRating ?: 0,
+        plotRating = mockBook.plotRating ?: 0,
         pageCount = mockBook.pageCount,
         price = mockBook.price,
         readingTime = mockBook.readingTime,

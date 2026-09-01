@@ -128,4 +128,16 @@
     <string name="tension_level">Tension</string>
     <string name="spice_level">Spice</string>
     <string name="emotion_level">Emotion</string>
+    <string name="chapter_length">Chapter Length</string>
+    <string name="ending_rating">Ending</string>
+    <string name="plot_rating">Plot</string>
+    <string name="add_cover_image">Add cover image</string>
+    <string name="book_cover">Book cover</string>
+    <string name="done">Done</string>
+    <string name="pick_image">Pick Image</string>
+    <string name="open_in_browser">Open in Browser</string>
+    <string name="delete_book">Delete Book</string>
+    <string name="possession_status">Possession Status</string>
+    <string name="read_status">Read Status</string>
+    <string name="ebook_status">eBook Status</string>
 </resources>
