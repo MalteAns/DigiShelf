@@ -9,13 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -93,76 +92,76 @@ fun SeriesDetailsScreen(
             )
         }
     ) { pad ->
-        val scrollState = rememberScrollState()
-        
-        Column(
+        val books = state.series?.books ?: emptyList()
+
+        LazyColumn(
             modifier = Modifier
                 .padding(pad)
-                .verticalScroll(scrollState)
+                .fillMaxSize(),
+            verticalArrangement = spacedBy(8.dp)
         ) {
-            if (state.series == null) {
-                return@Column
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.containerColor,
-                        shape = MaterialTheme.shapes.extraLarge,
-                    )
-                    .padding(16.dp)
-            ) {
-                Image(
-                    painter = painterResource(
-                        when (state.series.id.rem(5)) {
-                            0L -> Res.drawable.book_series_blue
-                            1L -> Res.drawable.book_series_green
-                            2L -> Res.drawable.book_series_purple
-                            3L -> Res.drawable.book_series_red
-                            else -> Res.drawable.book_series_yellow
+            state.series?.let { series ->
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .padding(top = 8.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.containerColor,
+                                shape = MaterialTheme.shapes.extraLarge,
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                when (series.id.rem(5)) {
+                                    0L -> Res.drawable.book_series_blue
+                                    1L -> Res.drawable.book_series_green
+                                    2L -> Res.drawable.book_series_purple
+                                    3L -> Res.drawable.book_series_red
+                                    else -> Res.drawable.book_series_yellow
+                                }
+                            ),
+                            contentDescription = series.title,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .aspectRatio(ratio = 0.65f)
+                                .weight(0.3f)
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Column(Modifier.weight(0.7f)) {
+                            Text(
+                                text = series.title,
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = series.description.ifBlank { stringResource(Res.string.series_details_no_description) },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
-                    ),
-                    contentDescription = state.series.title,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .aspectRatio(ratio = 0.65f)
-                        .weight(0.3f)
-                )
-                Spacer(Modifier.width(16.dp))
-                Column(Modifier.weight(0.7f)) {
-                    Text(
-                        text = state.series.title,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = state.series.description.ifBlank { stringResource(Res.string.series_details_no_description) },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    }
                 }
             }
-            Spacer(Modifier.height(16.dp))
 
-            val books = state.series.books
-            if (books.isEmpty() && !state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    Text(
-                        text = stringResource(Res.string.series_details_no_books),
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            if (books.isEmpty() && !state.isLoading && state.series != null) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.series_details_no_books),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
-                return@Column
             } else {
-                LazyColumn(
-                    verticalArrangement = spacedBy(8.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp),
-                ) {
-                    items(state.series.books) { book ->
+                items(books) { book ->
+                    Box(modifier = Modifier.padding(horizontal = 8.dp)) {
                         BookItem(
                             book = book,
                             onClick = { onAction(SeriesDetailsAction.NavigateToBookDetails(book.id)) },
@@ -170,10 +169,16 @@ fun SeriesDetailsScreen(
                     }
                 }
             }
+
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
         }
+
         if (state.isLoading) {
             Box(
                 modifier = Modifier
+                    .padding(pad)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
             ) {
