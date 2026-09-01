@@ -113,6 +113,7 @@
     <string name="book_added_success">Buch erfolgreich hinzugefügt</string>
     <string name="show">Anzeigen</string>
     <string name="pages">Seiten</string>
+    <string name="pages_short">S.</string>
     <string name="price">Preis</string>
     <string name="status">Status</string>
     <string name="cloud_completion">Cloud Vervollständigung</string>

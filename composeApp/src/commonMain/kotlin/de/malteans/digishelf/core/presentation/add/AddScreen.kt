@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -19,6 +18,10 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.outlined.ElectricBolt
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,6 +33,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.presentation.add.components.LevelBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
 import de.malteans.digishelf.core.presentation.details.components.ImagePicker
@@ -351,45 +355,66 @@ fun AddScreen(
                 }
                 Spacer(modifier = Modifier.width(12.dp))
             }
-            // Rating, Tension, Spice, Emotion sliders -----------------------------------------------
-            Row (
+            // Rating bar -----------------------------------------------
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
-                LevelSliderAdd(
-                    value = state.rating,
-                    onValueChange = { onAction(AddAction.OnRatingChanged(it)) },
-                    label = stringResource(Res.string.rating),
-                    icon = Icons.Filled.Star,
-                    modifier = Modifier.weight(1f)
-                )
-                LevelSliderAdd(
-                    value = state.tensionLevel,
-                    onValueChange = { onAction(AddAction.OnTensionLevelChanged(it)) },
-                    label = stringResource(Res.string.tension_level),
-                    icon = Icons.Filled.ElectricBolt,
-                    modifier = Modifier.weight(1f)
+                LevelBar(
+                    current = state.rating,
+                    onLevelChanged = { onAction(AddAction.OnRatingChanged(it)) },
+                    activeIcon = Icons.Filled.Star,
+                    inactiveIcon = Icons.Outlined.Star,
+                    contentDescription = stringResource(Res.string.rating),
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
             }
-            Row (
+            // Tension, Spice, Emotion bars ---------------------------------------
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
-                LevelSliderAdd(
-                    value = state.spiceLevel,
-                    onValueChange = { onAction(AddAction.OnSpiceLevelChanged(it)) },
-                    label = stringResource(Res.string.spice_level),
-                    icon = Icons.Filled.LocalFireDepartment,
-                    modifier = Modifier.weight(1f)
+                LevelBar(
+                    current = state.tensionLevel,
+                    onLevelChanged = { onAction(AddAction.OnTensionLevelChanged(it)) },
+                    activeIcon = Icons.Filled.ElectricBolt,
+                    inactiveIcon = Icons.Outlined.ElectricBolt,
+                    contentDescription = stringResource(Res.string.tension_level),
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
-                LevelSliderAdd(
-                    value = state.emotionLevel,
-                    onValueChange = { onAction(AddAction.OnEmotionLevelChanged(it)) },
-                    label = stringResource(Res.string.emotion_level),
-                    icon = Icons.Filled.WaterDrop,
-                    modifier = Modifier.weight(1f)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                LevelBar(
+                    current = state.spiceLevel,
+                    onLevelChanged = { onAction(AddAction.OnSpiceLevelChanged(it)) },
+                    activeIcon = Icons.Filled.LocalFireDepartment,
+                    inactiveIcon = Icons.Outlined.LocalFireDepartment,
+                    contentDescription = stringResource(Res.string.spice_level),
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                LevelBar(
+                    current = state.emotionLevel,
+                    onLevelChanged = { onAction(AddAction.OnEmotionLevelChanged(it)) },
+                    activeIcon = Icons.Filled.WaterDrop,
+                    inactiveIcon = Icons.Outlined.WaterDrop,
+                    contentDescription = stringResource(Res.string.emotion_level),
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
             }
             Row (
@@ -493,38 +518,6 @@ fun AddScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-    }
-}
-
-@Composable
-private fun LevelSliderAdd(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Slider(
-            value = value.toFloat(),
-            onValueChange = { onValueChange(it.toInt()) },
-            valueRange = 0f..5f,
-            steps = 4,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Text(
-            text = "$value/5",
-            style = MaterialTheme.typography.labelSmall
-        )
     }
 }
 

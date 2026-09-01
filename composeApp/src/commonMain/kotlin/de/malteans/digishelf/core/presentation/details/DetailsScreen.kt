@@ -3,39 +3,102 @@ package de.malteans.digishelf.core.presentation.details
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.WaterDrop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.malteans.digishelf.core.domain.Book
+import de.malteans.digishelf.core.presentation.add.components.LevelBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.customReadIcon
-import de.malteans.digishelf.core.presentation.details.components.*
-import digishelf.composeapp.generated.resources.*
+import de.malteans.digishelf.core.presentation.details.components.BlurredImageBackground
+import de.malteans.digishelf.core.presentation.details.components.CustomOpenInBrowserIcon
+import de.malteans.digishelf.core.presentation.details.components.DetailsEditCallbacks
+import de.malteans.digishelf.core.presentation.details.components.DetailsEditDialog
+import de.malteans.digishelf.core.presentation.details.components.DetailsEditValues
+import de.malteans.digishelf.core.presentation.details.components.EditType
+import de.malteans.digishelf.core.presentation.details.components.ImagePicker
+import de.malteans.digishelf.theme.DigiShelfTheme
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.details_by
+import digishelf.composeapp.generated.resources.edit
+import digishelf.composeapp.generated.resources.emotion_level
+import digishelf.composeapp.generated.resources.error
+import digishelf.composeapp.generated.resources.error_msg_no_title
+import digishelf.composeapp.generated.resources.error_msg_save_changes
+import digishelf.composeapp.generated.resources.error_save_changes
+import digishelf.composeapp.generated.resources.hours_short
+import digishelf.composeapp.generated.resources.ic_tablet
+import digishelf.composeapp.generated.resources.min_per_page
+import digishelf.composeapp.generated.resources.no_description_available
+import digishelf.composeapp.generated.resources.online_description
+import digishelf.composeapp.generated.resources.own_description
+import digishelf.composeapp.generated.resources.pages_short
+import digishelf.composeapp.generated.resources.rating
+import digishelf.composeapp.generated.resources.save
+import digishelf.composeapp.generated.resources.spice_level
+import digishelf.composeapp.generated.resources.status
+import digishelf.composeapp.generated.resources.tension_level
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.random.Random.Default.nextInt
+import kotlin.time.Duration.Companion.seconds
+import androidx.compose.ui.text.font.FontWeight as FontWeightCompose
 
 @Composable
 fun DetailsScreenRoot(
@@ -168,9 +231,13 @@ fun DetailsScreen(
         )
     }
 
+    val scrollState = rememberScrollState()
+
     BlurredImageBackground(
         imageUrl = state.imageUrl.replace("http://", "https://"),
         onBackClick = { onDismiss() },
+        scrollState = scrollState,
+        isEditing = state.isEditing,
         rightIcons = @Composable {
             IconButton(
                 onClick = { uriHandler.openUri("https://www.thalia.de/suche?sq=" + state.isbn.ifBlank { state.title }) }
@@ -209,7 +276,7 @@ fun DetailsScreen(
             val deleteClicked = remember { mutableStateOf(false) }
             LaunchedEffect(deleteClicked.value) {
                 if (deleteClicked.value) {
-                    delay(3000)
+                    delay(3.seconds)
                     deleteClicked.value = false
                 }
             }
@@ -231,541 +298,308 @@ fun DetailsScreen(
                 )
             }
         },
-        onImageClick = {
-            if (state.isEditing) {
+        onImageClick = if (state.isEditing) {
+            {
                 curEditType = EditType.COVER_IMAGE
                 showEditDialog = true
             }
-        },
-        onImageLongClick = {
-            if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-            curEditType = EditType.COVER_IMAGE
-            showEditDialog = true
-        },
-        errorImageId = (state.book?.bookSeries?.id?.rem(5) ?: state.book?.id?.rem(5))?.toInt() ?: nextInt(5),
+        } else null,
     ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
-                .padding(
-                    horizontal = 8.dp
-                )
-                .padding(
-                    top = 8.dp
-                )
-                .fillMaxSize()
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
             state.book?.let { book ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(
-                            state = rememberScrollState()
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                // 1. Hero Card (Title, Author, Rating)
+                ElevatedCard(
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ),
                 ) {
-                    // ISBN + Title + Author +  Rating --------------------------------------------
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                bottom = 8.dp,
-                                start = 16.dp,
-                                end = 16.dp),
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = state.isbn,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             color = if (state.isbnChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .combinedClickable(
-                                    onClick = {
-                                        if (state.isEditing) {
+                                .then(
+                                    if (state.isEditing) {
+                                        Modifier.clickable {
                                             curEditType = EditType.ISBN
                                             showEditDialog = true
                                         }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.ISBN
-                                        showEditDialog = true
-                                    }
-                                ),
+                                    } else Modifier
+                                )
                         )
-                        TitledContent(
-                            title = stringResource(Res.string.rating),
-                            color = if (state.ratingChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable(
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.RATING
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.RATING
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = if (state.rating > 0) "${state.rating}/5" else "–",
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = "Rating",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        }
                         Text(
                             text = state.title,
                             style = MaterialTheme.typography.headlineSmall,
                             color = if (state.titleChanged) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface,
+                                else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeightCompose.Bold,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.TITLE
+                                .then(
+                                    if (state.isEditing) {
+                                        Modifier.clickable {
+                                            curEditType = EditType.ISBN
                                             showEditDialog = true
                                         }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.TITLE
-                                        showEditDialog = true
-                                    }
-                                ),
+                                    } else Modifier
+                                )
                         )
                         Text(
                             text = stringResource(Res.string.details_by, state.author),
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (state.authorChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.AUTHOR
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        onAction(DetailsAction.OnAuthorSearch(state.author))
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.then(
+                                if (state.isEditing) {
+                                    Modifier.clickable {
+                                        curEditType = EditType.AUTHOR
+                                        showEditDialog = true
                                     }
-                                )
+                                } else Modifier
+                            )
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        DetailsRatingBar(
+                            current = state.rating,
+                            onLevelChanged = { onAction(DetailsAction.RatingChanged(it)) },
+                            enabled = state.isEditing,
+                            activeColor = if (state.ratingChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.tertiary,
+                            activeIcon = Icons.Filled.Star,
+                            inactiveIcon = Icons.Outlined.Star,
+                            label = stringResource(Res.string.rating)
                         )
                     }
-                    // Rating, Tension, Spice, Emotion -------------------------------------------
-                    Row(
-                        modifier = Modifier
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        TitledContent(
-                            title = stringResource(Res.string.tension_level),
-                            color = if (state.tensionLevelChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.TENSION_LEVEL
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.TENSION_LEVEL
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = if (state.tensionLevel > 0) "${state.tensionLevel}/5" else "–",
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.ElectricBolt,
-                                    contentDescription = "Tension Level",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                }
+
+                // 2. Metadata Chips (PageCount, Price, Series, Reading Time, Status)
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val chipModifier = Modifier.weight(1f).widthIn(min = 100.dp)
+                    DetailsInfoChip(
+                        label = "${state.pageCount ?: "–"} ${stringResource(Res.string.pages_short)}",
+                        icon = Icons.AutoMirrored.Filled.MenuBook,
+                        color = if (state.pagesChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        onClick = {
+                            if (state.isEditing) {
+                                curEditType = EditType.PAGE_COUNT
+                                showEditDialog = true
                             }
-                        }
-                        TitledContent(
-                            title = stringResource(Res.string.spice_level),
-                            color = if (state.spiceLevelChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.SPICE_LEVEL
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.SPICE_LEVEL
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = if (state.spiceLevel > 0) "${state.spiceLevel}/5" else "–",
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.LocalFireDepartment,
-                                    contentDescription = "Spice Level",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                        },
+                        modifier = chipModifier
+                    )
+                    DetailsInfoChip(
+                        label = state.price?.toPriceString(state.currency ?: "EUR") ?: "–",
+                        icon = Icons.Default.Payments,
+                        color = if (state.priceChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        onClick = {
+                            if (state.isEditing) {
+                                curEditType = EditType.PRICE
+                                showEditDialog = true
                             }
-                        }
-                        TitledContent(
-                            title = stringResource(Res.string.emotion_level),
-                            color = if (state.emotionLevelChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.EMOTION_LEVEL
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.EMOTION_LEVEL
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = if (state.emotionLevel > 0) "${state.emotionLevel}/5" else "–",
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.WaterDrop,
-                                    contentDescription = "Emotion Level",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                        },
+                        modifier = chipModifier
+                    )
+                    DetailsInfoChip(
+                        label = stringResource(Res.string.status),
+                        color = if (state.statusChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        onClick = {
+                            if (state.isEditing) {
+                                curEditType = EditType.STATUS
+                                showEditDialog = true
                             }
-                        }
-                    }
-                    // Pages, Price, Status -------------------------------------------------------
-                    Row(
-                        modifier = Modifier
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        TitledContent(
-                            title = stringResource(Res.string.pages),
-                            color = if (state.pagesChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.PAGE_COUNT
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.PAGE_COUNT
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = state.pageCount?.toString() ?: "–",
-                                )
-                            }
-                        }
-                        TitledContent(
-                            title = stringResource(Res.string.price),
-                            color = if (state.priceChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.PRICE
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.PRICE
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = state.price?.toPriceString(state.currency ?: "EUR") ?: "–",
-                                )
-                            }
-                        }
-                        TitledContent(
-                            title = stringResource(Res.string.status),
-                            color = if (state.statusChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.STATUS
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.STATUS
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip {
+                        },
+                        modifier = chipModifier,
+                        content = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = CustomBookIcon,
                                     contentDescription = "Possession Status",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                        alpha = if (state.possessionStatus) 1f else 0.4f
-                                    )
+                                    modifier = Modifier.size(16.dp),
+                                    tint = if (state.possessionStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(Modifier.width(4.dp))
                                 Icon(
                                     imageVector = customReadIcon(),
                                     contentDescription = "Read Status",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                        alpha = if (state.readStatus) 1f else 0.4f
-                                    )
+                                    modifier = Modifier.size(16.dp),
+                                    tint = if (state.readStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(Modifier.width(4.dp))
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.ic_tablet),
                                     contentDescription = "eBook Status",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                        alpha = if (state.ebookStatus) 1f else 0.4f
-                                    )
+                                    modifier = Modifier.size(16.dp),
+                                    tint = if (state.ebookStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                                 )
                             }
+                        }
+                    )
+                    var perPageCounter by remember { mutableStateOf(1) }
+                    var showPerPage by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            delay(1.seconds)
+                            perPageCounter = (perPageCounter + 1) % 4
                         }
                     }
-                    // Reading Time, BookSeries ---------------------------------------------------
-                    Row(
-                        modifier = Modifier
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        var perPageCounter by remember { mutableStateOf(1) }
-                        LaunchedEffect(Unit) {
-                            while (true) {
-                                delay(1000L)
-                                perPageCounter = (perPageCounter + 1) % 4
-                            }
-                        }
-
-                        var showPerPage by remember { mutableStateOf(false) }
-                        LaunchedEffect(perPageCounter) {
-                            if (perPageCounter == 0) {
-                                showPerPage = !showPerPage
-                            }
-                        }
-
-                        TitledContent(
-                            title = stringResource(Res.string.reading_time),
-                            color = if (state.readingTimeChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.READING_TIME
-                                            showEditDialog = true
-                                        } else {
-                                            perPageCounter = 0
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.READING_TIME
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip(
-                                size = ChipSize.LARGE
-                            ) {
-                                Text(
-                                    text = if (state.pageCount != null && showPerPage)
-                                        state.readingTime?.toReadingTimePerPageString(state.pageCount) ?: "–"
-                                    else state.readingTime?.toReadingTimeString() ?: "–",
-                                )
-                            }
-                        }
-                        TitledContent(
-                            title = stringResource(Res.string.series),
-                            color = if (state.seriesChanged) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .combinedClickable (
-                                    onClick = {
-                                        if (state.isEditing) {
-                                            curEditType = EditType.BOOK_SERIES
-                                            showEditDialog = true
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
-                                        curEditType = EditType.BOOK_SERIES
-                                        showEditDialog = true
-                                    }
-                                ),
-                        ) {
-                            BookChip(size = ChipSize.LARGE) {
-                                Text(
-                                    text = state.series?.title ?: "–",
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
+                    LaunchedEffect(perPageCounter) {
+                        if (perPageCounter == 0) showPerPage = !showPerPage
                     }
-                    // Descriptions ---------------------------------------------------------------
-                    Column(
-                        modifier = Modifier
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 8.dp,
-                            )
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (state.isEditing) {
-                                        curEditType = EditType.DESCRIPTION
-                                        showEditDialog = true
-                                    }
-                                },
-                                onLongClick = {
-                                    if (!state.isEditing) onAction(DetailsAction.SwitchEditing)
+                    DetailsInfoChip(
+                        label = if (state.pageCount != null && showPerPage)
+                            state.readingTime?.toReadingTimePerPageString(state.pageCount) ?: "–"
+                        else state.readingTime?.toReadingTimeString() ?: "–",
+                        icon = Icons.Default.Timer,
+                        color = if (state.readingTimeChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        onClick = {
+                            if (state.isEditing) {
+                                curEditType = EditType.READING_TIME
+                                showEditDialog = true
+                            } else {
+                                perPageCounter = 0
+                            }
+                        },
+                        modifier = chipModifier
+                    )
+                    DetailsInfoChip(
+                        label = state.series?.title ?: "–",
+                        icon = Icons.AutoMirrored.Filled.LibraryBooks,
+                        color = if (state.seriesChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        onClick = {
+                            if (state.isEditing) {
+                                curEditType = EditType.BOOK_SERIES
+                                showEditDialog = true
+                            }
+                        },
+                        modifier = chipModifier
+                    )
+                }
+
+                // 3. Mood Levels (Tension, Spice, Emotion)
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.tension_level),
+                            value = state.tensionLevel,
+                            icon = Icons.Filled.ElectricBolt,
+                            color = if (state.tensionLevelChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.TensionLevelChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.spice_level),
+                            value = state.spiceLevel,
+                            icon = Icons.Filled.LocalFireDepartment,
+                            color = if (state.spiceLevelChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.SpiceLevelChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                        DetailsMoodLevelRow(
+                            label = stringResource(Res.string.emotion_level),
+                            value = state.emotionLevel,
+                            icon = Icons.Filled.WaterDrop,
+                            color = if (state.emotionLevelChanged) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            onValueChange = { onAction(DetailsAction.EmotionLevelChanged(it)) },
+                            enabled = state.isEditing
+                        )
+                    }
+                }
+
+                // 4. Descriptions
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (state.isEditing) {
+                                Modifier.clickable {
                                     curEditType = EditType.DESCRIPTION
                                     showEditDialog = true
                                 }
-                            )
+                            } else Modifier
+                        )
+                ) {
+                    if (state.description.isBlank() && book.onlineDescription == null) {
+                        Text(
+                            text = stringResource(Res.string.no_description_available),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+                        )
+                    }
+                    AnimatedVisibility(
+                        visible = state.description.isNotBlank(),
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
                     ) {
-                        if (state.description.isBlank() && book.onlineDescription == null) {
+                        Column {
                             Text(
-                                text = stringResource(Res.string.no_description_available),
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
+                                text = stringResource(Res.string.own_description),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (state.descriptionChanged) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(bottom = 4.dp, start = 8.dp)
                             )
-                        }
-                        AnimatedVisibility(
-                            visible = state.description.isNotBlank(),
-                            enter = expandVertically(),
-                            exit = shrinkVertically(),
-                        ) {
-                            Column {
-                                Text(
-                                    text = stringResource(Res.string.own_description),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (state.descriptionChanged) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier
-                                        .padding(
-                                            bottom = 4.dp,
-                                            start = 8.dp,
-                                            end = 8.dp,
-                                        )
+                            ElevatedCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.elevatedCardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                ) {
-                                    Text(
-                                        text = state.description,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier
-                                            .padding(8.dp)
-                                    )
-                                }
+                            ) {
+                                Text(
+                                    text = state.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(12.dp)
+                                )
                             }
+                            Spacer(Modifier.height(16.dp))
                         }
-                        if (book.onlineDescription != null) {
-                            Column {
-                                Text(
-                                    text = stringResource(Res.string.online_description),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    modifier = Modifier
-                                        .padding(
-                                            top = 8.dp,
-                                            bottom = 4.dp,
-                                            start = 8.dp,
-                                            end = 8.dp,
-                                        )
+                    }
+                    if (book.onlineDescription != null) {
+                        Column {
+                            Text(
+                                text = stringResource(Res.string.online_description),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(bottom = 4.dp, start = 8.dp)
+                            )
+                            ElevatedCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.elevatedCardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                ) {
-                                    Text(
-                                        text = book.onlineDescription,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier
-                                            .padding(8.dp)
-                                    )
-                                }
+                            ) {
+                                Text(
+                                    text = book.onlineDescription,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(12.dp)
+                                )
                             }
                         }
                     }
                 }
             } ?: run {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
@@ -773,6 +607,99 @@ fun DetailsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun DetailsInfoChip(
+    label: String,
+    icon: ImageVector? = null,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (() -> Unit)? = null
+) {
+    AssistChip(
+        onClick = onClick,
+        label = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (content != null) {
+                    content()
+                } else {
+                    icon?.let {
+                        Icon(it, null, Modifier.size(18.dp), tint = color)
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    Text(text = label, color = color)
+                }
+            }
+        },
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun DetailsMoodLevelRow(
+    label: String,
+    value: Int,
+    icon: ImageVector,
+    color: Color,
+    onValueChange: (Int) -> Unit,
+    enabled: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, null, modifier = Modifier.size(20.dp), tint = color)
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = color,
+            modifier = Modifier.weight(1f)
+        )
+        LevelBar(
+            current = value,
+            onLevelChanged = onValueChange,
+            enabled = enabled,
+            activeColor = color,
+            inactiveColor = MaterialTheme.colorScheme.outlineVariant,
+            activeIcon = icon,
+            inactiveIcon = icon,
+            contentDescription = label,
+            modifier = Modifier.width(130.dp)
+        )
+    }
+}
+
+@Composable
+private fun DetailsRatingBar(
+    current: Int,
+    onLevelChanged: (Int) -> Unit,
+    enabled: Boolean,
+    activeColor: Color,
+    activeIcon: ImageVector,
+    inactiveIcon: ImageVector,
+    label: String
+) {
+    LevelBar(
+        current = current,
+        onLevelChanged = onLevelChanged,
+        enabled = enabled,
+        activeColor = activeColor,
+        inactiveColor = MaterialTheme.colorScheme.outlineVariant,
+        activeIcon = activeIcon,
+        inactiveIcon = inactiveIcon,
+        contentDescription = label,
+        modifier = Modifier.width(150.dp)
+    )
 }
 
 @Composable
@@ -807,4 +734,55 @@ fun Int.toReadingTimePerPageString(pageCount: Int) : String {
 
     return if (seconds < 10) "$minutes:0$seconds ${stringResource(Res.string.min_per_page)}"
         else "$minutes:$seconds ${stringResource(Res.string.min_per_page)}"
+}
+
+@Preview
+@Composable
+fun DetailsScreenPreview() {
+    val mockBook = Book(
+        title = "The Great Gatsby",
+        author = "F. Scott Fitzgerald",
+        isbn = "9780743273565",
+        rating = 4,
+        tensionLevel = 3,
+        spiceLevel = 1,
+        emotionLevel = 5,
+        pageCount = 180,
+        price = 12.99,
+        readingTime = 150,
+        description = "A classic novel about the American Dream in the Roaring Twenties. It tells the story of Jay Gatsby and his unrequited love for Daisy Buchanan.",
+        imageUrl = ""
+    )
+
+    var editMode by remember { mutableStateOf(false) }
+
+    val mockState by remember(editMode) { mutableStateOf( DetailsState(
+        book = mockBook,
+        title = mockBook.title,
+        author = mockBook.author,
+        isbn = mockBook.isbn,
+        rating = mockBook.rating ?: 0,
+        tensionLevel = mockBook.tensionLevel ?: 0,
+        spiceLevel = mockBook.spiceLevel ?: 0,
+        emotionLevel = mockBook.emotionLevel ?: 0,
+        pageCount = mockBook.pageCount,
+        price = mockBook.price,
+        readingTime = mockBook.readingTime,
+        description = mockBook.description,
+        imageUrl = mockBook.imageUrl,
+
+        isEditing = editMode
+    ) ) }
+
+    DigiShelfTheme(useDarkTheme = true) {
+        DetailsScreen(
+            state = mockState,
+            onAction = { action ->
+                when (action) {
+                    DetailsAction.SwitchEditing -> editMode = !editMode
+                    else -> {}
+                }
+            }
+        )
+    }
 }
