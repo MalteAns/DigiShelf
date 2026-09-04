@@ -80,7 +80,7 @@
     <string name="hours">hours</string>
     <string name="add_minutes">Add minutes</string>
     <string name="export_data">Export Data</string>
-    <string name="settings_export_desc">Export data as csv file</string>
+    <string name="settings_export_desc">Export data as json file</string>
     <string name="file_saved">File saved</string>
     <string name="file_save_error">Error while saving file</string>
     <string name="no_data_to_export">Failed: no data to export</string>
@@ -90,7 +90,7 @@
     <string name="new_series">New Series</string>
     <string name="no_series_assigned">No series assigned</string>
     <string name="import_data">Import Data</string>
-    <string name="settings_import_desc">Import data from csv file</string>
+    <string name="settings_import_desc">Import data from json file</string>
     <string name="error_no_file_selected">Failed: No file selected</string>
     <string name="no_file_selected">No file selected</string>
     <string name="file">File</string>
