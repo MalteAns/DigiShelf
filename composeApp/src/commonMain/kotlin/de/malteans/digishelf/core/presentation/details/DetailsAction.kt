@@ -1,6 +1,7 @@
 package de.malteans.digishelf.core.presentation.details
 
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.domain.Trope
 
 
 sealed class DetailsAction {
@@ -28,6 +29,14 @@ sealed class DetailsAction {
 
     data class ImageUrlChanged(val coverImage: String): DetailsAction()
     data class SetOnlineDescription(val onlineDescription: String): DetailsAction()
+
+    // Trope actions
+    data class AddTrope(val trope: Trope): DetailsAction()
+    data class RemoveTrope(val trope: Trope): DetailsAction()
+
+    // Favorite character and scene actions
+    data class FavoriteCharacterChanged(val character: String?): DetailsAction()
+    data class FavoriteSceneChanged(val scene: String?): DetailsAction()
 
     data object SwitchEditing: DetailsAction()
 

@@ -47,4 +47,6 @@ data class BookEntity (
     val possessionStatus: Boolean = false,
     val eBookStatus: Boolean = false,
     val deletedSince: Long = 0,
+    val favoriteCharacter: String? = null,
+    val favoriteScene: String? = null,
 )

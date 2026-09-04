@@ -74,7 +74,7 @@ import de.malteans.digishelf.core.presentation.add.components.LevelBar
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
 import de.malteans.digishelf.core.presentation.details.components.ImagePicker
-import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
+import de.malteans.digishelf.core.presentation.overview.components.SearchableAddDropdown
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.add_book
 import digishelf.composeapp.generated.resources.author
@@ -536,7 +536,7 @@ fun AddScreen(
                     .apply { put(null, "–") }
                     .toMap()
 
-                SeriesDropdown(
+                SearchableAddDropdown(
                     selectedOption = Pair<Any?, String>(state.bookSeries, state.bookSeries?.title ?: "–"),
                     options = options,
                     onValueChanged = { newSeries ->

@@ -140,4 +140,9 @@
     <string name="possession_status">Besitzstatus</string>
     <string name="read_status">Gelesen-Status</string>
     <string name="ebook_status">E-Book-Status</string>
+    <string name="tropes">Tropes</string>
+    <string name="favorite_character">Lieblingscharakter</string>
+    <string name="favorite_scene">Lieblingsszene</string>
+    <string name="add_trope">Trope hinzufügen</string>
+    <string name="new_trope">Neuer Trope</string>
 </resources>

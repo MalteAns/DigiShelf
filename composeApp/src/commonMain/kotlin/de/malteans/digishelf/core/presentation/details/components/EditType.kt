@@ -8,6 +8,8 @@ import digishelf.composeapp.generated.resources.cover_image
 import digishelf.composeapp.generated.resources.description
 import digishelf.composeapp.generated.resources.emotion_level
 import digishelf.composeapp.generated.resources.ending_rating
+import digishelf.composeapp.generated.resources.favorite_character
+import digishelf.composeapp.generated.resources.favorite_scene
 import digishelf.composeapp.generated.resources.isbn
 import digishelf.composeapp.generated.resources.pages
 import digishelf.composeapp.generated.resources.plot_rating
@@ -18,6 +20,7 @@ import digishelf.composeapp.generated.resources.spice_level
 import digishelf.composeapp.generated.resources.status
 import digishelf.composeapp.generated.resources.tension_level
 import digishelf.composeapp.generated.resources.title
+import digishelf.composeapp.generated.resources.tropes
 import org.jetbrains.compose.resources.StringResource
 
 enum class EditType {
@@ -37,7 +40,10 @@ enum class EditType {
     STATUS,
     READING_TIME,
     BOOK_SERIES,
-    DESCRIPTION;
+    DESCRIPTION,
+    TROPES,
+    FAVORITE_CHARACTER,
+    FAVORITE_SCENE;
 
     val getTypeStringResource: StringResource
         get() = when(this) {
@@ -58,5 +64,8 @@ enum class EditType {
             READING_TIME -> Res.string.reading_time
             BOOK_SERIES -> Res.string.book_series
             DESCRIPTION -> Res.string.description
+            TROPES -> Res.string.tropes
+            FAVORITE_CHARACTER -> Res.string.favorite_character
+            FAVORITE_SCENE -> Res.string.favorite_scene
         }
 }

@@ -6,6 +6,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import de.malteans.digishelf.core.data.database.entities.BookEntity
 import de.malteans.digishelf.core.data.database.entities.BookSeriesEntity
+import de.malteans.digishelf.core.data.database.entities.BookTropeEntity
+import de.malteans.digishelf.core.data.database.entities.TropeEntity
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -87,4 +89,26 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE bookSeriesId IN (:seriesIds) AND deletedSince = 0")
     fun getBooksBySeriesIds(seriesIds: List<Long>): Flow<List<BookEntity>>
+
+    // Trope operations
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertTrope(trope: TropeEntity): Long
+
+    @Query("SELECT * FROM tropes")
+    fun queryAllTropes(): Flow<List<TropeEntity>>
+
+    @Query("SELECT * FROM tropes WHERE name LIKE '%' || :nameQuery || '%'")
+    fun queryTropes(nameQuery: String = ""): Flow<List<TropeEntity>>
+
+    @Query("SELECT t.* FROM tropes t JOIN book_tropes bt ON t.id = bt.tropeId WHERE bt.bookId = :bookId")
+    fun queryTropesForBook(bookId: Long): Flow<List<TropeEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBookTrope(bookTrope: BookTropeEntity)
+
+    @Query("DELETE FROM book_tropes WHERE bookId = :bookId AND tropeId = :tropeId")
+    suspend fun deleteBookTrope(bookId: Long, tropeId: Long)
+
+    @Query("DELETE FROM book_tropes WHERE bookId = :bookId")
+    suspend fun deleteAllBookTropes(bookId: Long)
 }

@@ -2,6 +2,7 @@ package de.malteans.digishelf.core.data.repository
 
 import de.malteans.digishelf.core.data.database.BookDao
 import de.malteans.digishelf.core.data.database.entities.BookEntity
+import de.malteans.digishelf.core.data.database.entities.BookTropeEntity
 import de.malteans.digishelf.core.data.mappers.toDomain
 import de.malteans.digishelf.core.data.mappers.toEntity
 import de.malteans.digishelf.core.data.network.RemoteBookDataSource
@@ -9,11 +10,17 @@ import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookRepository
 import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.domain.SortType
+import de.malteans.digishelf.core.domain.Trope
 import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
 import de.malteans.digishelf.core.domain.errorHandling.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class DefaultBookRepository(
     private val bookDao: BookDao,
@@ -23,14 +30,14 @@ class DefaultBookRepository(
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getBook(id: Long): Flow<Book?> {
         return bookDao.getBookById(id).flatMapLatest { bookEntity ->
-            bookEntity?.addSeries() ?: flowOf(null)
+            bookEntity?.addSeries()?.addTropes() ?: flowOf(null)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getBookByIsbn(isbn: String): Flow<Book?> {
         return bookDao.getBookByIsbn(isbn).flatMapLatest { bookEntity ->
-            bookEntity?.addSeries() ?: flowOf(null)
+            bookEntity?.addSeries()?.addTropes() ?: flowOf(null)
         }
     }
 
@@ -40,6 +47,19 @@ class DefaultBookRepository(
                 this.toDomain(bookSeries)
             }
         else flowOf(this.toDomain(null))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<Book>.addTropes(): Flow<Book> {
+        return this.flatMapLatest { book ->
+            if (book.id == 0L) {
+                flowOf(book) // Don't fetch tropes for books without ID
+            } else {
+                bookDao.queryTropesForBook(book.id).map { tropeEntities ->
+                    book.copy(tropes = tropeEntities.map { it.toDomain() })
+                }
+            }
+        }
     }
     
     override suspend fun addBook(book: Book): Long {
@@ -70,6 +90,7 @@ class DefaultBookRepository(
         bookDao.deleteBookById(id)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun queryBooks(
         sortBy: SortType,
         titleQuery: String,
@@ -94,12 +115,24 @@ class DefaultBookRepository(
         )
         // Combine with all series (fetched with an empty query to get all series)
         val allSeriesFlow = this.querySeries()
-        return combine(booksFlow, allSeriesFlow) { bookEntities, allSeries ->
+        val allTropesForBooksFlow = booksFlow.flatMapLatest { bookEntities ->
+            val bookIds = bookEntities.map { it.id }
+            if (bookIds.isEmpty()) flowOf(emptyMap<Long, List<Trope>>())
+            else combine(bookIds.map { bookId -> 
+                bookDao.queryTropesForBook(bookId).map { tropeEntities -> 
+                    bookId to tropeEntities.map { it.toDomain() }
+                }
+            }) { pairs ->
+                pairs.toMap()
+            }
+        }
+        return combine(booksFlow, allSeriesFlow, allTropesForBooksFlow) { bookEntities, allSeries, tropesMap ->
             bookEntities.map { bookEntity ->
                 bookEntity.toDomain(
                     bookEntity.bookSeriesId?.let { seriesId ->
                         allSeries.find { it.id == seriesId }
-                    }
+                    },
+                    tropesMap[bookEntity.id] ?: emptyList()
                 )
             }
         }
@@ -129,11 +162,16 @@ class DefaultBookRepository(
         ).first()
         // Combine with all series (fetched with an empty query to get all series)
         val allSeries = this.querySeries().first()
+        // Fetch tropes for all books
+        val tropesMap = books.associate { bookEntity ->
+            bookEntity.id to bookDao.queryTropesForBook(bookEntity.id).first().map { it.toDomain() }
+        }
         return books.map { bookEntity ->
             bookEntity.toDomain(
                 bookEntity.bookSeriesId?.let { seriesId ->
                     allSeries.find { it.id == seriesId }
-                }
+                },
+                tropesMap[bookEntity.id] ?: emptyList()
             )
         }
     }
@@ -197,5 +235,34 @@ class DefaultBookRepository(
                 bookResponse.items?.firstOrNull()?.toDomain()
                     ?: return Result.Error(DataError.Remote.NO_RESULT)
             }
+    }
+
+    // Trope operations
+    override fun queryTropes(): Flow<List<Trope>> {
+        return bookDao.queryAllTropes().map { tropeEntities ->
+            tropeEntities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun addTrope(trope: Trope): Long {
+        return bookDao.upsertTrope(trope.toEntity())
+    }
+
+    override fun getTropesForBook(bookId: Long): Flow<List<Trope>> {
+        return bookDao.queryTropesForBook(bookId).map { tropeEntities ->
+            tropeEntities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun linkTropeToBook(bookId: Long, tropeId: Long) {
+        bookDao.insertBookTrope(BookTropeEntity(bookId, tropeId))
+    }
+
+    override suspend fun unlinkTropeFromBook(bookId: Long, tropeId: Long) {
+        bookDao.deleteBookTrope(bookId, tropeId)
+    }
+
+    override suspend fun unlinkAllTropesFromBook(bookId: Long) {
+        bookDao.deleteAllBookTropes(bookId)
     }
 }

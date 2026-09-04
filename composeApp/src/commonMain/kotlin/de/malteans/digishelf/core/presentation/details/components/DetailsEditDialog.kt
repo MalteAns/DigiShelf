@@ -29,12 +29,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.domain.Trope
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.toPriceString
-import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
+import de.malteans.digishelf.core.presentation.overview.components.SearchableAddDropdown
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.done
 import digishelf.composeapp.generated.resources.ebook
@@ -42,6 +43,7 @@ import digishelf.composeapp.generated.resources.edit_title
 import digishelf.composeapp.generated.resources.ic_tablet
 import digishelf.composeapp.generated.resources.minutes_short
 import digishelf.composeapp.generated.resources.new_label
+import digishelf.composeapp.generated.resources.new_trope
 import digishelf.composeapp.generated.resources.owned
 import digishelf.composeapp.generated.resources.pick_image
 import digishelf.composeapp.generated.resources.read
@@ -70,6 +72,10 @@ data class DetailsEditValues(
     val ebookStatus: Boolean,
     val series: BookSeries?,
     val bookSeriesList: List<BookSeries>,
+    val allTropes: List<Trope>,
+    val tropes: List<Trope>,
+    val favoriteCharacter: String?,
+    val favoriteScene: String?,
 )
 
 data class DetailsEditCallbacks(
@@ -90,6 +96,9 @@ data class DetailsEditCallbacks(
     val onReadingTimeChanged: (Int) -> Unit,
     val onSeriesChanged: (BookSeries?) -> Unit,
     val onDescriptionChanged: (String) -> Unit,
+    val onAddTrope: (Trope) -> Unit,
+    val onFavoriteCharacterChanged: (String?) -> Unit,
+    val onFavoriteSceneChanged: (String?) -> Unit,
 )
 
 @Composable
@@ -110,10 +119,13 @@ fun DetailsEditDialog(
     var tempChapterLength by remember { mutableStateOf(values.chapterLength) }
     var tempEndingRating by remember { mutableStateOf(values.endingRating) }
     var tempPlotRating by remember { mutableStateOf(values.plotRating) }
+    var tempTrope by remember { mutableStateOf<Trope?>(null) }
+    var tempFavoriteCharacter by remember { mutableStateOf(values.favoriteCharacter ?: "") }
+    var tempFavoriteScene by remember { mutableStateOf(values.favoriteScene ?: "") }
 
     var readyToFinish by remember { mutableStateOf(false) }
 
-    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel, tempChapterLength, tempEndingRating, tempPlotRating) {
+    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel, tempChapterLength, tempEndingRating, tempPlotRating, tempFavoriteCharacter, tempFavoriteScene, tempTrope) {
         readyToFinish = when (curEditType) {
             EditType.ISBN -> tempString.isIsbnFormat()
             EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
@@ -131,6 +143,8 @@ fun DetailsEditDialog(
             EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
             EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
             EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING -> true
+            EditType.TROPES -> tempTrope != null
+            EditType.FAVORITE_CHARACTER, EditType.FAVORITE_SCENE -> true // Always ready for text fields
         }
     }
 
@@ -151,6 +165,9 @@ fun DetailsEditDialog(
             EditType.CHAPTER_LENGTH -> values.chapterLength.toString()
             EditType.ENDING_RATING -> values.endingRating.toString()
             EditType.PLOT_RATING -> values.plotRating.toString()
+            EditType.FAVORITE_CHARACTER -> values.favoriteCharacter ?: ""
+            EditType.FAVORITE_SCENE -> values.favoriteScene ?: ""
+            EditType.TROPES -> ""
         }
         // Initialize level values when switching to level edit types
         when (curEditType) {
@@ -161,6 +178,8 @@ fun DetailsEditDialog(
             EditType.CHAPTER_LENGTH -> tempChapterLength = values.chapterLength
             EditType.ENDING_RATING -> tempEndingRating = values.endingRating
             EditType.PLOT_RATING -> tempPlotRating = values.plotRating
+            EditType.FAVORITE_CHARACTER -> tempFavoriteCharacter = values.favoriteCharacter ?: ""
+            EditType.FAVORITE_SCENE -> tempFavoriteScene = values.favoriteScene ?: ""
             else -> {}
         }
     }
@@ -188,6 +207,13 @@ fun DetailsEditDialog(
 
                 EditType.BOOK_SERIES -> callbacks.onSeriesChanged(tempSeries)
                 EditType.DESCRIPTION -> callbacks.onDescriptionChanged(tempString)
+                EditType.TROPES -> tempTrope?.let { callbacks.onAddTrope(it) }
+                EditType.FAVORITE_CHARACTER -> callbacks.onFavoriteCharacterChanged(
+                    if (tempFavoriteCharacter.isBlank()) null else tempFavoriteCharacter
+                )
+                EditType.FAVORITE_SCENE -> callbacks.onFavoriteSceneChanged(
+                    if (tempFavoriteScene.isBlank()) null else tempFavoriteScene
+                )
             }
             onClose()
         }
@@ -273,7 +299,7 @@ fun DetailsEditDialog(
                         .apply { put(null, "–") }
                         .toMap()
 
-                SeriesDropdown(
+                SearchableAddDropdown(
                     selectedOption = Pair<Any?, String>(tempSeries, tempSeries?.title ?: "–"),
                     options = options,
                     onValueChanged = { newSeries ->
@@ -386,6 +412,62 @@ fun DetailsEditDialog(
                     value = tempPlotRating,
                     onValueChange = { tempPlotRating = it },
                     label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.FAVORITE_CHARACTER -> {
+                OutlinedTextField(
+                    value = tempFavoriteCharacter,
+                    onValueChange = { tempFavoriteCharacter = it },
+                    label = {
+                        Text(
+                            text = stringResource(
+                                Res.string.new_label,
+                                stringResource(curEditType.getTypeStringResource)
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onDoneClicked() }
+                    )
+                )
+            }
+
+            EditType.FAVORITE_SCENE -> {
+                OutlinedTextField(
+                    value = tempFavoriteScene,
+                    onValueChange = { tempFavoriteScene = it },
+                    label = {
+                        Text(
+                            text = stringResource(
+                                Res.string.new_label,
+                                stringResource(curEditType.getTypeStringResource)
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onDoneClicked() }
+                    )
+                )
+            }
+
+            EditType.TROPES -> {
+                SearchableAddDropdown(
+                    label = stringResource(Res.string.new_trope),
+                    options = values.allTropes.associateBy({ it }, { it.name }),
+                    selectedOption = Pair(tempTrope, tempTrope?.name ?: ""),
+                    onValueAdded = { newName -> tempTrope = Trope(name = newName) },
+                    onValueChanged = { newTrope -> tempTrope = (newTrope as? Trope) },
                 )
             }
 

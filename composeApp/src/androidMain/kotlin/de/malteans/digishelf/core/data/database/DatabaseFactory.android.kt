@@ -7,6 +7,7 @@ import de.malteans.digishelf.core.data.database.migrations.MIGRATION1_2
 import de.malteans.digishelf.core.data.database.migrations.MIGRATION2_3
 import de.malteans.digishelf.core.data.database.migrations.MIGRATION3_4
 import de.malteans.digishelf.core.data.database.migrations.MIGRATION4_5
+import de.malteans.digishelf.core.data.database.migrations.MIGRATION5_6
 
 actual class DatabaseFactory(
     private val context: Context
@@ -19,7 +20,11 @@ actual class DatabaseFactory(
             name = dbFile.absolutePath
         )
             .addMigrations(
-                BookDatabase.MIGRATION1_2, BookDatabase.MIGRATION2_3, BookDatabase.MIGRATION3_4, BookDatabase.MIGRATION4_5,
+                BookDatabase.MIGRATION1_2,
+                BookDatabase.MIGRATION2_3,
+                BookDatabase.MIGRATION3_4,
+                BookDatabase.MIGRATION4_5,
+                BookDatabase.MIGRATION5_6,
             )
     }
 }

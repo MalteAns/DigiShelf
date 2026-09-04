@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SeriesDropdown(
+fun SearchableAddDropdown(
     label: String,
     selectedOption: Pair<Any?, String>,
     options: Map<Any?, String>,

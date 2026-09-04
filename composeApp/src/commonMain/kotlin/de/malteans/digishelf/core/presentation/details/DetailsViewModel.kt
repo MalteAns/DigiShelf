@@ -32,6 +32,13 @@ class DetailsViewModel (
             emptyList()
         )
 
+    private val _allTropes = repository.queryTropes()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
     private val _book: Flow<Book?> = _bookId
         .flatMapLatest { bookId ->
             if (bookId != null) {
@@ -43,7 +50,7 @@ class DetailsViewModel (
 
     private val _state = MutableStateFlow(DetailsState())
 
-    val state = combine(_book, _state, _bookSeriesList) { book, state, bookSeriesList ->
+    val state = combine(_book, _state, _bookSeriesList, _allTropes) { book, state, bookSeriesList, allTropes ->
         val coverImageChanged = state.imageUrl != book?.imageUrl
         val isbnChanged = state.isbn != book?.isbn
         val ratingChanged = !((state.rating == book?.rating) ||
@@ -69,6 +76,9 @@ class DetailsViewModel (
         val readingTimeChanged = state.readingTime != book?.readingTime
         val seriesChanged = (state.series?.id != book?.bookSeries?.id)
         val descriptionChanged = state.description != book?.description
+        val favoriteCharacterChanged = state.favoriteCharacter != book?.favoriteCharacter
+        val favoriteSceneChanged = state.favoriteScene != book?.favoriteScene
+        val tropesChanged = state.tropes != book?.tropes
 
         state.copy(
             bookId = book?.id,
@@ -91,13 +101,18 @@ class DetailsViewModel (
             statusChanged = statusChanged,
             readingTimeChanged = readingTimeChanged,
             seriesChanged = seriesChanged,
+            tropesChanged = tropesChanged,
+            favoriteCharacterChanged = favoriteCharacterChanged,
+            favoriteSceneChanged = favoriteSceneChanged,
             somethingChanged = coverImageChanged || isbnChanged || ratingChanged || tensionLevelChanged ||
                     spiceLevelChanged || emotionLevelChanged || chapterLengthChanged || endingRatingChanged ||
                     plotRatingChanged || titleChanged ||
                     authorChanged || priceChanged || pageCountChanged || statusChanged ||
-                    readingTimeChanged || seriesChanged || descriptionChanged,
+                    readingTimeChanged || seriesChanged || descriptionChanged || tropesChanged ||
+                    favoriteCharacterChanged || favoriteSceneChanged,
 
             bookSeriesList = bookSeriesList,
+            allTropes = allTropes,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DetailsState())
 
@@ -195,6 +210,22 @@ class DetailsViewModel (
             is DetailsAction.SetOnlineDescription -> {
                 _state.value = _state.value.copy(onlineDescription = action.onlineDescription)
             }
+            is DetailsAction.AddTrope -> {
+                _state.update { state -> state.copy(
+                    tropes = state.tropes + action.trope
+                ) }
+            }
+            is DetailsAction.RemoveTrope -> {
+                _state.update { state -> state.copy(
+                    tropes = state.tropes - action.trope
+                ) }
+            }
+            is DetailsAction.FavoriteCharacterChanged -> {
+                _state.value = _state.value.copy(favoriteCharacter = action.character)
+            }
+            is DetailsAction.FavoriteSceneChanged -> {
+                _state.value = _state.value.copy(favoriteScene = action.scene)
+            }
             is DetailsAction.SwitchEditing -> {
                 _state.value = _state.value.copy(isEditing = !_state.value.isEditing)
             }
@@ -240,18 +271,40 @@ class DetailsViewModel (
                     eBookStatus = _state.value.ebookStatus,
                     bookSeries = _state.value.series,
                     description = _state.value.description,
+                    favoriteCharacter = _state.value.favoriteCharacter,
+                    favoriteScene = _state.value.favoriteScene,
                 ) ?: throw IllegalStateException("No book to update")
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (book.bookSeries?.id == 0L) {
+                    // Handle series creation if needed
+                    val updatedBook = if (book.bookSeries?.id == 0L) {
                         val seriesId = repository.addSeries(book.bookSeries)
                         _state.update { it.copy(
                             series = book.bookSeries.copy(id = seriesId)
                         ) }
-                        repository.updateBook(book.copy(
-                            bookSeries = book.bookSeries.copy(id = seriesId)
-                        ))
+                        book.copy(bookSeries = book.bookSeries.copy(id = seriesId))
                     } else {
-                        repository.updateBook(book)
+                        book
+                    }
+
+                    // Update the book first
+                    repository.updateBook(updatedBook)
+
+                    // Handle trope linking
+                    val currentBookId = updatedBook.id
+                    if (currentBookId != 0L) {
+                        // First, unlink all existing tropes for this book
+                        repository.unlinkAllTropesFromBook(currentBookId)
+
+                        // Then link the selected tropes (create new ones if needed)
+                        for (trope in _state.value.tropes) {
+                            val tropeId = if (trope.id == 0L) {
+                                // This is a new trope, create it first
+                                repository.addTrope(trope)
+                            } else {
+                                trope.id
+                            }
+                            repository.linkTropeToBook(currentBookId, tropeId)
+                        }
                     }
                 }
             }
@@ -293,6 +346,9 @@ class DetailsViewModel (
                 series = book.bookSeries,
                 description = book.description,
                 onlineDescription = book.onlineDescription,
+                favoriteCharacter = book.favoriteCharacter,
+                favoriteScene = book.favoriteScene,
+                tropes = book.tropes,
                 isEditing = false,
             )
         }
