@@ -33,7 +33,9 @@ import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.Timer
@@ -70,7 +72,6 @@ import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.customReadIcon
 import de.malteans.digishelf.core.presentation.details.components.BlurredImageBackground
 import de.malteans.digishelf.core.presentation.details.components.CustomOpenInBrowserIcon
-import de.malteans.digishelf.core.presentation.details.components.DetailsEditCallbacks
 import de.malteans.digishelf.core.presentation.details.components.DetailsEditDialog
 import de.malteans.digishelf.core.presentation.details.components.DetailsEditValues
 import de.malteans.digishelf.core.presentation.details.components.DetailsInfoChip
@@ -228,33 +229,11 @@ fun DetailsScreen(
                 ebookStatus = state.ebookStatus,
                 series = state.series,
                 bookSeriesList = state.bookSeriesList,
-                allTropes = state.allTropes,
-                tropes = state.tropes,
+                availableTropes = state.allTropes.subtract(state.tropes.toSet()),
                 favoriteCharacter = state.favoriteCharacter,
                 favoriteScene = state.favoriteScene,
             ),
-            callbacks = DetailsEditCallbacks(
-                onImageUrlChanged = { onAction(DetailsAction.ImageUrlChanged(it)) },
-                onIsbnChanged = { onAction(DetailsAction.IsbnChanged(it)) },
-                onTitleChanged = { onAction(DetailsAction.TitleChanged(it)) },
-                onAuthorChanged = { onAction(DetailsAction.AuthorChanged(it)) },
-                onRatingChanged = { onAction(DetailsAction.RatingChanged(it)) },
-                onTensionLevelChanged = { onAction(DetailsAction.TensionLevelChanged(it)) },
-                onSpiceLevelChanged = { onAction(DetailsAction.SpiceLevelChanged(it)) },
-                onEmotionLevelChanged = { onAction(DetailsAction.EmotionLevelChanged(it)) },
-                onChapterLengthChanged = { onAction(DetailsAction.ChapterLengthChanged(it)) },
-                onEndingRatingChanged = { onAction(DetailsAction.EndingRatingChanged(it)) },
-                onPlotRatingChanged = { onAction(DetailsAction.PlotRatingChanged(it)) },
-                onPageCountChanged = { onAction(DetailsAction.PageCountChanged(it)) },
-                onPriceChanged = { onAction(DetailsAction.PriceChanged(it)) },
-                onStatusChanged = { owned, read, ebook -> onAction(DetailsAction.StatusChanged(owned, read, ebook)) },
-                onReadingTimeChanged = { onAction(DetailsAction.ReadingTimeChanged(it)) },
-                onSeriesChanged = { onAction(DetailsAction.SeriesChanged(it)) },
-                onDescriptionChanged = { onAction(DetailsAction.DescriptionChanged(it)) },
-                onAddTrope = { onAction(DetailsAction.AddTrope(it)) },
-                onFavoriteCharacterChanged = { onAction(DetailsAction.FavoriteCharacterChanged(it)) },
-                onFavoriteSceneChanged = { onAction(DetailsAction.FavoriteSceneChanged(it)) },
-            ),
+            onAction = onAction,
             onOpenImagePicker = { onResult ->
                 ImagePicker(onResult)
             },
@@ -641,6 +620,7 @@ fun DetailsScreen(
                 )
                 Spacer(Modifier.width(8.dp))
                 Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .weight(1f)
@@ -679,6 +659,8 @@ fun DetailsScreen(
                         .padding(16.dp)
                 ) {
                     Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
@@ -690,14 +672,25 @@ fun DetailsScreen(
                                 } else Modifier
                             )
                     ) {
-                        Text(text = stringResource(Res.string.favorite_character))
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
                         Text(
-                            text = state.favoriteCharacter ?: "",
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.End
+                            text = stringResource(Res.string.favorite_character),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = state.favoriteCharacter ?: "–",
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.weight(1f)
                         )
                     }
                     Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
@@ -709,11 +702,20 @@ fun DetailsScreen(
                                 } else Modifier
                             )
                     ) {
-                        Text(text = stringResource(Res.string.favorite_scene))
+                        Icon(
+                            imageVector = Icons.Default.Movie,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
                         Text(
-                            text = state.favoriteScene ?: "",
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.End
+                            text = stringResource(Res.string.favorite_scene),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = state.favoriteScene ?: "–",
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }

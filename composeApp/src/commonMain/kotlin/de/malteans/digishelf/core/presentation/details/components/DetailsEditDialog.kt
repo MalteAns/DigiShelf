@@ -34,6 +34,7 @@ import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
+import de.malteans.digishelf.core.presentation.details.DetailsAction
 import de.malteans.digishelf.core.presentation.details.toPriceString
 import de.malteans.digishelf.core.presentation.overview.components.SearchableAddDropdown
 import digishelf.composeapp.generated.resources.Res
@@ -72,40 +73,16 @@ data class DetailsEditValues(
     val ebookStatus: Boolean,
     val series: BookSeries?,
     val bookSeriesList: List<BookSeries>,
-    val allTropes: List<Trope>,
-    val tropes: List<Trope>,
+    val availableTropes: Set<Trope>,
     val favoriteCharacter: String?,
     val favoriteScene: String?,
-)
-
-data class DetailsEditCallbacks(
-    val onImageUrlChanged: (String) -> Unit,
-    val onIsbnChanged: (String) -> Unit,
-    val onTitleChanged: (String) -> Unit,
-    val onAuthorChanged: (String) -> Unit,
-    val onRatingChanged: (Int) -> Unit,
-    val onTensionLevelChanged: (Int) -> Unit,
-    val onSpiceLevelChanged: (Int) -> Unit,
-    val onEmotionLevelChanged: (Int) -> Unit,
-    val onChapterLengthChanged: (Int) -> Unit,
-    val onEndingRatingChanged: (Int) -> Unit,
-    val onPlotRatingChanged: (Int) -> Unit,
-    val onPageCountChanged: (Int?) -> Unit,
-    val onPriceChanged: (Double?) -> Unit,
-    val onStatusChanged: (owned: Boolean, read: Boolean, ebook: Boolean) -> Unit,
-    val onReadingTimeChanged: (Int) -> Unit,
-    val onSeriesChanged: (BookSeries?) -> Unit,
-    val onDescriptionChanged: (String) -> Unit,
-    val onAddTrope: (Trope) -> Unit,
-    val onFavoriteCharacterChanged: (String?) -> Unit,
-    val onFavoriteSceneChanged: (String?) -> Unit,
 )
 
 @Composable
 fun DetailsEditDialog(
     curEditType: EditType,
     values: DetailsEditValues,
-    callbacks: DetailsEditCallbacks,
+    onAction: (DetailsAction) -> Unit,
     onOpenImagePicker: @Composable (onSelected: (imagePath: String?) -> Unit) -> Unit,
     onClose: () -> Unit,
 ) {
@@ -187,33 +164,33 @@ fun DetailsEditDialog(
     fun onDoneClicked() {
         if (readyToFinish) {
             when (curEditType) {
-                EditType.COVER_IMAGE -> callbacks.onImageUrlChanged(tempString)
-                EditType.ISBN -> callbacks.onIsbnChanged(tempString)
-                EditType.TITLE -> callbacks.onTitleChanged(tempString)
-                EditType.AUTHOR -> callbacks.onAuthorChanged(tempString)
-                EditType.RATING -> callbacks.onRatingChanged(tempRating)
-                EditType.TENSION_LEVEL -> callbacks.onTensionLevelChanged(tempTensionLevel)
-                EditType.SPICE_LEVEL -> callbacks.onSpiceLevelChanged(tempSpiceLevel)
-                EditType.EMOTION_LEVEL -> callbacks.onEmotionLevelChanged(tempEmotionLevel)
-                EditType.CHAPTER_LENGTH -> callbacks.onChapterLengthChanged(tempChapterLength)
-                EditType.ENDING_RATING -> callbacks.onEndingRatingChanged(tempEndingRating)
-                EditType.PLOT_RATING -> callbacks.onPlotRatingChanged(tempPlotRating)
-                EditType.PAGE_COUNT -> callbacks.onPageCountChanged(tempString.toIntOrNull())
-                EditType.PRICE -> callbacks.onPriceChanged(tempString.toDoubleOrNull())
-                EditType.STATUS -> callbacks.onStatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook)
-                EditType.READING_TIME -> callbacks.onReadingTimeChanged(
+                EditType.COVER_IMAGE -> onAction(DetailsAction.ImageUrlChanged(tempString))
+                EditType.ISBN -> onAction(DetailsAction.IsbnChanged(tempString))
+                EditType.TITLE -> onAction(DetailsAction.TitleChanged(tempString))
+                EditType.AUTHOR -> onAction(DetailsAction.AuthorChanged(tempString))
+                EditType.RATING -> onAction(DetailsAction.RatingChanged(tempRating))
+                EditType.TENSION_LEVEL -> onAction(DetailsAction.TensionLevelChanged(tempTensionLevel))
+                EditType.SPICE_LEVEL -> onAction(DetailsAction.SpiceLevelChanged(tempSpiceLevel))
+                EditType.EMOTION_LEVEL -> onAction(DetailsAction.EmotionLevelChanged(tempEmotionLevel))
+                EditType.CHAPTER_LENGTH -> onAction(DetailsAction.ChapterLengthChanged(tempChapterLength))
+                EditType.ENDING_RATING -> onAction(DetailsAction.EndingRatingChanged(tempEndingRating))
+                EditType.PLOT_RATING -> onAction(DetailsAction.PlotRatingChanged(tempPlotRating))
+                EditType.PAGE_COUNT -> onAction(DetailsAction.PageCountChanged(tempString.toIntOrNull()))
+                EditType.PRICE -> onAction(DetailsAction.PriceChanged(tempString.toDoubleOrNull()))
+                EditType.STATUS -> onAction(DetailsAction.StatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook))
+                EditType.READING_TIME -> onAction(DetailsAction.ReadingTimeChanged(
                     (values.readingTime ?: 0) + (tempString.toIntOrNull() ?: 0)
-                )
+                ))
 
-                EditType.BOOK_SERIES -> callbacks.onSeriesChanged(tempSeries)
-                EditType.DESCRIPTION -> callbacks.onDescriptionChanged(tempString)
-                EditType.TROPES -> tempTrope?.let { callbacks.onAddTrope(it) }
-                EditType.FAVORITE_CHARACTER -> callbacks.onFavoriteCharacterChanged(
+                EditType.BOOK_SERIES -> onAction(DetailsAction.SeriesChanged(tempSeries))
+                EditType.DESCRIPTION -> onAction(DetailsAction.DescriptionChanged(tempString))
+                EditType.TROPES -> tempTrope?.let { onAction(DetailsAction.AddTrope(it)) }
+                EditType.FAVORITE_CHARACTER -> onAction(DetailsAction.FavoriteCharacterChanged(
                     if (tempFavoriteCharacter.isBlank()) null else tempFavoriteCharacter
-                )
-                EditType.FAVORITE_SCENE -> callbacks.onFavoriteSceneChanged(
+                ))
+                EditType.FAVORITE_SCENE -> onAction(DetailsAction.FavoriteSceneChanged(
                     if (tempFavoriteScene.isBlank()) null else tempFavoriteScene
-                )
+                ))
             }
             onClose()
         }
@@ -464,7 +441,7 @@ fun DetailsEditDialog(
             EditType.TROPES -> {
                 SearchableAddDropdown(
                     label = stringResource(Res.string.new_trope),
-                    options = values.allTropes.associateBy({ it }, { it.name }),
+                    options = values.availableTropes.associateBy({ it }, { it.name }),
                     selectedOption = Pair(tempTrope, tempTrope?.name ?: ""),
                     onValueAdded = { newName -> tempTrope = Trope(name = newName) },
                     onValueChanged = { newTrope -> tempTrope = (newTrope as? Trope) },
