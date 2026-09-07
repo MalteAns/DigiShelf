@@ -3,14 +3,24 @@ package de.malteans.digishelf.core.presentation.details.components
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.author
 import digishelf.composeapp.generated.resources.book_series
+import digishelf.composeapp.generated.resources.chapter_length
 import digishelf.composeapp.generated.resources.cover_image
 import digishelf.composeapp.generated.resources.description
+import digishelf.composeapp.generated.resources.emotion_level
+import digishelf.composeapp.generated.resources.ending_rating
+import digishelf.composeapp.generated.resources.favorite_character
+import digishelf.composeapp.generated.resources.favorite_scene
 import digishelf.composeapp.generated.resources.isbn
 import digishelf.composeapp.generated.resources.pages
+import digishelf.composeapp.generated.resources.plot_rating
 import digishelf.composeapp.generated.resources.price
+import digishelf.composeapp.generated.resources.rating
 import digishelf.composeapp.generated.resources.reading_time
+import digishelf.composeapp.generated.resources.spice_level
 import digishelf.composeapp.generated.resources.status
+import digishelf.composeapp.generated.resources.tension_level
 import digishelf.composeapp.generated.resources.title
+import digishelf.composeapp.generated.resources.tropes
 import org.jetbrains.compose.resources.StringResource
 
 enum class EditType {
@@ -18,12 +28,22 @@ enum class EditType {
     ISBN,
     TITLE,
     AUTHOR,
+    RATING,
+    TENSION_LEVEL,
+    SPICE_LEVEL,
+    EMOTION_LEVEL,
+    CHAPTER_LENGTH,
+    ENDING_RATING,
+    PLOT_RATING,
     PAGE_COUNT,
     PRICE,
     STATUS,
     READING_TIME,
     BOOK_SERIES,
-    DESCRIPTION;
+    DESCRIPTION,
+    TROPES,
+    FAVORITE_CHARACTER,
+    FAVORITE_SCENE;
 
     val getTypeStringResource: StringResource
         get() = when(this) {
@@ -31,11 +51,21 @@ enum class EditType {
             ISBN -> Res.string.isbn
             TITLE -> Res.string.title
             AUTHOR -> Res.string.author
+            RATING -> Res.string.rating
+            TENSION_LEVEL -> Res.string.tension_level
+            SPICE_LEVEL -> Res.string.spice_level
+            EMOTION_LEVEL -> Res.string.emotion_level
+            CHAPTER_LENGTH -> Res.string.chapter_length
+            ENDING_RATING -> Res.string.ending_rating
+            PLOT_RATING -> Res.string.plot_rating
             PAGE_COUNT -> Res.string.pages
             PRICE -> Res.string.price
             STATUS -> Res.string.status
             READING_TIME -> Res.string.reading_time
             BOOK_SERIES -> Res.string.book_series
             DESCRIPTION -> Res.string.description
+            TROPES -> Res.string.tropes
+            FAVORITE_CHARACTER -> Res.string.favorite_character
+            FAVORITE_SCENE -> Res.string.favorite_scene
         }
 }

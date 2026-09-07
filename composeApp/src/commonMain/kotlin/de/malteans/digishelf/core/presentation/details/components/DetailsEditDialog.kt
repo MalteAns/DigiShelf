@@ -1,28 +1,53 @@
 package de.malteans.digishelf.core.presentation.details.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.domain.Trope
 import de.malteans.digishelf.core.presentation.add.isIsbnFormat
 import de.malteans.digishelf.core.presentation.components.CustomBookIcon
 import de.malteans.digishelf.core.presentation.components.CustomDialog
 import de.malteans.digishelf.core.presentation.components.customReadIcon
+import de.malteans.digishelf.core.presentation.details.DetailsAction
 import de.malteans.digishelf.core.presentation.details.toPriceString
-import de.malteans.digishelf.core.presentation.overview.components.SeriesDropdown
-import digishelf.composeapp.generated.resources.*
+import de.malteans.digishelf.core.presentation.overview.components.SearchableAddDropdown
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.done
+import digishelf.composeapp.generated.resources.ebook
+import digishelf.composeapp.generated.resources.edit_title
+import digishelf.composeapp.generated.resources.ic_tablet
+import digishelf.composeapp.generated.resources.minutes_short
+import digishelf.composeapp.generated.resources.new_label
+import digishelf.composeapp.generated.resources.new_trope
+import digishelf.composeapp.generated.resources.owned
+import digishelf.composeapp.generated.resources.pick_image
+import digishelf.composeapp.generated.resources.read
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -32,6 +57,13 @@ data class DetailsEditValues(
     val isbn: String,
     val title: String,
     val author: String,
+    val rating: Int,
+    val tensionLevel: Int,
+    val spiceLevel: Int,
+    val emotionLevel: Int,
+    val chapterLength: Int,
+    val endingRating: Int,
+    val plotRating: Int,
     val pageCount: Int?,
     val price: Double?,
     val description: String,
@@ -41,36 +73,36 @@ data class DetailsEditValues(
     val ebookStatus: Boolean,
     val series: BookSeries?,
     val bookSeriesList: List<BookSeries>,
-)
-
-data class DetailsEditCallbacks(
-    val onImageUrlChanged: (String) -> Unit,
-    val onIsbnChanged: (String) -> Unit,
-    val onTitleChanged: (String) -> Unit,
-    val onAuthorChanged: (String) -> Unit,
-    val onPageCountChanged: (Int?) -> Unit,
-    val onPriceChanged: (Double?) -> Unit,
-    val onStatusChanged: (owned: Boolean, read: Boolean, ebook: Boolean) -> Unit,
-    val onReadingTimeChanged: (Int) -> Unit,
-    val onSeriesChanged: (BookSeries?) -> Unit,
-    val onDescriptionChanged: (String) -> Unit,
+    val availableTropes: Set<Trope>,
+    val favoriteCharacter: String?,
+    val favoriteScene: String?,
 )
 
 @Composable
 fun DetailsEditDialog(
     curEditType: EditType,
     values: DetailsEditValues,
-    callbacks: DetailsEditCallbacks,
+    onAction: (DetailsAction) -> Unit,
     onOpenImagePicker: @Composable (onSelected: (imagePath: String?) -> Unit) -> Unit,
     onClose: () -> Unit,
 ) {
     var tempString by remember { mutableStateOf("") }
     var tempSeries by remember { mutableStateOf(values.series) }
     var tempStatus by remember { mutableStateOf(StatusValues(values.possessionStatus, values.readStatus, values.ebookStatus)) }
+    var tempRating by remember { mutableStateOf(values.rating) }
+    var tempTensionLevel by remember { mutableStateOf(values.tensionLevel) }
+    var tempSpiceLevel by remember { mutableStateOf(values.spiceLevel) }
+    var tempEmotionLevel by remember { mutableStateOf(values.emotionLevel) }
+    var tempChapterLength by remember { mutableStateOf(values.chapterLength) }
+    var tempEndingRating by remember { mutableStateOf(values.endingRating) }
+    var tempPlotRating by remember { mutableStateOf(values.plotRating) }
+    var tempTrope by remember { mutableStateOf<Trope?>(null) }
+    var tempFavoriteCharacter by remember { mutableStateOf(values.favoriteCharacter ?: "") }
+    var tempFavoriteScene by remember { mutableStateOf(values.favoriteScene ?: "") }
 
     var readyToFinish by remember { mutableStateOf(false) }
 
-    LaunchedEffect(curEditType, tempString, tempSeries) {
+    LaunchedEffect(curEditType, tempString, tempSeries, tempRating, tempTensionLevel, tempSpiceLevel, tempEmotionLevel, tempChapterLength, tempEndingRating, tempPlotRating, tempFavoriteCharacter, tempFavoriteScene, tempTrope) {
         readyToFinish = when (curEditType) {
             EditType.ISBN -> tempString.isIsbnFormat()
             EditType.TITLE, EditType.AUTHOR -> tempString.isNotBlank()
@@ -86,6 +118,10 @@ fun DetailsEditDialog(
                 })
             }
             EditType.COVER_IMAGE, EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION -> true
+            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING -> true
+            EditType.TROPES -> tempTrope != null
+            EditType.FAVORITE_CHARACTER, EditType.FAVORITE_SCENE -> true // Always ready for text fields
         }
     }
 
@@ -99,25 +135,62 @@ fun DetailsEditDialog(
             EditType.PRICE -> values.price?.toPriceString(null) ?: ""
             EditType.DESCRIPTION -> values.description
             EditType.STATUS, EditType.READING_TIME, EditType.BOOK_SERIES -> ""
+            EditType.RATING -> values.rating.toString()
+            EditType.TENSION_LEVEL -> values.tensionLevel.toString()
+            EditType.SPICE_LEVEL -> values.spiceLevel.toString()
+            EditType.EMOTION_LEVEL -> values.emotionLevel.toString()
+            EditType.CHAPTER_LENGTH -> values.chapterLength.toString()
+            EditType.ENDING_RATING -> values.endingRating.toString()
+            EditType.PLOT_RATING -> values.plotRating.toString()
+            EditType.FAVORITE_CHARACTER -> values.favoriteCharacter ?: ""
+            EditType.FAVORITE_SCENE -> values.favoriteScene ?: ""
+            EditType.TROPES -> ""
+        }
+        // Initialize level values when switching to level edit types
+        when (curEditType) {
+            EditType.RATING -> tempRating = values.rating
+            EditType.TENSION_LEVEL -> tempTensionLevel = values.tensionLevel
+            EditType.SPICE_LEVEL -> tempSpiceLevel = values.spiceLevel
+            EditType.EMOTION_LEVEL -> tempEmotionLevel = values.emotionLevel
+            EditType.CHAPTER_LENGTH -> tempChapterLength = values.chapterLength
+            EditType.ENDING_RATING -> tempEndingRating = values.endingRating
+            EditType.PLOT_RATING -> tempPlotRating = values.plotRating
+            EditType.FAVORITE_CHARACTER -> tempFavoriteCharacter = values.favoriteCharacter ?: ""
+            EditType.FAVORITE_SCENE -> tempFavoriteScene = values.favoriteScene ?: ""
+            else -> {}
         }
     }
 
     fun onDoneClicked() {
         if (readyToFinish) {
             when (curEditType) {
-                EditType.COVER_IMAGE -> callbacks.onImageUrlChanged(tempString)
-                EditType.ISBN -> callbacks.onIsbnChanged(tempString)
-                EditType.TITLE -> callbacks.onTitleChanged(tempString)
-                EditType.AUTHOR -> callbacks.onAuthorChanged(tempString)
-                EditType.PAGE_COUNT -> callbacks.onPageCountChanged(tempString.toIntOrNull())
-                EditType.PRICE -> callbacks.onPriceChanged(tempString.toDoubleOrNull())
-                EditType.STATUS -> callbacks.onStatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook)
-                EditType.READING_TIME -> callbacks.onReadingTimeChanged(
+                EditType.COVER_IMAGE -> onAction(DetailsAction.ImageUrlChanged(tempString))
+                EditType.ISBN -> onAction(DetailsAction.IsbnChanged(tempString))
+                EditType.TITLE -> onAction(DetailsAction.TitleChanged(tempString))
+                EditType.AUTHOR -> onAction(DetailsAction.AuthorChanged(tempString))
+                EditType.RATING -> onAction(DetailsAction.RatingChanged(tempRating))
+                EditType.TENSION_LEVEL -> onAction(DetailsAction.TensionLevelChanged(tempTensionLevel))
+                EditType.SPICE_LEVEL -> onAction(DetailsAction.SpiceLevelChanged(tempSpiceLevel))
+                EditType.EMOTION_LEVEL -> onAction(DetailsAction.EmotionLevelChanged(tempEmotionLevel))
+                EditType.CHAPTER_LENGTH -> onAction(DetailsAction.ChapterLengthChanged(tempChapterLength))
+                EditType.ENDING_RATING -> onAction(DetailsAction.EndingRatingChanged(tempEndingRating))
+                EditType.PLOT_RATING -> onAction(DetailsAction.PlotRatingChanged(tempPlotRating))
+                EditType.PAGE_COUNT -> onAction(DetailsAction.PageCountChanged(tempString.toIntOrNull()))
+                EditType.PRICE -> onAction(DetailsAction.PriceChanged(tempString.toDoubleOrNull()))
+                EditType.STATUS -> onAction(DetailsAction.StatusChanged(tempStatus.owned, tempStatus.read, tempStatus.ebook))
+                EditType.READING_TIME -> onAction(DetailsAction.ReadingTimeChanged(
                     (values.readingTime ?: 0) + (tempString.toIntOrNull() ?: 0)
-                )
+                ))
 
-                EditType.BOOK_SERIES -> callbacks.onSeriesChanged(tempSeries)
-                EditType.DESCRIPTION -> callbacks.onDescriptionChanged(tempString)
+                EditType.BOOK_SERIES -> onAction(DetailsAction.SeriesChanged(tempSeries))
+                EditType.DESCRIPTION -> onAction(DetailsAction.DescriptionChanged(tempString))
+                EditType.TROPES -> tempTrope?.let { onAction(DetailsAction.AddTrope(it)) }
+                EditType.FAVORITE_CHARACTER -> onAction(DetailsAction.FavoriteCharacterChanged(
+                    if (tempFavoriteCharacter.isBlank()) null else tempFavoriteCharacter
+                ))
+                EditType.FAVORITE_SCENE -> onAction(DetailsAction.FavoriteSceneChanged(
+                    if (tempFavoriteScene.isBlank()) null else tempFavoriteScene
+                ))
             }
             onClose()
         }
@@ -143,7 +216,7 @@ fun DetailsEditDialog(
                         EditType.READING_TIME -> Icons.Default.AddCircle
                         else -> Icons.Default.Check
                     },
-                    contentDescription = "Done",
+                    contentDescription = stringResource(Res.string.done),
                     tint = if (readyToFinish) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
@@ -203,7 +276,7 @@ fun DetailsEditDialog(
                         .apply { put(null, "–") }
                         .toMap()
 
-                SeriesDropdown(
+                SearchableAddDropdown(
                     selectedOption = Pair<Any?, String>(tempSeries, tempSeries?.title ?: "–"),
                     options = options,
                     onValueChanged = { newSeries ->
@@ -248,7 +321,7 @@ fun DetailsEditDialog(
                         IconButton({ showImagePicker = true }) {
                             Icon(
                                 imageVector = Icons.Default.FileOpen,
-                                contentDescription = "Pick Image"
+                                contentDescription = stringResource(Res.string.pick_image)
                             )
                         }
                     },
@@ -260,6 +333,118 @@ fun DetailsEditDialog(
                         onDone = { onDoneClicked() }
                     ),
                     modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            EditType.RATING -> {
+                LevelSlider(
+                    value = tempRating,
+                    onValueChange = { tempRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.TENSION_LEVEL -> {
+                LevelSlider(
+                    value = tempTensionLevel,
+                    onValueChange = { tempTensionLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.SPICE_LEVEL -> {
+                LevelSlider(
+                    value = tempSpiceLevel,
+                    onValueChange = { tempSpiceLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.EMOTION_LEVEL -> {
+                LevelSlider(
+                    value = tempEmotionLevel,
+                    onValueChange = { tempEmotionLevel = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.CHAPTER_LENGTH -> {
+                LevelSlider(
+                    value = tempChapterLength,
+                    onValueChange = { tempChapterLength = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.ENDING_RATING -> {
+                LevelSlider(
+                    value = tempEndingRating,
+                    onValueChange = { tempEndingRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.PLOT_RATING -> {
+                LevelSlider(
+                    value = tempPlotRating,
+                    onValueChange = { tempPlotRating = it },
+                    label = stringResource(curEditType.getTypeStringResource)
+                )
+            }
+
+            EditType.FAVORITE_CHARACTER -> {
+                OutlinedTextField(
+                    value = tempFavoriteCharacter,
+                    onValueChange = { tempFavoriteCharacter = it },
+                    label = {
+                        Text(
+                            text = stringResource(
+                                Res.string.new_label,
+                                stringResource(curEditType.getTypeStringResource)
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onDoneClicked() }
+                    )
+                )
+            }
+
+            EditType.FAVORITE_SCENE -> {
+                OutlinedTextField(
+                    value = tempFavoriteScene,
+                    onValueChange = { tempFavoriteScene = it },
+                    label = {
+                        Text(
+                            text = stringResource(
+                                Res.string.new_label,
+                                stringResource(curEditType.getTypeStringResource)
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onDoneClicked() }
+                    )
+                )
+            }
+
+            EditType.TROPES -> {
+                SearchableAddDropdown(
+                    label = stringResource(Res.string.new_trope),
+                    options = values.availableTropes.associateBy({ it }, { it.name }),
+                    selectedOption = Pair(tempTrope, tempTrope?.name ?: ""),
+                    onValueAdded = { newName -> tempTrope = Trope(name = newName) },
+                    onValueChanged = { newTrope -> tempTrope = (newTrope as? Trope) },
                 )
             }
 
@@ -280,7 +465,9 @@ fun DetailsEditDialog(
                             EditType.PRICE -> Text(text = "EUR") // TODO: Add currency selection
                             EditType.READING_TIME -> Text(text = stringResource(Res.string.minutes_short))
                             EditType.ISBN, EditType.TITLE, EditType.AUTHOR, EditType.PAGE_COUNT,
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.DESCRIPTION, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> Text(text = "")
                         }
                     },
@@ -289,7 +476,9 @@ fun DetailsEditDialog(
                         keyboardType = when (curEditType) {
                             EditType.ISBN, EditType.PAGE_COUNT, EditType.PRICE, EditType.READING_TIME -> KeyboardType.Number
                             EditType.TITLE, EditType.AUTHOR, EditType.DESCRIPTION -> KeyboardType.Text
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         },
                         imeAction = when (curEditType) {
@@ -297,7 +486,9 @@ fun DetailsEditDialog(
                             EditType.PRICE, EditType.READING_TIME -> ImeAction.Done
 
                             EditType.DESCRIPTION -> ImeAction.Default
-                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE
+                            EditType.STATUS, EditType.BOOK_SERIES, EditType.COVER_IMAGE,
+                            EditType.RATING, EditType.TENSION_LEVEL, EditType.SPICE_LEVEL, EditType.EMOTION_LEVEL,
+                            EditType.CHAPTER_LENGTH, EditType.ENDING_RATING, EditType.PLOT_RATING
                                 -> throw IllegalStateException("Something went weirdly wrong")
                         }
                     ),
@@ -323,3 +514,36 @@ private data class StatusEditValues(
     val currentValue: Boolean,
     val onValueChange: (Boolean) -> Unit,
 )
+
+@Composable
+private fun LevelSlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { onValueChange(it.toInt()) },
+            valueRange = 0f..5f,
+            steps = 4,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        Text(
+            text = "$value/5",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}

@@ -4,9 +4,10 @@ import de.malteans.digishelf.core.data.database.entities.BookEntity
 import de.malteans.digishelf.core.data.network.dto.BookItem
 import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.domain.Trope
 
 // Updated to include new fields and default parameter for bookSeries
-fun BookEntity.toDomain(bookSeries: BookSeries?): Book {
+fun BookEntity.toDomain(bookSeries: BookSeries?, tropes: List<Trope> = emptyList()): Book {
     return Book(
         id = this.id,
         title = this.title,
@@ -20,11 +21,20 @@ fun BookEntity.toDomain(bookSeries: BookSeries?): Book {
         currency = this.currency,
         bookSeries = bookSeries,
         rating = this.rating,
+        tensionLevel = this.tensionLevel,
+        spiceLevel = this.spiceLevel,
+        emotionLevel = this.emotionLevel,
+        chapterLength = this.chapterLength,
+        endingRating = this.endingRating,
+        plotRating = this.plotRating,
         readStatus = this.readStatus,
         readingTime = this.readingTime,
         possessionStatus = this.possessionStatus,
         eBookStatus = this.eBookStatus,
-        deletedSince = this.deletedSince
+        deletedSince = this.deletedSince,
+        favoriteCharacter = this.favoriteCharacter,
+        favoriteScene = this.favoriteScene,
+        tropes = tropes,
     )
 }
 
@@ -42,11 +52,19 @@ fun Book.toEntity(): BookEntity {
         currency = this.currency,
         bookSeriesId = this.bookSeries?.id,
         rating = this.rating,
+        tensionLevel = this.tensionLevel,
+        spiceLevel = this.spiceLevel,
+        emotionLevel = this.emotionLevel,
+        chapterLength = this.chapterLength,
+        endingRating = this.endingRating,
+        plotRating = this.plotRating,
         readStatus = this.readStatus,
         readingTime = this.readingTime,
         possessionStatus = this.possessionStatus,
         eBookStatus = this.eBookStatus,
-        deletedSince = this.deletedSince
+        deletedSince = this.deletedSince,
+        favoriteCharacter = this.favoriteCharacter,
+        favoriteScene = this.favoriteScene,
     )
 }
 
@@ -74,6 +92,9 @@ fun BookItem.toDomain(): Book {
         readingTime = null,
         possessionStatus = false,
         eBookStatus = this.saleInfo.isEbook,
-        deletedSince = 0L
+        deletedSince = 0L,
+        favoriteCharacter = null,
+        favoriteScene = null,
+        tropes = emptyList(),
     )
 }

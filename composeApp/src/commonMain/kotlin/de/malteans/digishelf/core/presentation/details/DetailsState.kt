@@ -2,6 +2,7 @@ package de.malteans.digishelf.core.presentation.details
 
 import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookSeries
+import de.malteans.digishelf.core.domain.Trope
 
 data class DetailsState(
     val bookId: Long? = null,
@@ -18,6 +19,18 @@ data class DetailsState(
     val authorChanged: Boolean = false,
     val rating: Int = 0,
     val ratingChanged: Boolean = false,
+    val tensionLevel: Int = 0,
+    val tensionLevelChanged: Boolean = false,
+    val spiceLevel: Int = 0,
+    val spiceLevelChanged: Boolean = false,
+    val emotionLevel: Int = 0,
+    val emotionLevelChanged: Boolean = false,
+    val chapterLength: Int = 0,
+    val chapterLengthChanged: Boolean = false,
+    val endingRating: Int = 0,
+    val endingRatingChanged: Boolean = false,
+    val plotRating: Int = 0,
+    val plotRatingChanged: Boolean = false,
     val pageCount: Int? = null,
     val pagesChanged: Boolean = false,
     val price: Double? = null,
@@ -36,6 +49,17 @@ data class DetailsState(
     val series: BookSeries? = null,
     val seriesId: Long? = null,
     val seriesChanged: Boolean = false,
+
+    // Trope fields
+    val allTropes: List<Trope> = emptyList(),
+    val tropes: List<Trope> = emptyList(),
+    val tropesChanged: Boolean = false,
+
+    // Favorite character and scene
+    val favoriteCharacter: String? = null,
+    val favoriteScene: String? = null,
+    val favoriteCharacterChanged: Boolean = false,
+    val favoriteSceneChanged: Boolean = false,
 
     val somethingChanged: Boolean = false,
 

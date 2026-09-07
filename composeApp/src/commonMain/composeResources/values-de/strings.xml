@@ -80,7 +80,7 @@
     <string name="hours">Stunden</string>
     <string name="add_minutes">Minuten hinzufügen</string>
     <string name="export_data">Daten exportieren</string>
-    <string name="settings_export_desc">Daten als csv Datei exportieren</string>
+    <string name="settings_export_desc">Daten als json Datei exportieren</string>
     <string name="file_saved">Datei gespeichert</string>
     <string name="file_save_error">Fehler beim Speichern der Datei</string>
     <string name="no_data_to_export">Fehlgeschlagen: keine Daten zum Exportieren</string>
@@ -90,7 +90,7 @@
     <string name="new_series">Neue Serie</string>
     <string name="no_series_assigned">Keine Serie zugewiesen</string>
     <string name="import_data">Daten importieren</string>
-    <string name="settings_import_desc">Daten aus csv Datei importieren</string>
+    <string name="settings_import_desc">Daten aus json Datei importieren</string>
     <string name="error_no_file_selected">Fehler: Keine Datei ausgewählt</string>
     <string name="no_file_selected">Keine Datei ausgewählt</string>
     <string name="file">Datei</string>
@@ -113,6 +113,7 @@
     <string name="book_added_success">Buch erfolgreich hinzugefügt</string>
     <string name="show">Anzeigen</string>
     <string name="pages">Seiten</string>
+    <string name="pages_short">S.</string>
     <string name="price">Preis</string>
     <string name="status">Status</string>
     <string name="cloud_completion">Cloud Vervollständigung</string>
@@ -124,4 +125,24 @@
     <string name="series_details_topbar_title">Serie „%1$s“</string>
     <string name="series_details_no_books">Keine Bücher für diese Serie gefunden.</string>
     <string name="series_details_no_description">Keine Beschreibung vorhanden.</string>
+    <string name="tension_level">Spannung</string>
+    <string name="spice_level">Spice</string>
+    <string name="emotion_level">Emotion</string>
+    <string name="chapter_length">Kapitel Länge</string>
+    <string name="ending_rating">Ende</string>
+    <string name="plot_rating">Plot</string>
+    <string name="add_cover_image">Cover Bild hinzufügen</string>
+    <string name="book_cover">Buchcover</string>
+    <string name="done">Fertig</string>
+    <string name="pick_image">Bild auswählen</string>
+    <string name="open_in_browser">Im Browser öffnen</string>
+    <string name="delete_book">Buch löschen</string>
+    <string name="possession_status">Besitzstatus</string>
+    <string name="read_status">Gelesen-Status</string>
+    <string name="ebook_status">E-Book-Status</string>
+    <string name="tropes">Tropes</string>
+    <string name="favorite_character">Lieblingscharakter</string>
+    <string name="favorite_scene">Lieblingsszene</string>
+    <string name="add_trope">Trope hinzufügen</string>
+    <string name="new_trope">Neuer Trope</string>
 </resources>

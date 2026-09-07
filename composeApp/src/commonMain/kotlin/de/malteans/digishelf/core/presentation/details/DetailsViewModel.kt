@@ -7,7 +7,15 @@ import de.malteans.digishelf.core.domain.BookRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -18,6 +26,13 @@ class DetailsViewModel (
     private val _bookId = MutableStateFlow<Long?>(null)
 
     private val _bookSeriesList = repository.querySeries()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
+    private val _allTropes = repository.queryTropes()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
@@ -35,11 +50,23 @@ class DetailsViewModel (
 
     private val _state = MutableStateFlow(DetailsState())
 
-    val state = combine(_book, _state, _bookSeriesList) { book, state, bookSeriesList ->
+    val state = combine(_book, _state, _bookSeriesList, _allTropes) { book, state, bookSeriesList, allTropes ->
         val coverImageChanged = state.imageUrl != book?.imageUrl
         val isbnChanged = state.isbn != book?.isbn
         val ratingChanged = !((state.rating == book?.rating) ||
                 (state.rating == 0 && book?.rating == null))
+        val tensionLevelChanged = !((state.tensionLevel == book?.tensionLevel) ||
+                (state.tensionLevel == 0 && book?.tensionLevel == null))
+        val spiceLevelChanged = !((state.spiceLevel == book?.spiceLevel) ||
+                (state.spiceLevel == 0 && book?.spiceLevel == null))
+        val emotionLevelChanged = !((state.emotionLevel == book?.emotionLevel) ||
+                (state.emotionLevel == 0 && book?.emotionLevel == null))
+        val chapterLengthChanged = !((state.chapterLength == book?.chapterLength) ||
+                (state.chapterLength == 0 && book?.chapterLength == null))
+        val endingRatingChanged = !((state.endingRating == book?.endingRating) ||
+                (state.endingRating == 0 && book?.endingRating == null))
+        val plotRatingChanged = !((state.plotRating == book?.plotRating) ||
+                (state.plotRating == 0 && book?.plotRating == null))
         val titleChanged = state.title != book?.title
         val authorChanged = state.author != book?.author
         val priceChanged = state.price != book?.price || state.currency != book?.currency
@@ -49,6 +76,9 @@ class DetailsViewModel (
         val readingTimeChanged = state.readingTime != book?.readingTime
         val seriesChanged = (state.series?.id != book?.bookSeries?.id)
         val descriptionChanged = state.description != book?.description
+        val favoriteCharacterChanged = state.favoriteCharacter != book?.favoriteCharacter
+        val favoriteSceneChanged = state.favoriteScene != book?.favoriteScene
+        val tropesChanged = state.tropes != book?.tropes
 
         state.copy(
             bookId = book?.id,
@@ -57,6 +87,12 @@ class DetailsViewModel (
             imageUrlChanged = coverImageChanged,
             isbnChanged = isbnChanged,
             ratingChanged = ratingChanged,
+            tensionLevelChanged = tensionLevelChanged,
+            spiceLevelChanged = spiceLevelChanged,
+            emotionLevelChanged = emotionLevelChanged,
+            chapterLengthChanged = chapterLengthChanged,
+            endingRatingChanged = endingRatingChanged,
+            plotRatingChanged = plotRatingChanged,
             titleChanged = titleChanged,
             authorChanged = authorChanged,
             priceChanged = priceChanged,
@@ -65,11 +101,18 @@ class DetailsViewModel (
             statusChanged = statusChanged,
             readingTimeChanged = readingTimeChanged,
             seriesChanged = seriesChanged,
-            somethingChanged = coverImageChanged || isbnChanged || ratingChanged || titleChanged ||
+            tropesChanged = tropesChanged,
+            favoriteCharacterChanged = favoriteCharacterChanged,
+            favoriteSceneChanged = favoriteSceneChanged,
+            somethingChanged = coverImageChanged || isbnChanged || ratingChanged || tensionLevelChanged ||
+                    spiceLevelChanged || emotionLevelChanged || chapterLengthChanged || endingRatingChanged ||
+                    plotRatingChanged || titleChanged ||
                     authorChanged || priceChanged || pageCountChanged || statusChanged ||
-                    readingTimeChanged || seriesChanged || descriptionChanged,
+                    readingTimeChanged || seriesChanged || descriptionChanged || tropesChanged ||
+                    favoriteCharacterChanged || favoriteSceneChanged,
 
             bookSeriesList = bookSeriesList,
+            allTropes = allTropes,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DetailsState())
 
@@ -134,6 +177,24 @@ class DetailsViewModel (
             is DetailsAction.RatingChanged -> {
                 _state.value = _state.value.copy(rating = action.rating)
             }
+            is DetailsAction.TensionLevelChanged -> {
+                _state.value = _state.value.copy(tensionLevel = action.level)
+            }
+            is DetailsAction.SpiceLevelChanged -> {
+                _state.value = _state.value.copy(spiceLevel = action.level)
+            }
+            is DetailsAction.EmotionLevelChanged -> {
+                _state.value = _state.value.copy(emotionLevel = action.level)
+            }
+            is DetailsAction.ChapterLengthChanged -> {
+                _state.value = _state.value.copy(chapterLength = action.level)
+            }
+            is DetailsAction.EndingRatingChanged -> {
+                _state.value = _state.value.copy(endingRating = action.level)
+            }
+            is DetailsAction.PlotRatingChanged -> {
+                _state.value = _state.value.copy(plotRating = action.level)
+            }
             is DetailsAction.DescriptionChanged -> {
                 _state.value = _state.value.copy(description = action.description)
             }
@@ -149,6 +210,22 @@ class DetailsViewModel (
             is DetailsAction.SetOnlineDescription -> {
                 _state.value = _state.value.copy(onlineDescription = action.onlineDescription)
             }
+            is DetailsAction.AddTrope -> {
+                _state.update { state -> state.copy(
+                    tropes = state.tropes + action.trope
+                ) }
+            }
+            is DetailsAction.RemoveTrope -> {
+                _state.update { state -> state.copy(
+                    tropes = state.tropes - action.trope
+                ) }
+            }
+            is DetailsAction.FavoriteCharacterChanged -> {
+                _state.value = _state.value.copy(favoriteCharacter = action.character)
+            }
+            is DetailsAction.FavoriteSceneChanged -> {
+                _state.value = _state.value.copy(favoriteScene = action.scene)
+            }
             is DetailsAction.SwitchEditing -> {
                 _state.value = _state.value.copy(isEditing = !_state.value.isEditing)
             }
@@ -160,6 +237,30 @@ class DetailsViewModel (
                         0 -> null
                         else -> _state.value.rating
                     },
+                    tensionLevel = when (_state.value.tensionLevel) {
+                        0 -> null
+                        else -> _state.value.tensionLevel
+                    },
+                    spiceLevel = when (_state.value.spiceLevel) {
+                        0 -> null
+                        else -> _state.value.spiceLevel
+                    },
+                    emotionLevel = when (_state.value.emotionLevel) {
+                        0 -> null
+                        else -> _state.value.emotionLevel
+                    },
+                    chapterLength = when (_state.value.chapterLength) {
+                        0 -> null
+                        else -> _state.value.chapterLength
+                    },
+                    endingRating = when (_state.value.endingRating) {
+                        0 -> null
+                        else -> _state.value.endingRating
+                    },
+                    plotRating = when (_state.value.plotRating) {
+                        0 -> null
+                        else -> _state.value.plotRating
+                    },
                     title = _state.value.title,
                     author = _state.value.author,
                     pageCount = _state.value.pageCount,
@@ -170,18 +271,40 @@ class DetailsViewModel (
                     eBookStatus = _state.value.ebookStatus,
                     bookSeries = _state.value.series,
                     description = _state.value.description,
+                    favoriteCharacter = _state.value.favoriteCharacter,
+                    favoriteScene = _state.value.favoriteScene,
                 ) ?: throw IllegalStateException("No book to update")
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (book.bookSeries?.id == 0L) {
+                    // Handle series creation if needed
+                    val updatedBook = if (book.bookSeries?.id == 0L) {
                         val seriesId = repository.addSeries(book.bookSeries)
                         _state.update { it.copy(
                             series = book.bookSeries.copy(id = seriesId)
                         ) }
-                        repository.updateBook(book.copy(
-                            bookSeries = book.bookSeries.copy(id = seriesId)
-                        ))
+                        book.copy(bookSeries = book.bookSeries.copy(id = seriesId))
                     } else {
-                        repository.updateBook(book)
+                        book
+                    }
+
+                    // Update the book first
+                    repository.updateBook(updatedBook)
+
+                    // Handle trope linking
+                    val currentBookId = updatedBook.id
+                    if (currentBookId != 0L) {
+                        // First, unlink all existing tropes for this book
+                        repository.unlinkAllTropesFromBook(currentBookId)
+
+                        // Then link the selected tropes (create new ones if needed)
+                        for (trope in _state.value.tropes) {
+                            val tropeId = if (trope.id == 0L) {
+                                // This is a new trope, create it first
+                                repository.addTrope(trope)
+                            } else {
+                                trope.id
+                            }
+                            repository.linkTropeToBook(currentBookId, tropeId)
+                        }
                     }
                 }
             }
@@ -205,6 +328,12 @@ class DetailsViewModel (
                 imageUrl = book.imageUrl,
                 isbn = book.isbn,
                 rating = book.rating ?: 0,
+                tensionLevel = book.tensionLevel ?: 0,
+                spiceLevel = book.spiceLevel ?: 0,
+                emotionLevel = book.emotionLevel ?: 0,
+                chapterLength = book.chapterLength ?: 0,
+                endingRating = book.endingRating ?: 0,
+                plotRating = book.plotRating ?: 0,
                 title = book.title,
                 author = book.author,
                 pageCount = book.pageCount,
@@ -217,6 +346,9 @@ class DetailsViewModel (
                 series = book.bookSeries,
                 description = book.description,
                 onlineDescription = book.onlineDescription,
+                favoriteCharacter = book.favoriteCharacter,
+                favoriteScene = book.favoriteScene,
+                tropes = book.tropes,
                 isEditing = false,
             )
         }

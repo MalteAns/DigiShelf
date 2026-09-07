@@ -48,4 +48,12 @@ interface BookRepository {
     suspend fun fetchBookFromRemote(
         isbn: String? = null, title: String? = null, author: String? = null
     ): Result<Book, DataError.Remote>
+
+    // Trope operations
+    fun queryTropes(): Flow<List<Trope>>
+    suspend fun addTrope(trope: Trope): Long
+    fun getTropesForBook(bookId: Long): Flow<List<Trope>>
+    suspend fun linkTropeToBook(bookId: Long, tropeId: Long)
+    suspend fun unlinkTropeFromBook(bookId: Long, tropeId: Long)
+    suspend fun unlinkAllTropesFromBook(bookId: Long)
 }

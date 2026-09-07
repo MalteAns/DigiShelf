@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import de.malteans.digishelf.core.data.database.entities.BookEntity
 import de.malteans.digishelf.core.data.database.entities.BookSeriesEntity
+import de.malteans.digishelf.core.data.database.entities.BookTropeEntity
+import de.malteans.digishelf.core.data.database.entities.TropeEntity
 
 @Database(
-    entities = [BookEntity::class, BookSeriesEntity::class],
-    version = 3,
+    entities = [BookEntity::class, BookSeriesEntity::class, TropeEntity::class, BookTropeEntity::class],
+    version = 6,
     exportSchema = false
 )
 @ConstructedBy(BookDatabaseConstructor::class)
