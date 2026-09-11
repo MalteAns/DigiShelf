@@ -16,7 +16,7 @@ androidx-activityCompose = "1.13.0"
 androidx-lifecycle = "2.11.0"
 barcodeScanning = "17.3.0"
 cameraCore = "1.6.1"
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 
 composeMultiplatform = "1.12.0"
 material3 = "1.9.0"
@@ -32,12 +32,12 @@ room = "2.8.4"
 
 kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with outdated material3 for desktop. See https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8519/Migrate-to-kotlinx-datetime-0.7.1
 
-coil3 = "3.6.1"
+coil3 = "3.6.2"
 ktor = "3.5.2"
 
-fileKit = "0.15.0"
+fileKit = "0.16.0"
 
-kotlinStdlib = "2.4.10"
+kotlinStdlib = "2.4.20"
 aboutLibraries = "15.2.0"
 coreKtx = "1.19.0"
 
