@@ -6,7 +6,11 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.OptIn
-import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -20,7 +24,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -103,6 +113,14 @@ actual fun BarcodeScannerView(
     var flashOn by remember { mutableStateOf(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
     var lastScannedBarcode by remember { mutableStateOf<String?>(null) }
+    var scanner by remember { mutableStateOf<com.google.mlkit.vision.barcode.BarcodeScanner?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            scanner?.close()
+            executor.shutdown()
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -138,7 +156,9 @@ actual fun BarcodeScannerView(
                         )
                         .build()
 
-                    val scanner = BarcodeScanning.getClient(options)
+                    // Close the old scanner before creating a new one
+                    scanner?.close()
+                    scanner = BarcodeScanning.getClient(options)
 
                     imageAnalysis.setAnalyzer(executor) { imageProxy ->
                         val mediaImage = imageProxy.image
@@ -147,8 +167,8 @@ actual fun BarcodeScannerView(
                                 mediaImage,
                                 imageProxy.imageInfo.rotationDegrees
                             )
-                            scanner.process(image)
-                                .addOnSuccessListener { barcodes ->
+                            scanner?.process(image)
+                                ?.addOnSuccessListener { barcodes ->
                                     if (barcodes.isNotEmpty()) {
                                         val barcode = barcodes[0]
                                         lastScannedBarcode = barcode.rawValue
@@ -157,10 +177,10 @@ actual fun BarcodeScannerView(
                                         }
                                     }
                                 }
-                                .addOnFailureListener { e ->
+                                ?.addOnFailureListener { e ->
                                     Log.e("BarcodeScanner", "Barcode scanning failed: ${e.message}")
                                 }
-                                .addOnCompleteListener {
+                                ?.addOnCompleteListener {
                                     imageProxy.close()
                                 }
                         } else {
@@ -171,6 +191,7 @@ actual fun BarcodeScannerView(
                     // Bind use cases to lifecycle.
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                     try {
+                        // Clean up old camera and scanner
                         cameraProvider.unbindAll()
                         camera = cameraProvider.bindToLifecycle(
                             lifecycleOwner,
@@ -180,6 +201,8 @@ actual fun BarcodeScannerView(
                         )
                     } catch (exc: Exception) {
                         Log.e("BarcodeScanner", "Use case binding failed", exc)
+                        scanner?.close()
+                        scanner = null
                     }
                 }, ContextCompat.getMainExecutor(ctx))
                 previewView
