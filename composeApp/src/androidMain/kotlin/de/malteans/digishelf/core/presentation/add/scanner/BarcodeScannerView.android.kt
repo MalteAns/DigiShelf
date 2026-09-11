@@ -46,6 +46,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -113,7 +114,7 @@ actual fun BarcodeScannerView(
     var flashOn by remember { mutableStateOf(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
     var lastScannedBarcode by remember { mutableStateOf<String?>(null) }
-    var scanner by remember { mutableStateOf<com.google.mlkit.vision.barcode.BarcodeScanner?>(null) }
+    var scanner by remember { mutableStateOf<BarcodeScanner?>(null) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -157,18 +158,24 @@ actual fun BarcodeScannerView(
                         .build()
 
                     // Close the old scanner before creating a new one
-                    scanner?.close()
-                    scanner = BarcodeScanning.getClient(options)
+                    try {
+                        scanner?.close()
+                        scanner = BarcodeScanning.getClient(options)
+                    } catch (e: Exception) {
+                        Log.e("BarcodeScanner", "Failed to create BarcodeScanner client", e)
+                        scanner = null
+                    }
 
                     imageAnalysis.setAnalyzer(executor) { imageProxy ->
                         val mediaImage = imageProxy.image
-                        if (mediaImage != null) {
+                        val currentScanner = scanner
+                        if (mediaImage != null && currentScanner != null) {
                             val image = InputImage.fromMediaImage(
                                 mediaImage,
                                 imageProxy.imageInfo.rotationDegrees
                             )
-                            scanner?.process(image)
-                                ?.addOnSuccessListener { barcodes ->
+                            currentScanner.process(image)
+                                .addOnSuccessListener { barcodes ->
                                     if (barcodes.isNotEmpty()) {
                                         val barcode = barcodes[0]
                                         lastScannedBarcode = barcode.rawValue
@@ -177,10 +184,10 @@ actual fun BarcodeScannerView(
                                         }
                                     }
                                 }
-                                ?.addOnFailureListener { e ->
+                                .addOnFailureListener { e ->
                                     Log.e("BarcodeScanner", "Barcode scanning failed: ${e.message}")
                                 }
-                                ?.addOnCompleteListener {
+                                .addOnCompleteListener {
                                     imageProxy.close()
                                 }
                         } else {
