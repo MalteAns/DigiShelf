@@ -8,9 +8,9 @@ android-targetSdk = "37"
 
 # DON'T DELETE, IS ACUTALLY USED:
 applicationId = "de.malteans.digishelf"
-projectVersionCode = "6"
+projectVersionCode = "7"
 projectVersionName = "1.0.0"
-projectVersionNameSuffix = "-beta5"
+projectVersionNameSuffix = "-beta6"
 
 androidx-activityCompose = "1.13.0"
 androidx-lifecycle = "2.11.0"
