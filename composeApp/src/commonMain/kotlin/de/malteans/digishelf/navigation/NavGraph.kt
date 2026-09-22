@@ -6,7 +6,12 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -75,12 +80,13 @@ fun NavGraph(
                 popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis = 300, easing = EaseInOut)) },
             ) {
                 setScreen(CurScreen.Add)
-                val args = it.toRoute<Route.Books.Add>() // TODO: Implement AddScreen with passed isbn
+                val args = it.toRoute<Route.Books.Add>()
                 val viewModel = koinViewModel<AddViewModel>()
 
                 LaunchedEffect(args.isbn) {
                     if (args.isbn != null) {
-                        viewModel.onAction(AddAction.OnAutoComplete(isbn = args.isbn))
+                        viewModel.onAction(AddAction.OnIsbnChanged(args.isbn))
+                        viewModel.onAction(AddAction.OnSearchClicked)
                     }
                 }
 

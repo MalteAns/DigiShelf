@@ -55,8 +55,14 @@
     <string name="restore_or_delete_desc">Das Buch \"%1$s\" wiederherstellen oder löschen?</string>
     <string name="empty">leer</string>
     <string name="settings_version">Version: %1$s</string>
-    <string name="details_by">von %1$s</string>
+    <string name="by_label">von %1$s</string>
     <string name="cover_image">Cover Bild</string>
+    <string name="duplicate_isbn">Doppelte ISBN</string>
+    <string name="duplicate_isbn_msg">Ein Buch mit dieser ISBN existiert bereits. Trotzdem hinzufügen?</string>
+    <string name="isbn_already_exists">ISBN existiert bereits</string>
+    <string name="search_web">Im Web suchen</string>
+    <string name="just_add">Direkt hinzufügen</string>
+    <string name="isbn_label">ISBN: %1$s</string>
     <string name="own_description">Eigene Beschreibung</string>
     <string name="online_description">Online Beschreibung</string>
     <string name="no_description_available">Keine Beschreibung verfügbar.</string>

@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -26,19 +25,9 @@ class AddViewModel (
     private val repository: BookRepository
 ): ViewModel() {
 
-    private val _bookSeriesList = repository.querySeries()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
-        )
     private val _state = MutableStateFlow(AddState())
 
-    val state = combine(_state, _bookSeriesList) { state, bookSeriesList ->
-        state.copy(
-            bookSeriesList = bookSeriesList
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AddState())
+    val state = _state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AddState())
 
     fun onAction(action: AddAction) {
         when(action) {
@@ -51,131 +40,160 @@ class AddViewModel (
                 }
             }
             is AddAction.OnAuthorChanged -> {
-                _state.value = _state.value.copy(author = action.author)
+                _state.update {
+                    it.copy(author = action.author)
+                }
             }
             is AddAction.OnIsbnChanged -> {
-                val isbn = action.isbn.replace(Regex("\\D"), "")
-
-                _state.update { it.copy(
-                    isbn = isbn,
-                    showCompleteWithIsbn = isbn.isIsbnFormat(),
-                ) }
-                viewModelScope.launch(Dispatchers.IO) {
-                    _state.update { it.copy(
-                        isDoubleIsbn = isbn.isDoubleIsbn()
-                    ) }
-                }
-            }
-            is AddAction.OnPossessionStatusChanged -> {
-                _state.value = _state.value.copy(possessionStatus = action.possessionStatus)
-            }
-            is AddAction.OnReadStatusChanged -> {
-                _state.value = _state.value.copy(readStatus = action.readStatus)
-            }
-            is AddAction.OnEbookStatusChanged -> {
-                _state.value = _state.value.copy(eBookStatus = action.ebookStatus)
-            }
-            is AddAction.OnRatingChanged -> {
-                _state.value = _state.value.copy(rating = action.rating)
-            }
-            is AddAction.OnTensionLevelChanged -> {
-                _state.value = _state.value.copy(tensionLevel = action.level)
-            }
-            is AddAction.OnSpiceLevelChanged -> {
-                _state.value = _state.value.copy(spiceLevel = action.level)
-            }
-            is AddAction.OnEmotionLevelChanged -> {
-                _state.value = _state.value.copy(emotionLevel = action.level)
-            }
-            is AddAction.OnChapterLengthChanged -> {
-                _state.value = _state.value.copy(chapterLength = action.level)
-            }
-            is AddAction.OnEndingRatingChanged -> {
-                _state.value = _state.value.copy(endingRating = action.level)
-            }
-            is AddAction.OnPlotRatingChanged -> {
-                _state.value = _state.value.copy(plotRating = action.level)
-            }
-            is AddAction.OnPagesChanged -> {
-                _state.value = _state.value.copy(
-                    pages = action.pages,
-                    pagesError = action.pages.isBlank() || action.pages.toIntOrNull() == null
-                )
-            }
-            is AddAction.OnPriceChanged -> {
-                _state.value = _state.value.copy(
-                    price = action.price,
-                    priceError = !action.price.isBlank()
-                            && action.price.replace(",",".").toDoubleOrNull() == null
-                )
-            }
-            is AddAction.OnImageUrlChanged -> {
-                _state.value = _state.value.copy(imageUrl = action.imageUrl)
-            }
-            // On Auto Complete -------------------------------------------------------------------
-            is AddAction.OnAutoComplete -> {
+                // Clean ISBN input by removing non-digit characters
+                val cleanedIsbn = action.isbn.replace(Regex("\\D"), "")
                 _state.update {
                     it.copy(
-                        isLoading = true
+                        isbn = cleanedIsbn
                     )
                 }
-
-                viewModelScope.launch(Dispatchers.IO) {
-                    repository.fetchBookFromRemote(
-                        isbn = if (action.isbn?.isIsbnFormat() == true) action.isbn else null,
-                        title = action.title,
-                        author = action.author
-                    )
-                        .onSuccess { book ->
-                            _state.update {
-                                it.copy(
-                                    title = book.title,
-                                    author = book.author,
-                                    isbn = book.isbn,
-                                    isDoubleIsbn = book.isbn.isDoubleIsbn(),
-                                    imageUrl = book.imageUrl,
-                                    pages = book.pageCount?.toString() ?: "",
-                                    price = book.price?.toString() ?: "",
-                                    isLoading = false,
-                                )
+                
+                // Check for duplicate if ISBN is valid
+                if (cleanedIsbn.isNotBlank() && cleanedIsbn.isIsbnFormat()) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        checkIsbnDuplicate(cleanedIsbn)
+                    }
+                } else {
+                    _state.update {
+                        it.copy(isDuplicateIsbn = false)
+                    }
+                }
+            }
+            
+            // Search actions ----------------------------------------------------------------
+            is AddAction.OnSearchClicked -> {
+                val state = _state.value
+                
+                // Check if search conditions are met
+                val titleValid = state.title.length >= 10
+                val isbnValid = state.isbn.isIsbnFormat()
+                val titleAndAuthorValid = state.title.length >= 6 && state.author.length >= 6
+                
+                if (titleValid || isbnValid || titleAndAuthorValid) {
+                    // Open bottom sheet and start searching
+                    _state.update {
+                        it.copy(
+                            showSearchBottomSheet = true,
+                            isSearching = true,
+                            searchResults = emptyList()
+                        )
+                    }
+                    
+                    viewModelScope.launch(Dispatchers.IO) {
+                        try {
+                            val result = repository.fetchBookFromRemote(
+                                isbn = if (state.isbn.isIsbnFormat()) state.isbn else null,
+                                title = if (state.title.isNotBlank()) state.title else null,
+                                author = if (state.author.isNotBlank()) state.author else null,
+                                maxResults = 10
+                            )
+                            
+                            result.onSuccess { books ->
+                                _state.update {
+                                    it.copy(
+                                        searchResults = books,
+                                        isSearching = false
+                                    )
+                                }
+                            }.onError { error ->
+                                _state.update {
+                                    it.copy(
+                                        errorTitle = UiText.StringResourceId(Res.string.error_completion),
+                                        errorMessage = error.toUiText(),
+                                        showError = true,
+                                        isSearching = false
+                                    )
+                                }
                             }
-                        }
-                        .onError { error ->
+                        } catch (e: Exception) {
                             _state.update {
                                 it.copy(
-                                    errorTitle = UiText.StringResourceId(Res.string.error_completion),
-                                    errorMessage = error.toUiText(),
+                                    errorTitle = UiText.StringResourceId(Res.string.error),
+                                    errorMessage = UiText.StringResourceId(Res.string.error_unknown),
                                     showError = true,
-                                    isLoading = false,
+                                    isSearching = false
                                 )
                             }
                         }
+                    }
                 }
             }
-            // Error handling ---------------------------------------------------------------------
-            is AddAction.OnDismissError -> {
+            
+            is AddAction.OnSearchResultSelected -> {
+                val book = action.book
+                
+                viewModelScope.launch(Dispatchers.IO) {
+                    // Check if ISBN already exists in database
+                    val existingBook = repository.getBookByIsbn(book.isbn).first()
+                    
+                    if (existingBook != null) {
+                        // Duplicate ISBN - show dialog
+                        _state.update {
+                            it.copy(
+                                pendingBook = book
+                            )
+                        }
+                    } else {
+                        // Not a duplicate - add book directly
+                        val bookId = repository.addBook(book)
+                        _state.update {
+                            it.copy(
+                                addedBookId = bookId,
+                                showSearchBottomSheet = false,
+                                isSearching = false,
+                                searchResults = emptyList(),
+                                title = "",
+                                author = "",
+                                isbn = ""
+                            )
+                        }
+                    }
+                }
+            }
+            
+            is AddAction.OnDismissSearchBottomSheet -> {
                 _state.update {
                     it.copy(
-                        showError = false,
-                        errorTitle = UiText.StringResourceId(Res.string.error),
-                        errorMessage = UiText.StringResourceId(Res.string.error_unknown)
+                        showSearchBottomSheet = false,
+                        isSearching = false,
+                        searchResults = emptyList()
                     )
                 }
             }
-            is AddAction.OnShowIncompleteError -> {
+            
+            // Duplicate handling ------------------------------------------------------------
+            is AddAction.OnConfirmAddDuplicate -> {
+                val pendingBook = _state.value.pendingBook
+                if (pendingBook != null) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val bookId = repository.addBook(pendingBook)
+                        _state.update {
+                            it.copy(
+                                addedBookId = bookId,
+                                pendingBook = null,
+                                showSearchBottomSheet = false,
+                                title = "",
+                                author = "",
+                                isbn = ""
+                            )
+                        }
+                    }
+                }
+            }
+            
+            is AddAction.OnDismissDuplicateDialog -> {
                 _state.update {
                     it.copy(
-                        showIncompleteError = true
+                        pendingBook = null
                     )
                 }
             }
-            is AddAction.OnDismissIncompleteError -> {
-                _state.update {
-                    it.copy(
-                        showIncompleteError = false
-                    )
-                }
-            }
+            
             // Other actions ----------------------------------------------------------------------
             is AddAction.AddBook -> {
                 _state.update {
@@ -188,78 +206,75 @@ class AddViewModel (
                 if (title.isBlank()) return
                 val author = _state.value.author.trim()
                 val isbn = _state.value.isbn.trim()
-                val possessionStatus = _state.value.possessionStatus
-                val readStatus = _state.value.readStatus
-                val eBookStatus = _state.value.eBookStatus
-                val rating = _state.value.rating
-                val tensionLevel = _state.value.tensionLevel
-                val spiceLevel = _state.value.spiceLevel
-                val emotionLevel = _state.value.emotionLevel
-                val chapterLength = _state.value.chapterLength
-                val endingRating = _state.value.endingRating
-                val plotRating = _state.value.plotRating
-                val pageCount = _state.value.pages.toIntOrNull()
-                val price = _state.value.price.toDoubleOrNull()
-                val imageUrl = _state.value.imageUrl
-                val bookSeries = _state.value.bookSeries
 
                 val book = Book(
                     title = title,
                     author = author,
                     isbn = isbn,
-                    possessionStatus = possessionStatus,
-                    readStatus = readStatus,
-                    eBookStatus = eBookStatus,
-                    rating = rating,
-                    tensionLevel = tensionLevel,
-                    spiceLevel = spiceLevel,
-                    emotionLevel = emotionLevel,
-                    chapterLength = chapterLength,
-                    endingRating = endingRating,
-                    plotRating = plotRating,
-                    pageCount = pageCount,
-                    imageUrl = imageUrl,
-                    price = price,
-                    currency = "EUR", // TODO: Implement currency selection
-                    bookSeries = bookSeries
-
                 )
 
                 viewModelScope.launch(Dispatchers.IO) {
-                    var bookId: Long
-                    if (book.bookSeries?.id == 0L) {
-                        val seriesId = repository.addSeries(book.bookSeries)
-                        bookId = repository.addBook(book.copy(
-                            bookSeries = book.bookSeries.copy(id = seriesId)
-                        ))
-                    } else {
-                        bookId = repository.addBook(book)
+                    val bookId = repository.addBook(book)
+                    _state.update {
+                        it.copy(
+                            addedBookId = bookId,
+                            isLoading = false,
+                            title = "",
+                            author = "",
+                            isbn = ""
+                        )
                     }
-                    _state.value = AddState(
-                        addedBookId = bookId,
+                }
+            }
+            
+            is AddAction.ClearFields -> {
+                _state.update {
+                    it.copy(
+                        title = "",
+                        author = "",
+                        isbn = "",
+                        addedBookId = null
                     )
                 }
             }
-            is AddAction.ClearFields -> {
-                _state.value = AddState()
+            
+            is AddAction.OnShowBookDetail -> {
+                // Handled by the screen
             }
-            is AddAction.OnBookSeriesChanged -> {
-                _state.value = _state.value.copy(
-                    bookSeries = action.bookSeries
-                )
+            is AddAction.OnShowOverview -> {
+                // Handled by the screen
             }
-
-            else -> TODO("This should not happen")
+            is AddAction.OnScan -> {
+                // Handled by the screen
+            }
+            
+            // Error handling ---------------------------------------------------------------------
+            is AddAction.OnDismissError -> {
+                _state.update {
+                    it.copy(
+                        showError = false,
+                        errorTitle = UiText.StringResourceId(Res.string.error),
+                        errorMessage = UiText.StringResourceId(Res.string.error_unknown)
+                    )
+                }
+            }
         }
     }
 
-    private suspend fun String.isDoubleIsbn(): Boolean {
-        repository.queryBooks(isbnQuery = this).first() . forEach { book ->
-            if (book.isbn == this) {
-                return true
+    private suspend fun checkIsbnDuplicate(isbn: String) {
+        if (isbn.isBlank() || !isbn.isIsbnFormat()) {
+            _state.update {
+                it.copy(isDuplicateIsbn = false)
             }
+            return
         }
-        return false
+        
+        val existingBooks = repository.queryBooks(isbnQuery = isbn).first()
+        val isDuplicate = existingBooks.any { it.isbn == isbn }
+        
+        _state.update {
+            it.copy(isDuplicateIsbn = isDuplicate)
+        }
     }
 }
 

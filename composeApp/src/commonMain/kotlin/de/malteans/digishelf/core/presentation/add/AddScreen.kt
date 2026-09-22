@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -24,85 +25,51 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ElectricBolt
-import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.filled.HourglassBottom
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Terrain
-import androidx.compose.material.icons.filled.WaterDrop
-import androidx.compose.material.icons.outlined.ElectricBolt
-import androidx.compose.material.icons.outlined.Flag
-import androidx.compose.material.icons.outlined.HourglassBottom
-import androidx.compose.material.icons.outlined.LocalFireDepartment
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.Terrain
-import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import de.malteans.digishelf.core.domain.BookSeries
-import de.malteans.digishelf.core.presentation.add.components.LevelBar
+import de.malteans.digishelf.core.presentation.add.components.SearchBottomSheet
 import de.malteans.digishelf.core.presentation.components.CustomAlertDialog
 import de.malteans.digishelf.core.presentation.components.customIconBarcodeScanner
-import de.malteans.digishelf.core.presentation.details.components.ImagePicker
-import de.malteans.digishelf.core.presentation.overview.components.SearchableAddDropdown
 import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.add_book
 import digishelf.composeapp.generated.resources.author
-import digishelf.composeapp.generated.resources.auto_complete
 import digishelf.composeapp.generated.resources.back
-import digishelf.composeapp.generated.resources.book_added_success
-import digishelf.composeapp.generated.resources.book_series
-import digishelf.composeapp.generated.resources.chapter_length
-import digishelf.composeapp.generated.resources.cover_image
-import digishelf.composeapp.generated.resources.data_incomplete
-import digishelf.composeapp.generated.resources.ebook
-import digishelf.composeapp.generated.resources.emotion_level
-import digishelf.composeapp.generated.resources.ending_rating
-import digishelf.composeapp.generated.resources.error_msg_add_incomplete
-import digishelf.composeapp.generated.resources.is_double_isbn
+import digishelf.composeapp.generated.resources.duplicate_isbn
+import digishelf.composeapp.generated.resources.duplicate_isbn_msg
 import digishelf.composeapp.generated.resources.isbn
-import digishelf.composeapp.generated.resources.owned
-import digishelf.composeapp.generated.resources.pages
-import digishelf.composeapp.generated.resources.pick_image
-import digishelf.composeapp.generated.resources.plot_rating
-import digishelf.composeapp.generated.resources.price
-import digishelf.composeapp.generated.resources.rating
-import digishelf.composeapp.generated.resources.read
+import digishelf.composeapp.generated.resources.isbn_already_exists
+import digishelf.composeapp.generated.resources.just_add
 import digishelf.composeapp.generated.resources.scan
-import digishelf.composeapp.generated.resources.show
-import digishelf.composeapp.generated.resources.spice_level
-import digishelf.composeapp.generated.resources.submit
-import digishelf.composeapp.generated.resources.tension_level
+import digishelf.composeapp.generated.resources.search_web
 import digishelf.composeapp.generated.resources.title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -139,33 +106,15 @@ fun AddScreen(
     state: AddState,
     onAction: (AddAction) -> Unit,
 ) {
-    val focusManger = LocalFocusManager.current
-
+    val focusManager = LocalFocusManager.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
-    val resBookAdded = stringResource(Res.string.book_added_success)
-    val resShow = stringResource(Res.string.show)
-
+    // Automatically navigate to details when a book is added
     LaunchedEffect(state.addedBookId) {
         if (state.addedBookId != null) {
-            val snackbarResult = snackbarHostState.showSnackbar(
-                message = resBookAdded,
-                actionLabel = resShow,
-                withDismissAction = true,
-            )
-            if (snackbarResult == SnackbarResult.ActionPerformed) {
-                onAction(AddAction.OnShowBookDetail(state.addedBookId))
-            }
-        }
-    }
-
-    var showImagePicker by remember { mutableStateOf(false) }
-    if (showImagePicker) {
-        ImagePicker { imagePath ->
-            if (!imagePath.isNullOrBlank()) {
-                onAction(AddAction.OnImageUrlChanged(imagePath))
-            }
-            showImagePicker = false
+            onAction(AddAction.OnShowBookDetail(state.addedBookId))
         }
     }
 
@@ -174,8 +123,7 @@ fun AddScreen(
             CenterAlignedTopAppBar(
                 navigationIcon = {
                     IconButton(onClick = { onAction(AddAction.OnShowOverview) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back)
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 },
                 title = {
@@ -184,25 +132,6 @@ fun AddScreen(
                         modifier = Modifier.clickable { onAction(AddAction.ClearFields) }
                     )
                 },
-                actions = {
-                    IconButton(onClick = {
-                        if (state.title.isNotBlank() && !state.pagesError && !state.priceError) {
-                            if (state.author.isBlank() || state.isbn.isBlank()) {
-                                onAction(AddAction.OnShowIncompleteError)
-                            } else {
-                                onAction(AddAction.AddBook)
-                            }
-                        }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = stringResource(Res.string.submit),
-                            tint = if (state.title.isNotBlank() && !state.pagesError && !state.priceError)
-                                MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                }
             )
         },
         snackbarHost = { SnackbarHost(
@@ -224,6 +153,7 @@ fun AddScreen(
     ) { pad ->
         val scrollState = rememberScrollState()
 
+        // Error dialog
         if (state.showError) {
             CustomAlertDialog(
                 title = state.errorTitle.asString(),
@@ -234,24 +164,24 @@ fun AddScreen(
             )
         }
 
-        if (state.showIncompleteError) {
+        // Duplicate ISBN dialog for search results
+        if (state.pendingBook != null) {
             CustomAlertDialog(
-                title = stringResource(Res.string.data_incomplete),
-                text = stringResource(Res.string.error_msg_add_incomplete),
-                onDismiss = { onAction(AddAction.OnDismissIncompleteError) },
-                onConfirm = {
-                    onAction(AddAction.OnDismissIncompleteError)
-                    onAction(AddAction.AddBook)
-                },
+                title = stringResource(Res.string.duplicate_isbn),
+                text = stringResource(Res.string.duplicate_isbn_msg),
+                onDismiss = { onAction(AddAction.OnDismissDuplicateDialog) },
+                onConfirm = { onAction(AddAction.OnConfirmAddDuplicate) },
             )
         }
 
+        // Clear focus when loading
         LaunchedEffect(state.isLoading) {
             if (state.isLoading) {
-                focusManger.clearFocus()
+                focusManager.clearFocus()
             }
         }
 
+        // Loading overlay
         AnimatedVisibility(
             visible = state.isLoading,
             enter = fadeIn(),
@@ -267,51 +197,51 @@ fun AddScreen(
             }
         }
 
+        // Search bottom sheet
+        if (state.showSearchBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { onAction(AddAction.OnDismissSearchBottomSheet) },
+                sheetState = sheetState,
+            ) {
+                SearchBottomSheet(
+                    isSearching = state.isSearching,
+                    searchResults = state.searchResults,
+                    onResultSelected = { book ->
+                        onAction(AddAction.OnSearchResultSelected(book))
+                    },
+                    onDismiss = { onAction(AddAction.OnDismissSearchBottomSheet) }
+                )
+            }
+        }
+
+        // Main content
         Column(
             modifier = Modifier
                 .padding(12.dp, pad.calculateTopPadding(), 12.dp, 12.dp)
                 .verticalScroll(scrollState)
                 .blur(if (state.isLoading) 1.dp else 0.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Title ------------------------------------------------------------------------------
+            // Title field
             OutlinedTextField(
                 value = state.title,
-                onValueChange = {
-                    onAction(AddAction.OnTitleChanged(it))
-                },
+                onValueChange = { onAction(AddAction.OnTitleChanged(it)) },
                 label = { Text(stringResource(Res.string.title)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                trailingIcon = {
-                    if (state.title.length >= 8) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(Res.string.auto_complete),
-                            modifier = Modifier
-                                .clickable {
-                                    onAction(AddAction.OnAutoComplete(title = state.title))
-                                }
-                                .padding(end = 8.dp)
-                        )
-                    }
-                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManger.moveFocus(FocusDirection.Down)
-                    }
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
                 )
             )
-            // Author -----------------------------------------------------------------------------
+
+            // Author field
             OutlinedTextField(
                 value = state.author,
-                onValueChange = {
-                    onAction(AddAction.OnAuthorChanged(it))
-                },
+                onValueChange = { onAction(AddAction.OnAuthorChanged(it)) },
                 label = { Text(stringResource(Res.string.author)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -320,27 +250,24 @@ fun AddScreen(
                     imeAction = ImeAction.Next,
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManger.moveFocus(FocusDirection.Down)
-                    }
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
                 )
             )
-            // ISBN -------------------------------------------------------------------------------
+
+            // ISBN field
             OutlinedTextField(
                 value = state.isbn,
-                onValueChange = {
-                    onAction(AddAction.OnIsbnChanged(it))
-                },
+                onValueChange = { onAction(AddAction.OnIsbnChanged(it)) },
                 label = { Text(stringResource(Res.string.isbn)) },
-                isError = state.isDoubleIsbn,
+                isError = state.isDuplicateIsbn,
                 supportingText = {
                     AnimatedVisibility (
-                        visible = state.isDoubleIsbn,
+                        visible = state.isDuplicateIsbn,
                         enter = expandVertically(),
                         exit = shrinkVertically()
                     ) {
                         Text(
-                            text = stringResource(Res.string.is_double_isbn),
+                            text = stringResource(Res.string.isbn_already_exists),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -348,393 +275,62 @@ fun AddScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 trailingIcon = {
-                    if (state.showCompleteWithIsbn) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(Res.string.auto_complete),
-                            modifier = Modifier
-                                .clickable {
-                                    onAction(AddAction.OnAutoComplete(isbn = state.isbn))
-                                }
-                                .padding(end = 8.dp)
-                        )
-                    } else {
+                    IconButton(
+                        onClick = { onAction(AddAction.OnScan) },
+                        shape = RectangleShape,
+                    ) {
                         Icon(
                             imageVector = customIconBarcodeScanner(),
-                            contentDescription = stringResource(Res.string.scan),
-                            modifier = Modifier
-                                .clickable {
-                                    onAction(AddAction.OnScan)
-                                }
-                                .padding(end = 8.dp)
+                            contentDescription = stringResource(Res.string.scan)
                         )
                     }
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next,
+                    imeAction = ImeAction.Done,
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManger.moveFocus(FocusDirection.Down)
-                    }
-                ),
+                    onDone = { focusManager.clearFocus() }
+                )
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Action buttons
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                // Search button
+                Button(
+                    onClick = { onAction(AddAction.OnSearchClicked) },
+                    enabled = state.title.length >= 10 || 
+                            state.isbn.isIsbnFormat() || 
+                            (state.title.length >= 6 && state.author.length >= 6),
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Checkbox(
-                        checked = state.possessionStatus,
-                        onCheckedChange = {
-                            onAction(AddAction.OnPossessionStatusChanged(it))
-                        },
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(Res.string.search_web)
                     )
-                    Text(stringResource(Res.string.owned))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(Res.string.search_web))
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+                // Just add button
+                Button(
+                    onClick = { onAction(AddAction.AddBook) },
+                    enabled = state.title.isNotBlank(),
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Checkbox(
-                        checked = state.readStatus,
-                        onCheckedChange = {
-                            onAction(AddAction.OnReadStatusChanged(it))
-                        },
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = stringResource(Res.string.add_book)
                     )
-                    Text(stringResource(Res.string.read))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(Res.string.just_add))
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Checkbox(
-                        checked = state.eBookStatus,
-                        onCheckedChange = {
-                            onAction(AddAction.OnEbookStatusChanged(it))
-                        },
-                    )
-                    Text(stringResource(Res.string.ebook))
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-            }
-            // Rating bar -----------------------------------------------
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.rating,
-                    onLevelChanged = { onAction(AddAction.OnRatingChanged(it)) },
-                    activeIcon = Icons.Filled.Star,
-                    inactiveIcon = Icons.Outlined.Star,
-                    contentDescription = stringResource(Res.string.rating),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            // Tension, Spice, Emotion, Chapter Length, Ending, Plot bars ---------------------------------------
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.tensionLevel,
-                    onLevelChanged = { onAction(AddAction.OnTensionLevelChanged(it)) },
-                    activeIcon = Icons.Filled.ElectricBolt,
-                    inactiveIcon = Icons.Outlined.ElectricBolt,
-                    contentDescription = stringResource(Res.string.tension_level),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.spiceLevel,
-                    onLevelChanged = { onAction(AddAction.OnSpiceLevelChanged(it)) },
-                    activeIcon = Icons.Filled.LocalFireDepartment,
-                    inactiveIcon = Icons.Outlined.LocalFireDepartment,
-                    contentDescription = stringResource(Res.string.spice_level),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.emotionLevel,
-                    onLevelChanged = { onAction(AddAction.OnEmotionLevelChanged(it)) },
-                    activeIcon = Icons.Filled.WaterDrop,
-                    inactiveIcon = Icons.Outlined.WaterDrop,
-                    contentDescription = stringResource(Res.string.emotion_level),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.chapterLength,
-                    onLevelChanged = { onAction(AddAction.OnChapterLengthChanged(it)) },
-                    activeIcon = Icons.Filled.HourglassBottom,
-                    inactiveIcon = Icons.Outlined.HourglassBottom,
-                    contentDescription = stringResource(Res.string.chapter_length),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.endingRating,
-                    onLevelChanged = { onAction(AddAction.OnEndingRatingChanged(it)) },
-                    activeIcon = Icons.Filled.Flag,
-                    inactiveIcon = Icons.Outlined.Flag,
-                    contentDescription = stringResource(Res.string.ending_rating),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                LevelBar(
-                    current = state.plotRating,
-                    onLevelChanged = { onAction(AddAction.OnPlotRatingChanged(it)) },
-                    activeIcon = Icons.Filled.Terrain,
-                    inactiveIcon = Icons.Outlined.Terrain,
-                    contentDescription = stringResource(Res.string.plot_rating),
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-
-            }
-            Row (
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val options: Map<Any?, String> = state.bookSeriesList.associateBy({ it as BookSeries? }, { it.title })
-                    .toMutableMap()
-                    .apply { put(null, "–") }
-                    .toMap()
-
-                SearchableAddDropdown(
-                    selectedOption = Pair<Any?, String>(state.bookSeries, state.bookSeries?.title ?: "–"),
-                    options = options,
-                    onValueChanged = { newSeries ->
-                        onAction(
-                            AddAction.OnBookSeriesChanged(newSeries as BookSeries?)
-                        )
-                    },
-                    onValueAdded = { newSeriesName ->
-                        onAction( AddAction.OnBookSeriesChanged(
-                            BookSeries(
-                                id = 0L,
-                                title = newSeriesName,
-                            )
-                        ))
-                    },
-                    label = stringResource(Res.string.book_series),
-                )
-            }
-            // Pages, Price -----------------------------------------------------------------------
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                OutlinedTextField(
-                    value = state.pages,
-                    onValueChange = {
-                        onAction(AddAction.OnPagesChanged(it))
-                    },
-                    label = { Text(stringResource(Res.string.pages)) },
-                    isError = state.pagesError,
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManger.moveFocus(FocusDirection.Right)
-                        }
-                    )
-                )
-                OutlinedTextField(
-                    value = state.price,
-                    onValueChange = {
-                        onAction(AddAction.OnPriceChanged(it))
-                    },
-                    label = { Text(stringResource(Res.string.price)) },
-                    suffix = { Text("€") },
-                    isError = state.priceError,
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManger.moveFocus(FocusDirection.Down)
-                        }
-                    )
-                )
-            }
-            // Image URL --------------------------------------------------------------------------
-            OutlinedTextField(
-                value = state.imageUrl,
-                onValueChange = {
-                    onAction(AddAction.OnImageUrlChanged(it))
-                },
-                label = { Text(stringResource(Res.string.cover_image)) },
-                trailingIcon = {
-                    IconButton({ showImagePicker = true }) {
-                        Icon(
-                            imageVector = Icons.Default.FileOpen,
-                            contentDescription = stringResource(Res.string.pick_image)
-                        )
-                    }
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Uri,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManger.clearFocus()
-                    }
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-//private suspend fun completeWithIsbn(
-//    onEvent: (AddAction) -> Unit,
-//    isbnFromNav: String,
-//    pErrorTitleResource: Int,
-//    state: AddState,
-//    pErrorMessageResource: Int,
-//    pShowError: Boolean
-//): Triple<Int, Int, Boolean> {
-//    var errorTitleResource = pErrorTitleResource FIXME: Complete with ISBN
-//    var errorMessageResource = pErrorMessageResource
-//    var showError = pShowError
-//    val bookResponse = BookModel.bookService.getBook(
-//        isbn = "isbn:$isbnFromNav"
-//    )
-//    try {
-//        onEvent(AddAction.TitleChanged(""))
-//        onEvent(AddAction.AuthorChanged(""))
-//        onEvent(AddAction.TitleChanged(bookResponse.items[0].volumeInfo.title))
-//        onEvent(AddAction.AuthorChanged(bookResponse.items[0].volumeInfo.authors.joinToString(", ")))
-//    } catch (e: Exception) {
-//        errorTitleResource = R.string.error_scan
-//        errorMessageResource = if (state.title.isBlank()) {
-//            R.string.error_msg_scan
-//        } else {
-//            R.string.error_msg_scan_author
-//        }
-//        showError = true
-//    }
-//    //return list of errorTitleResource, errorMessageResource, showError
-//    return Triple(errorTitleResource, errorMessageResource, showError)
-//}
-
-/* RIP BookSeriesDropDown
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BookSeriesDropDown(
-    selectedOption: String,
-    options: List<String>,
-    label: String,
-    onValueChanged: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    var currentInput by remember { mutableStateOf(selectedOption) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-            if (expanded)
-                currentInput = ""
-        },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            readOnly = !expanded,
-            value = if (expanded) currentInput else selectedOption,
-            onValueChange = {
-                currentInput = it
-                onValueChanged(it)
-            },
-            label = { Text(text = label) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            colors = OutlinedTextFieldDefaults.colors(),
-            modifier = Modifier
-                .menuAnchor()
-                .fillMaxWidth(),
-            singleLine = true,
-        )
-
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option: String ->
-                if (option.contains(currentInput, ignoreCase = true)) {
-                    DropdownMenuItem(
-                        text = { Text(text = option) },
-                        onClick = {
-                            expanded = false
-                            currentInput = option
-                            onValueChanged(option)
-                        }
-                    )
-                }
-            }
-            if (currentInput.isNotBlank() && !options.contains(currentInput)) {
-                DropdownMenuItem(
-                    text = { Text(text = currentInput) },
-                    onClick = {
-                        expanded = false
-                        onValueChanged(currentInput)
-                    }
-                )
             }
         }
     }
 }
-*/
-
-//@Preview
-//@Composable
-//fun AddBookScreenPreview() {
-//    BookOverviewTheme {
-//        AddBookScreen()
-//    }
-//}
