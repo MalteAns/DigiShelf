@@ -63,9 +63,13 @@ import digishelf.composeapp.generated.resources.Res
 import digishelf.composeapp.generated.resources.add_book
 import digishelf.composeapp.generated.resources.author
 import digishelf.composeapp.generated.resources.back
+import digishelf.composeapp.generated.resources.duplicate_isbn
+import digishelf.composeapp.generated.resources.duplicate_isbn_msg
 import digishelf.composeapp.generated.resources.isbn
+import digishelf.composeapp.generated.resources.isbn_already_exists
+import digishelf.composeapp.generated.resources.just_add
 import digishelf.composeapp.generated.resources.scan
-import digishelf.composeapp.generated.resources.search
+import digishelf.composeapp.generated.resources.search_web
 import digishelf.composeapp.generated.resources.title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -163,8 +167,8 @@ fun AddScreen(
         // Duplicate ISBN dialog for search results
         if (state.pendingBook != null) {
             CustomAlertDialog(
-                title = "Duplicate ISBN",
-                text = "A book with this ISBN already exists. Add anyway?",
+                title = stringResource(Res.string.duplicate_isbn),
+                text = stringResource(Res.string.duplicate_isbn_msg),
                 onDismiss = { onAction(AddAction.OnDismissDuplicateDialog) },
                 onConfirm = { onAction(AddAction.OnConfirmAddDuplicate) },
             )
@@ -263,7 +267,7 @@ fun AddScreen(
                         exit = shrinkVertically()
                     ) {
                         Text(
-                            text = "ISBN already exists",
+                            text = stringResource(Res.string.isbn_already_exists),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -307,10 +311,10 @@ fun AddScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(Res.string.search)
+                        contentDescription = stringResource(Res.string.search_web)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(Res.string.search))
+                    Text(stringResource(Res.string.search_web))
                 }
 
                 // Just add button
@@ -324,7 +328,7 @@ fun AddScreen(
                         contentDescription = stringResource(Res.string.add_book)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Just add")
+                    Text(stringResource(Res.string.just_add))
                 }
             }
         }

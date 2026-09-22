@@ -21,6 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.malteans.digishelf.core.domain.Book
+import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.by_label
+import digishelf.composeapp.generated.resources.error_no_result
+import digishelf.composeapp.generated.resources.isbn_label
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +47,7 @@ fun SearchBottomSheet(
             when {
                 isSearching -> CircularProgressIndicator()
                 searchResults.isEmpty() -> Text(
-                    text = "No results found",
+                    text = stringResource(Res.string.error_no_result),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -95,7 +100,7 @@ fun SearchResultItem(
             
             // Author
             Text(
-                text = "by ${book.author}",
+                text = stringResource(Res.string.by_label, book.author),
                 style = MaterialTheme.typography.bodyMedium
             )
             
@@ -103,7 +108,7 @@ fun SearchResultItem(
             
             // ISBN
             Text(
-                text = "ISBN: ${book.isbn}",
+                text = stringResource(Res.string.isbn_label, book.isbn),
                 style = MaterialTheme.typography.bodySmall
             )
         }
