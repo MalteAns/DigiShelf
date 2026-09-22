@@ -228,12 +228,11 @@ class DefaultBookRepository(
         }
     }
 
-    override suspend fun fetchBookFromRemote(isbn: String?, title: String?, author: String?): Result<Book, DataError.Remote> {
+    override suspend fun fetchBookFromRemote(isbn: String?, title: String?, author: String?, maxResults: Int): Result<List<Book>, DataError.Remote> {
         return remoteDataSource
-            .fetchBook(isbn, title, author)
+            .fetchBook(isbn, title, author, maxResults)
             .map { bookResponse ->
-                bookResponse.items?.firstOrNull()?.toDomain()
-                    ?: return Result.Error(DataError.Remote.NO_RESULT)
+                bookResponse.items?.map { it.toDomain() } ?: emptyList()
             }
     }
 
