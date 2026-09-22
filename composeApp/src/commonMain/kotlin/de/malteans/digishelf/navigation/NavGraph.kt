@@ -86,6 +86,7 @@ fun NavGraph(
                 LaunchedEffect(args.isbn) {
                     if (args.isbn != null) {
                         viewModel.onAction(AddAction.OnIsbnChanged(args.isbn))
+                        viewModel.onAction(AddAction.OnSearchClicked)
                     }
                 }
 
