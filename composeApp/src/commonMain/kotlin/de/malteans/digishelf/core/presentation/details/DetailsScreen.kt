@@ -82,9 +82,9 @@ import de.malteans.digishelf.core.presentation.details.components.ImagePicker
 import de.malteans.digishelf.core.presentation.details.components.TropeChip
 import de.malteans.digishelf.theme.DigiShelfTheme
 import digishelf.composeapp.generated.resources.Res
+import digishelf.composeapp.generated.resources.by_label
 import digishelf.composeapp.generated.resources.chapter_length
 import digishelf.composeapp.generated.resources.delete_book
-import digishelf.composeapp.generated.resources.details_by
 import digishelf.composeapp.generated.resources.ebook_status
 import digishelf.composeapp.generated.resources.edit
 import digishelf.composeapp.generated.resources.emotion_level
@@ -409,7 +409,7 @@ fun DetailsScreen(
                             )
                     )
                     Text(
-                        text = stringResource(Res.string.details_by, state.author),
+                        text = stringResource(Res.string.by_label, state.author),
                         style = MaterialTheme.typography.bodyLarge,
                         color = if (state.authorChanged) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurfaceVariant,

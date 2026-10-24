@@ -10,5 +10,6 @@ interface RemoteBookDataSource {
         isbn: String? = null,
         title: String? = null,
         author: String? = null,
+        maxResults: Int = 1
     ): Result<BookResponse, DataError.Remote>
 }

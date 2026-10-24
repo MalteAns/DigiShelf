@@ -13,7 +13,11 @@ import de.malteans.digishelf.navigation.CurScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel (
@@ -142,7 +146,11 @@ class SettingsViewModel (
                         when (cloudBookResult) {
                             is Result.Success -> {
                                 var newBook = book.copy()
-                                val cloudBook = cloudBookResult.data
+                                val cloudBooks = cloudBookResult.data
+                                val cloudBook = cloudBooks.firstOrNull() ?: run {
+                                    // No books found, skip update
+                                    return@launch
+                                }
 
                                 if (!newBook.isbn.isIsbnFormat())
                                     newBook = newBook.copy(isbn = cloudBook.isbn)

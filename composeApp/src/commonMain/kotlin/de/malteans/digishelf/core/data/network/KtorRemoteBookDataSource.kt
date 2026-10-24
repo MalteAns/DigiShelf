@@ -3,8 +3,9 @@ package de.malteans.digishelf.core.data.network
 import de.malteans.digishelf.core.data.network.dto.BookResponse
 import de.malteans.digishelf.core.domain.errorHandling.DataError
 import de.malteans.digishelf.core.domain.errorHandling.Result
-import io.ktor.client.*
-import io.ktor.client.request.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 
 private const val BASE_URL = "https://www.googleapis.com/books/v1"
 
@@ -14,7 +15,7 @@ class KtorRemoteBookDataSource(
 ) : RemoteBookDataSource {
 
     override suspend fun fetchBook(
-        isbn: String?, title: String?, author: String?
+        isbn: String?, title: String?, author: String?, maxResults: Int
     ): Result<BookResponse, DataError.Remote> {
         val query = when {
             isbn != null -> "isbn:$isbn"
@@ -28,6 +29,7 @@ class KtorRemoteBookDataSource(
             client.get("$BASE_URL/volumes") {
                 parameter("key", apiConfig.googleApiToken)
                 parameter("q", query)
+                parameter("maxResults", maxResults)
             }
         }
     }

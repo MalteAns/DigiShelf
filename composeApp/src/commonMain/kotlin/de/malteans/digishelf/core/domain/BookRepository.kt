@@ -46,8 +46,8 @@ interface BookRepository {
     ): Flow<List<BookSeries>>
 
     suspend fun fetchBookFromRemote(
-        isbn: String? = null, title: String? = null, author: String? = null
-    ): Result<Book, DataError.Remote>
+        isbn: String? = null, title: String? = null, author: String? = null, maxResults: Int = 1
+    ): Result<List<Book>, DataError.Remote>
 
     // Trope operations
     fun queryTropes(): Flow<List<Trope>>
