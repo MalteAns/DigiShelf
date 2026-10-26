@@ -35,7 +35,7 @@ val sharedModule = module {
     }
     single { get<BookDatabase>().bookDao }
 
-    single<RemoteBookDataSource> { KtorRemoteBookDataSource(get(), get()) }
+    single<RemoteBookDataSource> { KtorRemoteBookDataSource(get()) }
 
     single<BookRepository> { DefaultBookRepository(get(), get()) }
     single<ExportRepository> { DefaultExportRepository(get()) }

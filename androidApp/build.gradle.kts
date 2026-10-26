@@ -1,16 +1,7 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
 }
-
-private val googleApiKey: String = gradleLocalProperties(rootDir, rootProject.providers)
-    .getProperty("GOOGLE_API_KEY")
-    ?: System.getenv("GOOGLE_API_KEY")
-    ?: throw IllegalStateException(
-        "Missing GOOGLE_API_KEY property in local.properties or environment variable"
-    )
 
 android {
     namespace = "de.malteans.digishelf"
@@ -25,10 +16,6 @@ android {
         versionCode = libs.versions.projectVersionCode.get().toInt()
         versionName = libs.versions.projectVersionName.get()
         versionNameSuffix = libs.versions.projectVersionNameSuffix.get()
-
-
-        val safeKey = googleApiKey.removeSurrounding("\"")
-        buildConfigField("String", "GOOGLE_API_KEY", "\"$safeKey\"")
     }
 
     buildTypes {

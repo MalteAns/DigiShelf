@@ -1,7 +1,7 @@
 package de.malteans.digishelf.core.data.mappers
 
 import de.malteans.digishelf.core.data.database.entities.BookEntity
-import de.malteans.digishelf.core.data.network.dto.BookItem
+import de.malteans.digishelf.core.data.network.dto.OpenLibraryDoc
 import de.malteans.digishelf.core.domain.Book
 import de.malteans.digishelf.core.domain.BookSeries
 import de.malteans.digishelf.core.domain.Trope
@@ -68,30 +68,34 @@ fun Book.toEntity(): BookEntity {
     )
 }
 
-fun BookItem.toDomain(): Book {
+fun OpenLibraryDoc.toDomain(): Book {
+    val isbn13 = this.isbn?.find { it.length == 13 }
+    val chosenIsbn = isbn13 ?: this.isbn?.firstOrNull() ?: ""
+
+    val imageUrl = when {
+        this.coverI != null -> "https://covers.openlibrary.org/b/id/${this.coverI}-L.jpg"
+        this.coverEditionKey != null -> "https://covers.openlibrary.org/b/olid/${this.coverEditionKey}-L.jpg"
+        chosenIsbn.isNotBlank() -> "https://covers.openlibrary.org/b/isbn/$chosenIsbn-L.jpg"
+        else -> ""
+    }
+
     return Book(
         id = 0L, // id is generated locally
-        title = this.volumeInfo.title,
-        author = this.volumeInfo.authors?.joinToString(", ") ?: "",
-        isbn = this.volumeInfo.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier ?: "",
+        title = this.title ?: "",
+        author = this.authorName?.joinToString(", ") ?: "",
+        isbn = chosenIsbn,
         description = "",
-        onlineDescription = this.volumeInfo.description,
-        imageUrl = this.volumeInfo.imageLinks?.extraLarge
-            ?: this.volumeInfo.imageLinks?.large
-            ?: this.volumeInfo.imageLinks?.medium
-            ?: this.volumeInfo.imageLinks?.small
-            ?: this.volumeInfo.imageLinks?.thumbnail
-            ?: this.volumeInfo.imageLinks?.smallThumbnail
-            ?: "",
-        pageCount = this.volumeInfo.pageCount,
-        price = this.saleInfo.listPrice?.amount,
-        currency = this.saleInfo.listPrice?.currencyCode,
+        onlineDescription = null,
+        imageUrl = imageUrl,
+        pageCount = this.numberOfPagesMedian ?: this.numberOfPages,
+        price = null,
+        currency = null,
         bookSeries = null,
         rating = null,
         readStatus = false,
         readingTime = null,
         possessionStatus = false,
-        eBookStatus = this.saleInfo.isEbook,
+        eBookStatus = false,
         deletedSince = 0L,
         favoriteCharacter = null,
         favoriteScene = null,
