@@ -1,5 +1,5 @@
 [versions]
-agp = "9.5.1"
+agp = "9.5.2"
 
 # DON'T DELETE, IS ACUTALLY USED:
 android-compileSdk = "37"
@@ -15,7 +15,7 @@ projectVersionNameSuffix = "-beta6"
 androidx-activityCompose = "1.13.0"
 androidx-lifecycle = "2.11.0"
 barcodeScanning = "17.3.0"
-cameraCore = "1.6.1"
+cameraCore = "1.7.0"
 kotlin = "2.4.21"
 
 composeMultiplatform = "1.12.2"
@@ -26,7 +26,7 @@ navigationCompose = "2.10.0"
 kotlinSerialization = "1.13.0"
 koin = "4.2.2"
 
-ksp = "2.3.13"
+ksp = "2.3.14"
 sqlite = "2.7.0"
 room = "2.8.5"
 
@@ -35,7 +35,7 @@ kotlinxDatetime = "0.8.0-0.6.x-compat" # "-0.6.x-compat" for compatibility with 
 coil3 = "3.6.3"
 ktor = "3.6.1"
 
-fileKit = "0.17.0"
+fileKit = "0.17.1"
 
 kotlinStdlib = "2.4.21"
 aboutLibraries = "15.3.0"
